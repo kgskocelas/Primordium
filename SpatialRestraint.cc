@@ -1,5 +1,3 @@
-// Expanded version - control connectivity of multicells.
-
 #include <iostream>
 #include <fstream>
 #include "../../Empirical/source/base/array.h"
@@ -34,8 +32,21 @@ struct World {
     return '+';
   }
   
+  // Neighborhood layout:
+  //  7 2 4
+  //  0 * 1
+  //  5 3 6
+  //
+  // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8 neighborhood.
+  // (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the full set.
+
   static size_t RandomNeighbor(emp::Random & random, size_t pos, size_t n_count=8)
   {
+    if (n_count > 8) {
+      emp_assert(n_count <= SIZE, n_count, SIZE);
+      return random.GetUInt(n_count);
+    }
+
     const size_t x = ToX(pos);
     const size_t y = ToY(pos);
     size_t next_x = (size_t) -1;
@@ -44,16 +55,18 @@ struct World {
     while (next_x >= WIDTH || next_y >= HEIGHT) {
       const size_t dir = random.GetUInt(n_count);  // Direction for offspring.
       switch (dir) {
-      case 0: case 3: case 5: next_x = x-1; break;
-      case 2: case 4: case 7: next_x = x+1; break;
+      case 0: case 5: case 7: next_x = x-1; break;
+      case 1: case 4: case 6: next_x = x+1; break;
       default: next_x = x;
       };
       switch (dir) {
-      case 0: case 1: case 2: next_y = y-1; break;
-      case 5: case 6: case 7: next_y = y+1; break;
+      case 2: case 4: case 7: next_y = y-1; break;
+      case 3: case 5: case 6: next_y = y+1; break;
       default: next_y = y;
       };
     }
+
+    emp_assert(ToPos(next_x, next_y) < SIZE, next_x, next_y, WIDTH, HEIGHT);
 
     return ToPos(next_x, next_y);
   }
@@ -68,7 +81,7 @@ struct World {
     }
   }
   
-  static size_t TestMulticell(size_t threshold, bool restrain, emp::Random & random) {
+  static size_t TestMulticell(size_t threshold, bool restrain, emp::Random & random, size_t nsize=8) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     emp::array<size_t, SIZE> orgs;
     for (size_t i = 0; i < SIZE; i++) orgs[i] = 0;
@@ -94,7 +107,7 @@ struct World {
           if (++orgs[pos] == threshold) {
             orgs[pos] = 1;
 
-            size_t next_pos = RandomNeighbor(random, pos);
+            size_t next_pos = RandomNeighbor(random, pos, nsize);
             size_t & next_org = orgs[next_pos];
 
             // If the target is empty, put a new organism there.
@@ -132,6 +145,7 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
   static void Run(emp::Random & random,
 		  std::ostream & os=std::cout,
 		  size_t threshold=20,
+      size_t nsize=8,
 		  size_t num_runs=100,
 		  bool verbose=false) {
     // Build a world of the correct size.
@@ -143,7 +157,7 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     
     double total_time = 0.0;
     for (size_t i = 0; i < num_runs; i++) {
-      size_t cur_time = world.TestMulticell(threshold, false, random);
+      size_t cur_time = world.TestMulticell(threshold, false, random, nsize);
       if (verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
     }
@@ -155,7 +169,7 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     
     total_time = 0.0;
     for (size_t i = 0; i < num_runs; i++) {
-      size_t cur_time = world.TestMulticell(threshold, true, random);
+      size_t cur_time = world.TestMulticell(threshold, true, random, nsize);
       if (verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
     }
@@ -163,12 +177,12 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     
     
     // Do the recursive call.
-    WorldSet<WORLD_SIZES...>::Run(random, os, threshold, num_runs);
+    WorldSet<WORLD_SIZES...>::Run(random, os, threshold, nsize, num_runs, verbose);
   }
 };
 
 int main()
 {
   emp::Random random;
-  WorldSet<2,4,8,16,32,64,128>::Run(random);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, std::cout, 20, 8, 100, true);
 }
