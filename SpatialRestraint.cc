@@ -13,10 +13,9 @@ struct Config {
   size_t neighbors = 8;
 
   size_t num_runs = 100;
-  size_t max_size = (size_t) -1;            ///< Largest SIDE for a population.
 
-  std::string GetHeaders() { return "threshold, restrain, neighbors"; }
-  std::string AsCSV() { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
+  std::string GetHeaders() const { return "threshold, restrain, neighbors"; }
+  std::string AsCSV() const { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
 };
 
 // Set of parameters to use.
@@ -33,7 +32,7 @@ struct ConfigSet {
   size_t GetSize() const { return restrain_set.size() * threshold_set.size() * neighbor_set.size(); }
 
   Config GetConfig() const {
-    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs, max_size };
+    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs };
   }
 
   bool Next() {
@@ -127,7 +126,7 @@ struct World {
     }
   }
   
-  static size_t TestMulticell(emp::Random & random, Config config) {
+  static size_t TestMulticell(emp::Random & random, const Config & config) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     emp::array<size_t, SIZE> orgs;
     for (size_t i = 0; i < SIZE; i++) orgs[i] = 0;
@@ -189,51 +188,53 @@ struct WorldSet<> {
 template <size_t CUR_SIZE, size_t... WORLD_SIZES>
 struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
   static void Run(emp::Random & random,
-                  Config config,
+                  const Config & config,
                   std::ostream & os=std::cout,
                   bool verbose=false,
                   bool headers=true)
   {
-    if (CUR_SIZE <= config.max_size) {
-      // Build a world of the correct size.
-      World<CUR_SIZE,CUR_SIZE> world;
-      
-      // Only the first time through should we print the column headers.
-      if (headers) {
-        os << "world_x, world_y, " << config.GetHeaders();
-        if (verbose) {
-          for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
-        }
-        os << ", ave_time" << std::endl;
+    World<CUR_SIZE,CUR_SIZE> world;
+    
+    // Only the first time through should we print the column headers.
+    if (headers) {
+      os << "world_x, world_y, " << config.GetHeaders();
+      if (verbose) {
+        for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
       }
-
-      // Output current config info.
-      os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
-      
-      double total_time = 0.0;
-      for (size_t i = 0; i < config.num_runs; i++) {
-        size_t cur_time = world.TestMulticell(random, config);
-        if (verbose) os << ", " << cur_time;
-        total_time += (double) cur_time;
-      }
-      os << ", " << (total_time / (double) config.num_runs) << std::endl;
+      os << ", ave_time" << std::endl;
     }
-      
-    // Do the recursive call.
-    WorldSet<WORLD_SIZES...>::Run(random, config, os, verbose, false);
+
+    // Output current config info.
+    os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
+    
+    double total_time = 0.0;
+    for (size_t i = 0; i < config.num_runs; i++) {
+      size_t cur_time = world.TestMulticell(random, config);
+      if (verbose) os << ", " << cur_time;
+      total_time += (double) cur_time;
+    }
+    os << ", " << (total_time / (double) config.num_runs) << std::endl;
   }
 
   // Run all of the configurations in an entire set.
   static void Run(emp::Random & random,
                   ConfigSet config_set,
                   std::ostream & os=std::cout,
-                  bool verbose=false)
+                  bool verbose=false,
+                  bool headers=true)
   {
-    const size_t num_configs = config_set.GetSize();
-    for (size_t i = 0; i < num_configs; i++) {
-      Run(random, config_set.GetConfig(), std::cout, verbose, i==0);
-      config_set.Next();
+    // Build a world of the correct size.
+    if (CUR_SIZE <= config_set.max_size) {
+      const size_t num_configs = config_set.GetSize();
+      for (size_t i = 0; i < num_configs; i++) {
+        Run(random, config_set.GetConfig(), std::cout, verbose, i==0 && headers);
+        config_set.Next();
+      }
+      headers = false; // Don't do headers more than once.
     }
+
+    // Do the recursive call.
+    WorldSet<WORLD_SIZES...>::Run(random, config_set, os, verbose, headers);
   }
 
 };
