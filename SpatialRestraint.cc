@@ -2,6 +2,7 @@
 #include <fstream>
 #include "../../Empirical/source/base/array.h"
 #include "../../Empirical/source/base/vector.h"
+#include "../../Empirical/source/config/command_line.h"
 #include "../../Empirical/source/tools/Random.h"
 #include "../../Empirical/source/tools/string_utils.h"
 #include "../../Empirical/source/tools/vector_utils.h"
@@ -239,15 +240,25 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
 
 };
 
-int main()
+void PrintHelp(const std::string & name) {
+  std::cout << "Format: " << name << " [OPTIONS...]\n"
+            << "Options include:\n"
+            << " -h : This message (--help)\n "
+            << std::endl;
+}
+
+int main(int argc, char* argv[])
 {
+  emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+
+  if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) { PrintHelp(args[0]); exit(0); }
+
   emp::Random random;
   ConfigSet config_set;
   emp::Append(config_set.restrain_set, true, false);
   emp::Append(config_set.threshold_set, 4, 8, 16, 32);
   emp::Append(config_set.neighbor_set, 0, 4, 6, 8);
   config_set.num_runs = 100;
-//  config_set.max_size = 30;
 
   WorldSet<2,4,8,16,32,64,128>::Run(random, config_set, std::cout, false);
 }
