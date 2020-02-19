@@ -3,12 +3,23 @@
 #include "../../Empirical/source/base/array.h"
 #include "../../Empirical/source/base/vector.h"
 #include "../../Empirical/source/tools/Random.h"
+#include "../../Empirical/source/tools/string_utils.h"
 
 // Informatin needed to configure a run.
 struct Config {
   size_t threshold = 16;
   bool restrain = false;
   size_t neighbors = 8;
+
+  std::string GetHeaders() { return "threshold, restrain, neighbors"; }
+  std::string AsCSV() { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
+};
+
+// Set of parameters to use.
+struct ConfigSet {
+  emp::vector<size_t> threshold_set;
+  emp::vector<bool> restrain_set;
+  size_t neighbor_set;
 };
 
 // Test a single multicell for how long it takes to replicate.
@@ -81,7 +92,7 @@ struct World {
     }
   }
   
-  static size_t TestMulticell(emp::Random & random, size_t threshold, bool restrain, size_t neighbors=8) {
+  static size_t TestMulticell(emp::Random & random, Config config) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     emp::array<size_t, SIZE> orgs;
     for (size_t i = 0; i < SIZE; i++) orgs[i] = 0;
@@ -104,10 +115,10 @@ struct World {
         // See if this cell gets a unit of resource.
         if (orgs[pos] && random.P(0.5)) {
           // If so, give resource and see if it replicates.
-          if (++orgs[pos] == threshold) {
+          if (++orgs[pos] == config.threshold) {
             orgs[pos] = 1;
 
-            size_t next_pos = RandomNeighbor(random, pos, neighbors);
+            size_t next_pos = RandomNeighbor(random, pos, config.neighbors);
             size_t & next_org = orgs[next_pos];
 
             // If the target is empty, put a new organism there.
@@ -117,7 +128,7 @@ struct World {
             }
 
             // Otherwise if we don't restrain, reset organism there.
-            else if (!restrain) {
+            else if (!config.restrain) {
               next_org = 1;
             }
           }
@@ -143,46 +154,42 @@ struct WorldSet<> {
 template <size_t CUR_SIZE, size_t... WORLD_SIZES>
 struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
   static void Run(emp::Random & random,
+      Config config,
 		  std::ostream & os=std::cout,
-		  size_t threshold=20,
-      size_t neighbors=8,
 		  size_t num_runs=100,
-		  bool verbose=false) {
+		  bool verbose=false,
+      bool headers=true) {
     // Build a world of the correct size.
     World<CUR_SIZE,CUR_SIZE> world;
     
-    // Output initial size information, first for no restraint
-    os << CUR_SIZE << ", " << CUR_SIZE;
-    if (verbose) os << ", 0";
+    // Only the first time through should we print the column headers.
+    if (headers) {
+      os << "world_x, world_y, " << config.GetHeaders();
+      if (verbose) {
+        for (size_t i=0; i < num_runs; i++) os << ", run" << i;
+      }
+      os << ", ave_time" << std::endl;
+    }
+
+    // Output current config info.
+    os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
     
     double total_time = 0.0;
     for (size_t i = 0; i < num_runs; i++) {
-      size_t cur_time = world.TestMulticell(random, threshold, false, neighbors);
-      if (verbose) os << ", " << cur_time;
-      total_time += (double) cur_time;
-    }
-    os << ", " << (total_time / (double) num_runs);
-    if (verbose) os << std::endl;
-    
-    // Then for restraint...
-    if (verbose) os << CUR_SIZE << ", " << CUR_SIZE << ", 1";
-    
-    total_time = 0.0;
-    for (size_t i = 0; i < num_runs; i++) {
-      size_t cur_time = world.TestMulticell(random, threshold, true, neighbors);
+      size_t cur_time = world.TestMulticell(random, config);
       if (verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
     }
     os << ", " << (total_time / (double) num_runs) << std::endl;
     
-    
     // Do the recursive call.
-    WorldSet<WORLD_SIZES...>::Run(random, os, threshold, neighbors, num_runs, verbose);
+    WorldSet<WORLD_SIZES...>::Run(random, config, os, num_runs, verbose, false);
   }
 };
 
 int main()
 {
   emp::Random random;
-  WorldSet<2,4,8,16,32,64,128>::Run(random, std::cout, 20, 8, 100, true);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{20, true, 8}, std::cout, 100, false);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{20, false, 8}, std::cout, 100, false);
 }
