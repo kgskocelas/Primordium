@@ -13,6 +13,7 @@ struct Config {
   size_t neighbors = 8;
 
   size_t num_runs = 100;
+  size_t max_size = (size_t) -1;            ///< Largest SIDE for a population.
 
   std::string GetHeaders() { return "threshold, restrain, neighbors"; }
   std::string AsCSV() { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
@@ -20,18 +21,19 @@ struct Config {
 
 // Set of parameters to use.
 struct ConfigSet {
-  emp::vector<bool> restrain_set;
-  emp::vector<size_t> threshold_set;
-  emp::vector<size_t> neighbor_set;
+  emp::vector<bool> restrain_set;           ///< Should organisms be restrained?
+  emp::vector<size_t> threshold_set;        ///< How high a count for replication?
+  emp::vector<size_t> neighbor_set;         ///< How many neighbors should we look at; (0=well mixed; 4,6,8 are 2D)
 
-  emp::array<size_t, 3> cur_ids{0,0,0};       ///< Which settings are we going to use next?
+  emp::array<size_t, 3> cur_ids{0,0,0};     ///< Which settings are we going to use next?
 
-  size_t num_runs = 100;
+  size_t num_runs = 100;                    ///< How many times should we run each configuration?
+  size_t max_size = (size_t) -1;            ///< Largest SIDE for a population.
 
   size_t GetSize() const { return restrain_set.size() * threshold_set.size() * neighbor_set.size(); }
 
   Config GetConfig() const {
-    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs };
+    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs, max_size };
   }
 
   bool Next() {
@@ -192,29 +194,31 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
                   bool verbose=false,
                   bool headers=true)
   {
-    // Build a world of the correct size.
-    World<CUR_SIZE,CUR_SIZE> world;
-    
-    // Only the first time through should we print the column headers.
-    if (headers) {
-      os << "world_x, world_y, " << config.GetHeaders();
-      if (verbose) {
-        for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
+    if (CUR_SIZE <= config.max_size) {
+      // Build a world of the correct size.
+      World<CUR_SIZE,CUR_SIZE> world;
+      
+      // Only the first time through should we print the column headers.
+      if (headers) {
+        os << "world_x, world_y, " << config.GetHeaders();
+        if (verbose) {
+          for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
+        }
+        os << ", ave_time" << std::endl;
       }
-      os << ", ave_time" << std::endl;
-    }
 
-    // Output current config info.
-    os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
-    
-    double total_time = 0.0;
-    for (size_t i = 0; i < config.num_runs; i++) {
-      size_t cur_time = world.TestMulticell(random, config);
-      if (verbose) os << ", " << cur_time;
-      total_time += (double) cur_time;
+      // Output current config info.
+      os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
+      
+      double total_time = 0.0;
+      for (size_t i = 0; i < config.num_runs; i++) {
+        size_t cur_time = world.TestMulticell(random, config);
+        if (verbose) os << ", " << cur_time;
+        total_time += (double) cur_time;
+      }
+      os << ", " << (total_time / (double) config.num_runs) << std::endl;
     }
-    os << ", " << (total_time / (double) config.num_runs) << std::endl;
-    
+      
     // Do the recursive call.
     WorldSet<WORLD_SIZES...>::Run(random, config, os, verbose, false);
   }
@@ -242,9 +246,7 @@ int main()
   emp::Append(config_set.threshold_set, 4, 8, 16, 32);
   emp::Append(config_set.neighbor_set, 0, 4, 6, 8);
   config_set.num_runs = 100;
+//  config_set.max_size = 30;
 
-  WorldSet<2,4,8,16,32>::Run(random, config_set, std::cout, false);
-
-  // WorldSet<2,4,8,16,32,64,128>::Run(random, Config{true, 20, 8, 100}, std::cout, false);
-  // WorldSet<2,4,8,16,32,64,128>::Run(random, Config{false, 20, 8, 100}, std::cout, false);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, config_set, std::cout, false);
 }
