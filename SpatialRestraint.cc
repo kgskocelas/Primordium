@@ -243,21 +243,36 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
 void PrintHelp(const std::string & name) {
   std::cout << "Format: " << name << " [OPTIONS...]\n"
             << "Options include:\n"
-            << " -h : This message (--help)\n "
+            << " -h         : This message (--help).\n"
+            << " -n [SIZES] : Comma separated neighborhood sizes (--neighbors).\n"
+            << "\nExample:  " << name << " -n 0,4,8\n"
             << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+  emp::vector<size_t>  neighbor_set = {8};  // Default to size 8 neighborhoods.
 
-  if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) { PrintHelp(args[0]); exit(0); }
+  if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
+    PrintHelp(args[0]); exit(0);
+  }
+
+  size_t arg_id = 1;
+  while (arg_id < args.size()) {
+    const std::string cur_arg = args[arg_id++];
+    if (cur_arg == "-n" || cur_arg == "--neighbors") {
+      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide neighborhood sizes!\n"; exit(1); }
+      neighbor_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
+    }
+  }
 
   emp::Random random;
   ConfigSet config_set;
   emp::Append(config_set.restrain_set, true, false);
   emp::Append(config_set.threshold_set, 4, 8, 16, 32);
-  emp::Append(config_set.neighbor_set, 0, 4, 6, 8);
+  // emp::Append(config_set.neighbor_set, 0, 4, 6, 8);
+  config_set.neighbor_set = neighbor_set;
   config_set.num_runs = 100;
 
   WorldSet<2,4,8,16,32,64,128>::Run(random, config_set, std::cout, false);
