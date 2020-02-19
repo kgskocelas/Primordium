@@ -7,9 +7,11 @@
 
 // Informatin needed to configure a run.
 struct Config {
-  size_t threshold = 16;
   bool restrain = false;
+  size_t threshold = 16;
   size_t neighbors = 8;
+
+  size_t num_runs = 100;
 
   std::string GetHeaders() { return "threshold, restrain, neighbors"; }
   std::string AsCSV() { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
@@ -17,9 +19,39 @@ struct Config {
 
 // Set of parameters to use.
 struct ConfigSet {
-  emp::vector<size_t> threshold_set;
   emp::vector<bool> restrain_set;
-  size_t neighbor_set;
+  emp::vector<size_t> threshold_set;
+  emp::vector<size_t> neighbor_set;
+
+  emp::array<size_t, 3> cur_ids{0,0,0};       ///< Which settings are we going to use next?
+
+  size_t num_runs = 100;
+
+  size_t GetSize() const { return restrain_set.size() * threshold_set.size() * neighbor_set.size(); }
+
+  Config GetConfig() const {
+    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs };
+  }
+
+  bool Next() {
+    // First try to toggle restraint.
+    cur_ids[0]++;
+    if (cur_ids[0] < restrain_set.size()) return true;
+
+    // Next, cycle restrain back to the beginning and try to move to the next threshold.
+    cur_ids[0] = 0;
+    cur_ids[1]++;
+    if (cur_ids[1] < threshold_set.size()) return true;
+
+    // If we're done with thresholds, cycle back and try neighbors.
+    cur_ids[1] = 0;
+    cur_ids[2]++;
+    if (cur_ids[2] < neighbor_set.size()) return true;
+
+    // If we made it this far, we are done.  Cycle neighbor back and return false.
+    cur_ids[2] = 0;
+    return false;
+  }
 };
 
 // Test a single multicell for how long it takes to replicate.
@@ -156,7 +188,6 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
   static void Run(emp::Random & random,
       Config config,
 		  std::ostream & os=std::cout,
-		  size_t num_runs=100,
 		  bool verbose=false,
       bool headers=true) {
     // Build a world of the correct size.
@@ -166,7 +197,7 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     if (headers) {
       os << "world_x, world_y, " << config.GetHeaders();
       if (verbose) {
-        for (size_t i=0; i < num_runs; i++) os << ", run" << i;
+        for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
       }
       os << ", ave_time" << std::endl;
     }
@@ -175,21 +206,21 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
     
     double total_time = 0.0;
-    for (size_t i = 0; i < num_runs; i++) {
+    for (size_t i = 0; i < config.num_runs; i++) {
       size_t cur_time = world.TestMulticell(random, config);
       if (verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
     }
-    os << ", " << (total_time / (double) num_runs) << std::endl;
+    os << ", " << (total_time / (double) config.num_runs) << std::endl;
     
     // Do the recursive call.
-    WorldSet<WORLD_SIZES...>::Run(random, config, os, num_runs, verbose, false);
+    WorldSet<WORLD_SIZES...>::Run(random, config, os, verbose, false);
   }
 };
 
 int main()
 {
   emp::Random random;
-  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{20, true, 8}, std::cout, 100, false);
-  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{20, false, 8}, std::cout, 100, false);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{true, 20, 8, 100}, std::cout, false);
+  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{false, 20, 8, 100}, std::cout, false);
 }
