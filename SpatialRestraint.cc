@@ -4,6 +4,7 @@
 #include "../../Empirical/source/base/vector.h"
 #include "../../Empirical/source/tools/Random.h"
 #include "../../Empirical/source/tools/string_utils.h"
+#include "../../Empirical/source/tools/vector_utils.h"
 
 // Informatin needed to configure a run.
 struct Config {
@@ -85,8 +86,8 @@ struct World {
 
   static size_t RandomNeighbor(emp::Random & random, size_t pos, size_t neighbors=8)
   {
-    if (neighbors > 8) {
-      emp_assert(neighbors == SIZE, neighbors, SIZE);
+    if (neighbors == 0 || neighbors > 8) {
+      neighbors = SIZE;
       return random.GetUInt(neighbors);
     }
 
@@ -186,10 +187,11 @@ struct WorldSet<> {
 template <size_t CUR_SIZE, size_t... WORLD_SIZES>
 struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
   static void Run(emp::Random & random,
-      Config config,
-		  std::ostream & os=std::cout,
-		  bool verbose=false,
-      bool headers=true) {
+                  Config config,
+                  std::ostream & os=std::cout,
+                  bool verbose=false,
+                  bool headers=true)
+  {
     // Build a world of the correct size.
     World<CUR_SIZE,CUR_SIZE> world;
     
@@ -216,11 +218,33 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     // Do the recursive call.
     WorldSet<WORLD_SIZES...>::Run(random, config, os, verbose, false);
   }
+
+  // Run all of the configurations in an entire set.
+  static void Run(emp::Random & random,
+                  ConfigSet config_set,
+                  std::ostream & os=std::cout,
+                  bool verbose=false)
+  {
+    const size_t num_configs = config_set.GetSize();
+    for (size_t i = 0; i < num_configs; i++) {
+      Run(random, config_set.GetConfig(), std::cout, verbose, i==0);
+      config_set.Next();
+    }
+  }
+
 };
 
 int main()
 {
   emp::Random random;
-  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{true, 20, 8, 100}, std::cout, false);
-  WorldSet<2,4,8,16,32,64,128>::Run(random, Config{false, 20, 8, 100}, std::cout, false);
+  ConfigSet config_set;
+  emp::Append(config_set.restrain_set, true, false);
+  emp::Append(config_set.threshold_set, 4, 8, 16, 32);
+  emp::Append(config_set.neighbor_set, 0, 4, 6, 8);
+  config_set.num_runs = 100;
+
+  WorldSet<2,4,8,16,32>::Run(random, config_set, std::cout, false);
+
+  // WorldSet<2,4,8,16,32,64,128>::Run(random, Config{true, 20, 8, 100}, std::cout, false);
+  // WorldSet<2,4,8,16,32,64,128>::Run(random, Config{false, 20, 8, 100}, std::cout, false);
 }
