@@ -249,6 +249,7 @@ void PrintHelp(const std::string & name) {
             << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
             << " -r [RESTRAINS]  : Should cells restrain?  Comma separated values (--restrains) [0,1].\n"
             << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
+            << " -v              : Use verbose data printing ALL results (--verbose) [false]"
             << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
             << std::endl;
 }
@@ -264,6 +265,7 @@ int main(int argc, char* argv[])
   config_set.threshold_set = {16};         // Default to a threshold of 16.
   config_set.num_runs = 100;               // Default to 100 runs.
   config_set.max_size = 32;                // Default to 32x32 populations.
+  bool verbose = false;
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
     PrintHelp(args[0]); exit(0);
@@ -298,11 +300,15 @@ int main(int argc, char* argv[])
       config_set.threshold_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
     }
 
+    else if (cur_arg == "-v" || cur_arg == "--verbose") {
+      verbose = true;
+    }
+
     else {
       std::cerr << "ERROR: Unknown option " << cur_arg << "\n";
       exit(1);
     }
   }
 
-  WorldSet<2,4,8,16,32,64,128,256>::Run(random, config_set, std::cout, false);
+  WorldSet<2,4,8,16,32,64,128,256>::Run(random, config_set, std::cout, verbose);
 }
