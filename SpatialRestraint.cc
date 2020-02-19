@@ -243,11 +243,13 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
 void PrintHelp(const std::string & name) {
   std::cout << "Format: " << name << " [OPTIONS...]\n"
             << "Options include:\n"
+            << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
             << " -h              : This message (--help).\n"
-            << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors).\n"
-            << " -r [RESTRAINS]  : Should cells restrain?  Comma separated values (--restrains).\n"
-            << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds).\n"
-            << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32\n"
+            << " -m [MAX_SIDE]   : Maximum multi-cell side length, up to 256 (--max_side) [32]\n"
+            << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
+            << " -r [RESTRAINS]  : Should cells restrain?  Comma separated values (--restrains) [0,1].\n"
+            << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
+            << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
             << std::endl;
 }
 
@@ -257,9 +259,11 @@ int main(int argc, char* argv[])
   ConfigSet config_set;
 
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
-  emp::vector<size_t> neighbor_set = {8};  // Default to size 8 neighborhoods.
-  emp::vector<bool>   restrain_set = {false,true};  // Default to size 8 neighborhoods.
-  emp::vector<size_t> threshold_set = {16};  // Default to size 8 neighborhoods.
+  config_set.neighbor_set = {8};           // Default to size-8 neighborhoods.
+  config_set.restrain_set = {false,true};  // Default to both no restraint and restraint.
+  config_set.threshold_set = {16};         // Default to a threshold of 16.
+  config_set.num_runs = 100;               // Default to 100 runs.
+  config_set.max_size = 32;                // Default to 32x32 populations.
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
     PrintHelp(args[0]); exit(0);
@@ -269,27 +273,36 @@ int main(int argc, char* argv[])
   while (arg_id < args.size()) {
     const std::string cur_arg = args[arg_id++];
 
-    if (cur_arg == "-n" || cur_arg == "--neighbors") {
+    if (cur_arg == "-d" || cur_arg == "--data_count") {
+      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide data count!\n"; exit(1); }
+      config_set.num_runs = emp::from_string<size_t>(args[arg_id++]);
+    }
+
+    else if (cur_arg == "-m" || cur_arg == "--max_side") {
+      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide maximum side-length to use!\n"; exit(1); }
+      config_set.max_size = emp::from_string<size_t>(args[arg_id++]);
+    }
+
+    else if (cur_arg == "-n" || cur_arg == "--neighbors") {
       if (arg_id >= args.size()) { std::cout << "ERROR: Must provide neighborhood sizes!\n"; exit(1); }
-      neighbor_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
+      config_set.neighbor_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
     }
 
-    if (cur_arg == "-r" || cur_arg == "--restrains") {
+    else if (cur_arg == "-r" || cur_arg == "--restrains") {
       if (arg_id >= args.size()) { std::cout << "ERROR: Must provide restrain values!\n"; exit(1); }
-      restrain_set = emp::from_strings<bool>(emp::slice(args[arg_id++], ','));
+      config_set.restrain_set = emp::from_strings<bool>(emp::slice(args[arg_id++], ','));
     }
 
-    if (cur_arg == "-t" || cur_arg == "--thresholds") {
+    else if (cur_arg == "-t" || cur_arg == "--thresholds") {
       if (arg_id >= args.size()) { std::cout << "ERROR: Must provide threshold values!\n"; exit(1); }
-      threshold_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
+      config_set.threshold_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
     }
 
+    else {
+      std::cerr << "ERROR: Unknown option " << cur_arg << "\n";
+      exit(1);
+    }
   }
 
-  config_set.neighbor_set = neighbor_set;
-  config_set.restrain_set = restrain_set;
-  config_set.threshold_set = threshold_set;
-  config_set.num_runs = 100;
-
-  WorldSet<2,4,8,16,32,64,128>::Run(random, config_set, std::cout, false);
+  WorldSet<2,4,8,16,32,64,128,256>::Run(random, config_set, std::cout, false);
 }
