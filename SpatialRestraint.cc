@@ -9,13 +9,13 @@
 
 // Informatin needed to configure a run.
 struct Config {
-  size_t cells_side = 32;    // How many cells are on a side of the (square) multi-cell?
-  bool restrain = false;     // Should cells refrain from overwriting each other?
-  size_t threshold = 16;     // How many resources are needed to produce an offspring?
-  size_t neighbors = 8;      // Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
+  size_t cells_side = 32;  ///< How many cells are on a side of the (square) multi-cell?
+  bool restrain = false;   ///< Should cells refrain from overwriting each other?
+  size_t threshold = 16;   ///< How many resources are needed to produce an offspring?
+  size_t neighbors = 8;    ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
 
-  size_t num_runs = 100;     // How many runs should we do with the above configuration?
-  bool verbose = false;      // Should we print timings for each replicate?
+  size_t num_runs = 100;   ///< How many runs should we do with the above configuration?
+  bool verbose = false;    ///< Should we print timings for each replicate?
 
   size_t GetWidth() const { return cells_side; }
   size_t GetHeight() const { return cells_side; }
@@ -86,6 +86,7 @@ struct ConfigSet {
 
 struct World {
   emp::Random random;
+  emp::vector<size_t> orgs;
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
@@ -147,7 +148,8 @@ struct World {
   size_t TestMulticell(const Config & config) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = config.GetSize();
-    emp::vector<size_t> orgs(mc_size, 0);
+    orgs.resize(0);           // Clear out any current organisms.
+    orgs.resize(mc_size, 0);  // Put in new organsims initialized to 0.
     size_t time = 0;
     
     // Inject a cell in the middle.
