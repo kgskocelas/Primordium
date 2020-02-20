@@ -9,66 +9,80 @@
 
 // Informatin needed to configure a run.
 struct Config {
-  bool restrain = false;
-  size_t threshold = 16;
-  size_t neighbors = 8;
+  size_t cells_side = 32;    // How many cells are on a side of the (square) multi-cell?
+  bool restrain = false;     // Should cells refrain from overwriting each other?
+  size_t threshold = 16;     // How many resources are needed to produce an offspring?
+  size_t neighbors = 8;      // Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
 
-  size_t num_runs = 100;
+  size_t num_runs = 100;     // How many runs should we do with the above configuration?
 
-  std::string GetHeaders() const { return "threshold, restrain, neighbors"; }
-  std::string AsCSV() const { return emp::to_string(threshold, ", ", restrain, ", ", neighbors); }
+  size_t GetWidth() const { return cells_side; }
+  size_t GetHeight() const { return cells_side; }
+  size_t GetSize() const { return cells_side * cells_side; }
+
+  std::string GetHeaders() const { return "width, height, threshold, restrain, neighbors"; }
+  std::string AsCSV() const {
+    return emp::to_string(GetWidth(), ", ", GetHeight(), ", ", threshold, ", ", restrain, ", ", neighbors);
+  }
+
+  size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
+  size_t ToX(size_t pos) const { return pos % cells_side; }
+  size_t ToY(size_t pos) const { return pos / cells_side; }
 };
 
 // Set of parameters to use.
 struct ConfigSet {
-  emp::vector<bool> restrain_set;           ///< Should organisms be restrained?
-  emp::vector<size_t> threshold_set;        ///< How high a count for replication?
-  emp::vector<size_t> neighbor_set;         ///< How many neighbors should we look at; (0=well mixed; 4,6,8 are 2D)
+  emp::vector<size_t> side_set;             ///< Values to use for cells_side.
+  emp::vector<bool> restrain_set;           ///< Values to use for restrain.
+  emp::vector<size_t> threshold_set;        ///< Values to use for threhsold.
+  emp::vector<size_t> neighbor_set;         ///< How many neighbors should we look at; 
 
-  emp::array<size_t, 3> cur_ids{0,0,0};     ///< Which settings are we going to use next?
+  emp::array<size_t, 4> cur_ids{0,0,0,0};   ///< Which settings are we going to use next?
 
   size_t num_runs = 100;                    ///< How many times should we run each configuration?
-  size_t max_size = (size_t) -1;            ///< Largest SIDE for a population.
 
-  size_t GetSize() const { return restrain_set.size() * threshold_set.size() * neighbor_set.size(); }
+  size_t GetSize() const {
+    return side_set.size() * restrain_set.size() * threshold_set.size() * neighbor_set.size();
+  }
 
   Config GetConfig() const {
-    return Config{ restrain_set[cur_ids[0]], threshold_set[cur_ids[1]], neighbor_set[cur_ids[2]], num_runs };
+    return Config{ side_set[cur_ids[0]],
+                   restrain_set[cur_ids[1]],
+                   threshold_set[cur_ids[2]],
+                   neighbor_set[cur_ids[3]],
+                   num_runs
+                  };
   }
 
   bool Next() {
-    // First try to toggle restraint.
+    // First try to toggle sides.
     cur_ids[0]++;
-    if (cur_ids[0] < restrain_set.size()) return true;
+    if (cur_ids[0] < side_set.size()) return true;
 
-    // Next, cycle restrain back to the beginning and try to move to the next threshold.
+    // Next, cycle sides back to the beginning and try to move to the next restrain.
     cur_ids[0] = 0;
     cur_ids[1]++;
-    if (cur_ids[1] < threshold_set.size()) return true;
+    if (cur_ids[1] < restrain_set.size()) return true;
 
-    // If we're done with thresholds, cycle back and try neighbors.
+    // Next, cycle restrain back to the beginning and try to move to the next threshold.
     cur_ids[1] = 0;
     cur_ids[2]++;
-    if (cur_ids[2] < neighbor_set.size()) return true;
+    if (cur_ids[2] < threshold_set.size()) return true;
+
+    // If we're done with thresholds, cycle back and try neighbors.
+    cur_ids[2] = 0;
+    cur_ids[3]++;
+    if (cur_ids[3] < neighbor_set.size()) return true;
 
     // If we made it this far, we are done.  Cycle neighbor back and return false.
-    cur_ids[2] = 0;
+    cur_ids[3] = 0;
     return false;
   }
 };
 
-// Test a single multicell for how long it takes to replicate.
-// Multicell is WIDTH * HEIGHT in size
-// threshold indicates resources needed to replicate.
-// restrain indicates if cells should hold back.
+// World to test a single multicell for how long it takes to replicate.
 
-template <size_t WIDTH, size_t HEIGHT>
 struct World {
-  static constexpr size_t SIZE = WIDTH * HEIGHT;
-    
-  static constexpr size_t ToPos(size_t x, size_t y) { return x + y * WIDTH; }
-  static constexpr size_t ToX(size_t pos) { return pos % WIDTH; }
-  static constexpr size_t ToY(size_t pos) { return pos / WIDTH; }
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
@@ -86,20 +100,19 @@ struct World {
   // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8 neighborhood.
   // (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the full set.
 
-  static size_t RandomNeighbor(emp::Random & random, size_t pos, size_t neighbors=8)
+  static size_t RandomNeighbor(emp::Random & random, size_t pos, const Config & config)
   {
-    if (neighbors == 0 || neighbors > 8) {
-      neighbors = SIZE;
-      return random.GetUInt(neighbors);
+    if (config.neighbors == 0 || config.neighbors > 8) {
+      return random.GetUInt(config.GetSize());
     }
 
-    const size_t x = ToX(pos);
-    const size_t y = ToY(pos);
+    const size_t x = config.ToX(pos);
+    const size_t y = config.ToY(pos);
     size_t next_x = (size_t) -1;
     size_t next_y = (size_t) -1;
 
-    while (next_x >= WIDTH || next_y >= HEIGHT) {
-      const size_t dir = random.GetUInt(neighbors);  // Direction for offspring.
+    while (next_x >= config.GetWidth() || next_y >= config.GetHeight()) {
+      const size_t dir = random.GetUInt(config.neighbors);  // Direction for offspring.
       switch (dir) {
       case 0: case 5: case 7: next_x = x-1; break;
       case 1: case 4: case 6: next_x = x+1; break;
@@ -112,16 +125,17 @@ struct World {
       };
     }
 
-    emp_assert(ToPos(next_x, next_y) < SIZE, next_x, next_y, WIDTH, HEIGHT);
+    emp_assert(config.ToPos(next_x, next_y) < config.GetSize(), next_x, next_y, config.cells_side);
 
-    return ToPos(next_x, next_y);
+    return config.ToPos(next_x, next_y);
   }
 
-  static void Print(const emp::array<size_t, SIZE> & ms) {
+  static void Print(const emp::vector<size_t> & mc, const Config & config) {
+    emp_assert(mv.size() == config.GetSize());
     size_t pos = 0;
-    for (size_t y = 0; y < HEIGHT; y++) {
-      for (size_t x = 0; x < WIDTH; x++) {
-	std::cout << " " << ToChar(ms[pos++]);
+    for (size_t y = 0; y < config.GetHeight(); y++) {
+      for (size_t x = 0; x < config.GetWidth(); x++) {
+      	std::cout << " " << ToChar(mc[pos++]);
       }
       std::cout << std::endl;
     }
@@ -129,31 +143,31 @@ struct World {
   
   static size_t TestMulticell(emp::Random & random, const Config & config) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
-    emp::array<size_t, SIZE> orgs;
-    for (size_t i = 0; i < SIZE; i++) orgs[i] = 0;
+    const size_t mc_size = config.GetSize();
+    emp::vector<size_t> orgs(mc_size, 0);
     size_t time = 0;
     
     // Inject a cell in the middle.
-    constexpr size_t start_pos = ToPos(WIDTH/2, HEIGHT/2);
+    const size_t start_pos = config.ToPos(config.GetWidth()/2, config.GetHeight()/2);
     orgs[start_pos] = 1; // Live cells start at one resource.
     size_t num_orgs = 1;    
 
     // Loop through updates until cell is full.
-    while (num_orgs < SIZE) {
+    while (num_orgs < mc_size) {
       // std::cout << "Update: " << time << "; num_orgs: " << num_orgs << std::endl;
-      // if (time % 100 == 0) Print(orgs);
+      // if (time % 100 == 0) Print(config, orgs);
 
       time++;
 
       // Loop through cells, probabilistically incrementing resources.
-      for (size_t pos = 0; pos < SIZE; pos++) {
+      for (size_t pos = 0; pos < mc_size; pos++) {
         // See if this cell gets a unit of resource.
         if (orgs[pos] && random.P(0.5)) {
           // If so, give resource and see if it replicates.
           if (++orgs[pos] == config.threshold) {
             orgs[pos] = 1;
 
-            size_t next_pos = RandomNeighbor(random, pos, config.neighbors);
+            size_t next_pos = RandomNeighbor(random, pos, config);
             size_t & next_org = orgs[next_pos];
 
             // If the target is empty, put a new organism there.
@@ -162,7 +176,7 @@ struct World {
               num_orgs++;
             }
 
-            // Otherwise if we don't restrain, reset organism there.
+            // Otherwise if we don't restrain, reset existing organism there.
             else if (!config.restrain) {
               next_org = 1;
             }
@@ -175,30 +189,19 @@ struct World {
   }
 };
 
-// General case
-template <size_t...> struct WorldSet;
 
-// Base case
-template <>
-struct WorldSet<> {
-  template <typename... Ts>
-  static void Run(Ts &&...) { ; }
-};
-
-// Recursive case
-template <size_t CUR_SIZE, size_t... WORLD_SIZES>
-struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
+struct WorldSet {
   static void Run(emp::Random & random,
                   const Config & config,
                   std::ostream & os=std::cout,
                   bool verbose=false,
                   bool headers=true)
   {
-    World<CUR_SIZE,CUR_SIZE> world;
+    World world;
     
     // Only the first time through should we print the column headers.
     if (headers) {
-      os << "world_x, world_y, " << config.GetHeaders();
+      os << config.GetHeaders();
       if (verbose) {
         for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
       }
@@ -206,7 +209,7 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
     }
 
     // Output current config info.
-    os << CUR_SIZE << ", " << CUR_SIZE << ", " << config.AsCSV();
+    os << config.AsCSV();
     
     double total_time = 0.0;
     for (size_t i = 0; i < config.num_runs; i++) {
@@ -225,17 +228,12 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
                   bool headers=true)
   {
     // Build a world of the correct size.
-    if (CUR_SIZE <= config_set.max_size) {
-      const size_t num_configs = config_set.GetSize();
-      for (size_t i = 0; i < num_configs; i++) {
-        Run(random, config_set.GetConfig(), std::cout, verbose, i==0 && headers);
-        config_set.Next();
-      }
-      headers = false; // Don't do headers more than once.
+    const size_t num_configs = config_set.GetSize();
+    for (size_t i = 0; i < num_configs; i++) {
+      Run(random, config_set.GetConfig(), std::cout, verbose, i==0 && headers);
+      config_set.Next();
     }
-
-    // Do the recursive call.
-    WorldSet<WORLD_SIZES...>::Run(random, config_set, os, verbose, headers);
+    headers = false; // Don't do headers more than once.
   }
 
 };
@@ -243,11 +241,11 @@ struct WorldSet<CUR_SIZE, WORLD_SIZES...> {
 void PrintHelp(const std::string & name) {
   std::cout << "Format: " << name << " [OPTIONS...]\n"
             << "Options include:\n"
+            << " -c [SIDE_SIZES] : Cells on side of (square) multicell (--cells_side) [16]\n"
             << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
             << " -h              : This message (--help).\n"
-            << " -m [MAX_SIDE]   : Maximum multi-cell side length, up to 256 (--max_side) [32]\n"
             << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
-            << " -r [RESTRAINS]  : Should cells restrain?  Comma separated values (--restrains) [0,1].\n"
+            << " -r [RESTRAINS]  : Should cells restrain? (--restrains) [0,1].\n"
             << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
             << " -v              : Use verbose data printing ALL results (--verbose) [false]"
             << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
@@ -260,11 +258,11 @@ int main(int argc, char* argv[])
   ConfigSet config_set;
 
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+  config_set.side_set = {16};              // Default to 16x16 = size 256 multicell.
   config_set.neighbor_set = {8};           // Default to size-8 neighborhoods.
   config_set.restrain_set = {false,true};  // Default to both no restraint and restraint.
   config_set.threshold_set = {16};         // Default to a threshold of 16.
   config_set.num_runs = 100;               // Default to 100 runs.
-  config_set.max_size = 32;                // Default to 32x32 populations.
   bool verbose = false;
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
@@ -275,14 +273,14 @@ int main(int argc, char* argv[])
   while (arg_id < args.size()) {
     const std::string cur_arg = args[arg_id++];
 
-    if (cur_arg == "-d" || cur_arg == "--data_count") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide data count!\n"; exit(1); }
-      config_set.num_runs = emp::from_string<size_t>(args[arg_id++]);
+    if (cur_arg == "-c" || cur_arg == "--cells_side") {
+      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide side-lengths to use!\n"; exit(1); }
+      config_set.side_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
     }
 
-    else if (cur_arg == "-m" || cur_arg == "--max_side") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide maximum side-length to use!\n"; exit(1); }
-      config_set.max_size = emp::from_string<size_t>(args[arg_id++]);
+    else if (cur_arg == "-d" || cur_arg == "--data_count") {
+      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide data count!\n"; exit(1); }
+      config_set.num_runs = emp::from_string<size_t>(args[arg_id++]);
     }
 
     else if (cur_arg == "-n" || cur_arg == "--neighbors") {
@@ -310,5 +308,5 @@ int main(int argc, char* argv[])
     }
   }
 
-  WorldSet<2,4,8,16,32,64,128,256>::Run(random, config_set, std::cout, verbose);
+  WorldSet::Run(random, config_set, std::cout, verbose);
 }
