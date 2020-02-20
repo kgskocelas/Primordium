@@ -14,9 +14,6 @@ struct Config {
   size_t threshold = 16;   ///< How many resources are needed to produce an offspring?
   size_t neighbors = 8;    ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
 
-  size_t num_runs = 100;   ///< How many runs should we do with the above configuration?
-  bool verbose = false;    ///< Should we print timings for each replicate?
-
   size_t GetWidth() const { return cells_side; }
   size_t GetHeight() const { return cells_side; }
   size_t GetSize() const { return cells_side * cells_side; }
@@ -53,8 +50,6 @@ struct ConfigSet {
                    restrain_set[cur_ids[1]],
                    threshold_set[cur_ids[2]],
                    neighbor_set[cur_ids[3]],
-                   num_runs,
-                   verbose
                   };
   }
 
@@ -220,7 +215,7 @@ void Run(ConfigSet config_set, std::ostream & os=std::cout) {
 
     // Conduct all replicates and output the information.    
     double total_time = 0.0;
-    for (size_t i = 0; i < world.config.num_runs; i++) {
+    for (size_t i = 0; i < config_set.num_runs; i++) {
       size_t cur_time = world.TestMulticell();
       if (config_set.verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
