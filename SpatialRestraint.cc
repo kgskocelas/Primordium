@@ -84,9 +84,8 @@ struct ConfigSet {
   }
 };
 
-// World to test a single multicell for how long it takes to replicate.
-
 struct World {
+  emp::Random random;
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
@@ -104,7 +103,7 @@ struct World {
   // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8 neighborhood.
   // (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the full set.
 
-  static size_t RandomNeighbor(emp::Random & random, size_t pos, const Config & config)
+  size_t RandomNeighbor(size_t pos, const Config & config)
   {
     if (config.neighbors == 0 || config.neighbors > 8) {
       return random.GetUInt(config.GetSize());
@@ -145,7 +144,7 @@ struct World {
     }
   }
   
-  static size_t TestMulticell(emp::Random & random, const Config & config) {
+  size_t TestMulticell(const Config & config) {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = config.GetSize();
     emp::vector<size_t> orgs(mc_size, 0);
@@ -171,7 +170,7 @@ struct World {
           if (++orgs[pos] == config.threshold) {
             orgs[pos] = 1;
 
-            size_t next_pos = RandomNeighbor(random, pos, config);
+            size_t next_pos = RandomNeighbor(pos, config);
             size_t & next_org = orgs[next_pos];
 
             // If the target is empty, put a new organism there.
@@ -193,29 +192,11 @@ struct World {
   }
 };
 
-void Run(emp::Random & random,
-                const Config & config,
-                std::ostream & os=std::cout)
-{
-  World world;
-  
-  // Output current config info.
-  os << config.AsCSV();
-  
-  double total_time = 0.0;
-  for (size_t i = 0; i < config.num_runs; i++) {
-    size_t cur_time = world.TestMulticell(random, config);
-    if (config.verbose) os << ", " << cur_time;
-    total_time += (double) cur_time;
-  }
-  os << ", " << (total_time / (double) config.num_runs) << std::endl;
-}
 
 // Run all of the configurations in an entire set.
-void Run(emp::Random & random,
-                ConfigSet config_set,
-                std::ostream & os=std::cout)
-{
+void Run(ConfigSet config_set, std::ostream & os=std::cout) {
+  World world;
+
   // Start with column headers.
   os << config_set.GetHeaders();
   if (config_set.verbose) {
@@ -225,8 +206,24 @@ void Run(emp::Random & random,
 
   // Build a world of the correct size.
   const size_t num_configs = config_set.GetSize();
+
+  // Loop through configurations to test.
   for (size_t i = 0; i < num_configs; i++) {
-    Run(random, config_set.GetConfig(), std::cout);
+    // Get the current config
+    Config config = config_set.GetConfig();
+
+    // Output current config info.
+    os << config.AsCSV();
+
+    // Conduct all replicates and output the information.    
+    double total_time = 0.0;
+    for (size_t i = 0; i < config.num_runs; i++) {
+      size_t cur_time = world.TestMulticell(config);
+      if (config.verbose) os << ", " << cur_time;
+      total_time += (double) cur_time;
+    }
+    os << ", " << (total_time / (double) config.num_runs) << std::endl;
+
     config_set.Next();
   }
 }
@@ -294,8 +291,7 @@ void ProcessCommandLine(ConfigSet & config_set, int argc, char* argv[]) {
 
 int main(int argc, char* argv[])
 {
-  emp::Random random;
   ConfigSet config_set;
   ProcessCommandLine(config_set, argc, argv);
-  Run(random, config_set, std::cout);
+  Run(config_set, std::cout);
 }
