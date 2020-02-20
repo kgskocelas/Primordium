@@ -21,7 +21,6 @@ struct Config {
   size_t GetHeight() const { return cells_side; }
   size_t GetSize() const { return cells_side * cells_side; }
 
-  std::string GetHeaders() const { return "width, height, threshold, restrain, neighbors"; }
   std::string AsCSV() const {
     return emp::to_string(GetWidth(), ", ", GetHeight(), ", ", threshold, ", ", restrain, ", ", neighbors);
   }
@@ -42,6 +41,8 @@ struct ConfigSet {
 
   size_t num_runs = 100;                    ///< How many times should we run each configuration?
   bool verbose = false;                     ///< Should we print data for each replicate?
+
+  std::string GetHeaders() const { return "width, height, threshold, restrain, neighbors"; }
 
   size_t GetSize() const {
     return side_set.size() * restrain_set.size() * threshold_set.size() * neighbor_set.size();
@@ -192,23 +193,12 @@ struct World {
   }
 };
 
-
 void Run(emp::Random & random,
                 const Config & config,
-                std::ostream & os=std::cout,
-                bool headers=true)
+                std::ostream & os=std::cout)
 {
   World world;
   
-  // Only the first time through should we print the column headers.
-  if (headers) {
-    os << config.GetHeaders();
-    if (config.verbose) {
-      for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
-    }
-    os << ", ave_time" << std::endl;
-  }
-
   // Output current config info.
   os << config.AsCSV();
   
@@ -224,18 +214,22 @@ void Run(emp::Random & random,
 // Run all of the configurations in an entire set.
 void Run(emp::Random & random,
                 ConfigSet config_set,
-                std::ostream & os=std::cout,
-                bool headers=true)
+                std::ostream & os=std::cout)
 {
+  // Start with column headers.
+  os << config_set.GetHeaders();
+  if (config_set.verbose) {
+    for (size_t i=0; i < config_set.num_runs; i++) os << ", run" << i;
+  }
+  os << ", ave_time" << std::endl;
+
   // Build a world of the correct size.
   const size_t num_configs = config_set.GetSize();
   for (size_t i = 0; i < num_configs; i++) {
-    Run(random, config_set.GetConfig(), std::cout, i==0 && headers);
+    Run(random, config_set.GetConfig(), std::cout);
     config_set.Next();
   }
-  headers = false; // Don't do headers more than once.
 }
-
 
 void PrintHelp(const std::string & name) {
   std::cout << "Format: " << name << " [OPTIONS...]\n"
@@ -251,13 +245,7 @@ void PrintHelp(const std::string & name) {
             << std::endl;
 }
 
-//void ProcessCommandLine(ConfigSet & config_set, int argc, char* argv[])
-
-int main(int argc, char* argv[])
-{
-  emp::Random random;
-  ConfigSet config_set;
-
+void ProcessCommandLine(ConfigSet & config_set, int argc, char* argv[]) {
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
@@ -302,6 +290,12 @@ int main(int argc, char* argv[])
       exit(1);
     }
   }
+}
 
+int main(int argc, char* argv[])
+{
+  emp::Random random;
+  ConfigSet config_set;
+  ProcessCommandLine(config_set, argc, argv);
   Run(random, config_set, std::cout);
 }
