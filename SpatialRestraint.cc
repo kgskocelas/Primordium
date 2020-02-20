@@ -87,6 +87,7 @@ struct ConfigSet {
 struct World {
   emp::Random random;
   emp::vector<size_t> orgs;
+  Config config;
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
@@ -104,7 +105,7 @@ struct World {
   // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8 neighborhood.
   // (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the full set.
 
-  size_t RandomNeighbor(size_t pos, const Config & config)
+  size_t RandomNeighbor(size_t pos)
   {
     if (config.neighbors == 0 || config.neighbors > 8) {
       return random.GetUInt(config.GetSize());
@@ -134,18 +135,18 @@ struct World {
     return config.ToPos(next_x, next_y);
   }
 
-  static void Print(const emp::vector<size_t> & mc, const Config & config) {
-    emp_assert(mv.size() == config.GetSize());
+  void Print() {
+    emp_assert(orgs.size() == config.GetSize());
     size_t pos = 0;
     for (size_t y = 0; y < config.GetHeight(); y++) {
       for (size_t x = 0; x < config.GetWidth(); x++) {
-      	std::cout << " " << ToChar(mc[pos++]);
+      	std::cout << " " << ToChar(orgs[pos++]);
       }
       std::cout << std::endl;
     }
   }
   
-  size_t TestMulticell(const Config & config) {
+  size_t TestMulticell() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = config.GetSize();
     orgs.resize(0);           // Clear out any current organisms.
@@ -160,7 +161,7 @@ struct World {
     // Loop through updates until cell is full.
     while (num_orgs < mc_size) {
       // std::cout << "Update: " << time << "; num_orgs: " << num_orgs << std::endl;
-      // if (time % 100 == 0) Print(config, orgs);
+      // if (time % 100 == 0) Print();
 
       time++;
 
@@ -172,7 +173,7 @@ struct World {
           if (++orgs[pos] == config.threshold) {
             orgs[pos] = 1;
 
-            size_t next_pos = RandomNeighbor(pos, config);
+            size_t next_pos = RandomNeighbor(pos);
             size_t & next_org = orgs[next_pos];
 
             // If the target is empty, put a new organism there.
@@ -212,19 +213,19 @@ void Run(ConfigSet config_set, std::ostream & os=std::cout) {
   // Loop through configurations to test.
   for (size_t i = 0; i < num_configs; i++) {
     // Get the current config
-    Config config = config_set.GetConfig();
+    world.config = config_set.GetConfig();
 
     // Output current config info.
-    os << config.AsCSV();
+    os << world.config.AsCSV();
 
     // Conduct all replicates and output the information.    
     double total_time = 0.0;
-    for (size_t i = 0; i < config.num_runs; i++) {
-      size_t cur_time = world.TestMulticell(config);
-      if (config.verbose) os << ", " << cur_time;
+    for (size_t i = 0; i < world.config.num_runs; i++) {
+      size_t cur_time = world.TestMulticell();
+      if (config_set.verbose) os << ", " << cur_time;
       total_time += (double) cur_time;
     }
-    os << ", " << (total_time / (double) config.num_runs) << std::endl;
+    os << ", " << (total_time / (double) config_set.num_runs) << std::endl;
 
     config_set.Next();
   }
