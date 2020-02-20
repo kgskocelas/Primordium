@@ -15,6 +15,7 @@ struct Config {
   size_t neighbors = 8;      // Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
 
   size_t num_runs = 100;     // How many runs should we do with the above configuration?
+  bool verbose = false;      // Should we print timings for each replicate?
 
   size_t GetWidth() const { return cells_side; }
   size_t GetHeight() const { return cells_side; }
@@ -40,6 +41,7 @@ struct ConfigSet {
   emp::array<size_t, 4> cur_ids{0,0,0,0};   ///< Which settings are we going to use next?
 
   size_t num_runs = 100;                    ///< How many times should we run each configuration?
+  bool verbose = false;                     ///< Should we print data for each replicate?
 
   size_t GetSize() const {
     return side_set.size() * restrain_set.size() * threshold_set.size() * neighbor_set.size();
@@ -50,7 +52,8 @@ struct ConfigSet {
                    restrain_set[cur_ids[1]],
                    threshold_set[cur_ids[2]],
                    neighbor_set[cur_ids[3]],
-                   num_runs
+                   num_runs,
+                   verbose
                   };
   }
 
@@ -190,53 +193,49 @@ struct World {
 };
 
 
-struct WorldSet {
-  static void Run(emp::Random & random,
-                  const Config & config,
-                  std::ostream & os=std::cout,
-                  bool verbose=false,
-                  bool headers=true)
-  {
-    World world;
-    
-    // Only the first time through should we print the column headers.
-    if (headers) {
-      os << config.GetHeaders();
-      if (verbose) {
-        for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
-      }
-      os << ", ave_time" << std::endl;
+void Run(emp::Random & random,
+                const Config & config,
+                std::ostream & os=std::cout,
+                bool headers=true)
+{
+  World world;
+  
+  // Only the first time through should we print the column headers.
+  if (headers) {
+    os << config.GetHeaders();
+    if (config.verbose) {
+      for (size_t i=0; i < config.num_runs; i++) os << ", run" << i;
     }
-
-    // Output current config info.
-    os << config.AsCSV();
-    
-    double total_time = 0.0;
-    for (size_t i = 0; i < config.num_runs; i++) {
-      size_t cur_time = world.TestMulticell(random, config);
-      if (verbose) os << ", " << cur_time;
-      total_time += (double) cur_time;
-    }
-    os << ", " << (total_time / (double) config.num_runs) << std::endl;
+    os << ", ave_time" << std::endl;
   }
 
-  // Run all of the configurations in an entire set.
-  static void Run(emp::Random & random,
-                  ConfigSet config_set,
-                  std::ostream & os=std::cout,
-                  bool verbose=false,
-                  bool headers=true)
-  {
-    // Build a world of the correct size.
-    const size_t num_configs = config_set.GetSize();
-    for (size_t i = 0; i < num_configs; i++) {
-      Run(random, config_set.GetConfig(), std::cout, verbose, i==0 && headers);
-      config_set.Next();
-    }
-    headers = false; // Don't do headers more than once.
+  // Output current config info.
+  os << config.AsCSV();
+  
+  double total_time = 0.0;
+  for (size_t i = 0; i < config.num_runs; i++) {
+    size_t cur_time = world.TestMulticell(random, config);
+    if (config.verbose) os << ", " << cur_time;
+    total_time += (double) cur_time;
   }
+  os << ", " << (total_time / (double) config.num_runs) << std::endl;
+}
 
-};
+// Run all of the configurations in an entire set.
+void Run(emp::Random & random,
+                ConfigSet config_set,
+                std::ostream & os=std::cout,
+                bool headers=true)
+{
+  // Build a world of the correct size.
+  const size_t num_configs = config_set.GetSize();
+  for (size_t i = 0; i < num_configs; i++) {
+    Run(random, config_set.GetConfig(), std::cout, i==0 && headers);
+    config_set.Next();
+  }
+  headers = false; // Don't do headers more than once.
+}
+
 
 void PrintHelp(const std::string & name) {
   std::cout << "Format: " << name << " [OPTIONS...]\n"
@@ -252,6 +251,8 @@ void PrintHelp(const std::string & name) {
             << std::endl;
 }
 
+//void ProcessCommandLine(ConfigSet & config_set, int argc, char* argv[])
+
 int main(int argc, char* argv[])
 {
   emp::Random random;
@@ -263,7 +264,6 @@ int main(int argc, char* argv[])
   config_set.restrain_set = {false,true};  // Default to both no restraint and restraint.
   config_set.threshold_set = {16};         // Default to a threshold of 16.
   config_set.num_runs = 100;               // Default to 100 runs.
-  bool verbose = false;
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
     PrintHelp(args[0]); exit(0);
@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
     }
 
     else if (cur_arg == "-v" || cur_arg == "--verbose") {
-      verbose = true;
+      config_set.verbose = true;
     }
 
     else {
@@ -308,5 +308,5 @@ int main(int argc, char* argv[])
     }
   }
 
-  WorldSet::Run(random, config_set, std::cout, verbose);
+  Run(random, config_set, std::cout);
 }
