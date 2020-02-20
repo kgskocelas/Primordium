@@ -33,10 +33,10 @@ struct Config {
 
 // Set of parameters to use.
 struct ConfigSet {
-  emp::vector<size_t> side_set;             ///< Values to use for cells_side.
-  emp::vector<bool> restrain_set;           ///< Values to use for restrain.
-  emp::vector<size_t> threshold_set;        ///< Values to use for threhsold.
-  emp::vector<size_t> neighbor_set;         ///< How many neighbors should we look at; 
+  emp::vector<size_t> side_set{16};         ///< Values for cell side (16x16 = size 256 multicell.)
+  emp::vector<bool> restrain_set{0,1};      ///< Values to use for restrain.
+  emp::vector<size_t> threshold_set{16};    ///< Values to use for threhsold.
+  emp::vector<size_t> neighbor_set{8};      ///< How many neighbors should we look at; 
 
   emp::array<size_t, 4> cur_ids{0,0,0,0};   ///< Which settings are we going to use next?
 
@@ -259,11 +259,6 @@ int main(int argc, char* argv[])
   ConfigSet config_set;
 
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
-  config_set.side_set = {16};              // Default to 16x16 = size 256 multicell.
-  config_set.neighbor_set = {8};           // Default to size-8 neighborhoods.
-  config_set.restrain_set = {false,true};  // Default to both no restraint and restraint.
-  config_set.threshold_set = {16};         // Default to a threshold of 16.
-  config_set.num_runs = 100;               // Default to 100 runs.
 
   if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
     PrintHelp(args[0]); exit(0);
