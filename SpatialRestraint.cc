@@ -3,6 +3,7 @@
 #include "../../Empirical/source/base/vector.h"
 #include "../../Empirical/source/config/command_line.h"
 #include "../../Empirical/source/config/SettingCombos.h"
+#include "../../Empirical/source/tools/Bool.h"
 #include "../../Empirical/source/tools/Random.h"
 #include "../../Empirical/source/tools/string_utils.h"
 #include "../../Empirical/source/tools/vector_utils.h"
@@ -16,7 +17,7 @@ struct Config {
 
   void Set(emp::SettingCombos & combos) {
     cells_side = combos.GetValue<size_t>("cells_side");
-    restrain = combos.GetValue<uint8_t>("restrain");
+    restrain = combos.GetValue<emp::Bool>("restrain");
     threshold = combos.GetValue<size_t>("threshold");
     neighbors = combos.GetValue<size_t>("neighbors");
   }
@@ -42,7 +43,7 @@ struct World {
   bool verbose = false;
 
   World(int argc, char* argv[]) {
-    combos.AddSetting<uint8_t>(  "restrain",   "Should cells restrain replication?", "-r") = { 0, 1 };
+    combos.AddSetting<emp::Bool>(  "restrain",   "Should cells restrain replication?", "-r") = { 0, 1 };
     combos.AddSetting<size_t>("threshold",  "Resources needed to replicate", "-t") = { 16 };
     combos.AddSetting<size_t>("neighbors",  "Neighborhood size for replication", "-n") = { 8 };
     combos.AddSetting<size_t>("cells_side", "Cells on side of (square) multicell", "-c") = { 16 };
