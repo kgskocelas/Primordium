@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include "../../Empirical/source/base/array.h"
 #include "../../Empirical/source/base/vector.h"
 #include "../../Empirical/source/config/command_line.h"
+#include "../../Empirical/source/config/SettingCombos.h"
 #include "../../Empirical/source/tools/Random.h"
 #include "../../Empirical/source/tools/string_utils.h"
 #include "../../Empirical/source/tools/vector_utils.h"
@@ -13,6 +13,13 @@ struct Config {
   bool restrain = false;   ///< Should cells refrain from overwriting each other?
   size_t threshold = 16;   ///< How many resources are needed to produce an offspring?
   size_t neighbors = 8;    ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
+
+  void Set(emp::SettingCombos & combos) {
+    cells_side = combos.GetValue<size_t>("cells_side");
+    restrain = combos.GetValue<uint8_t>("restrain");
+    threshold = combos.GetValue<size_t>("threshold");
+    neighbors = combos.GetValue<size_t>("neighbors");
+  }
 
   size_t GetWidth() const { return cells_side; }
   size_t GetHeight() const { return cells_side; }
@@ -27,62 +34,40 @@ struct Config {
   size_t ToY(size_t pos) const { return pos / cells_side; }
 };
 
-// Set of parameters to use.
-struct ConfigSet {
-  emp::vector<size_t> side_set{16};         ///< Values for cell side (16x16 = size 256 multicell.)
-  emp::vector<bool> restrain_set{0,1};      ///< Values to use for restrain.
-  emp::vector<size_t> threshold_set{16};    ///< Values to use for threhsold.
-  emp::vector<size_t> neighbor_set{8};      ///< How many neighbors should we look at; 
-
-  emp::array<size_t, 4> cur_ids{0,0,0,0};   ///< Which settings are we going to use next?
-
-  size_t num_runs = 100;                    ///< How many times should we run each configuration?
-  bool verbose = false;                     ///< Should we print data for each replicate?
-
-  std::string GetHeaders() const { return "width, height, threshold, restrain, neighbors"; }
-
-  size_t GetSize() const {
-    return side_set.size() * restrain_set.size() * threshold_set.size() * neighbor_set.size();
-  }
-
-  Config GetConfig() const {
-    return Config{ side_set[cur_ids[0]],
-                   restrain_set[cur_ids[1]],
-                   threshold_set[cur_ids[2]],
-                   neighbor_set[cur_ids[3]],
-                  };
-  }
-
-  bool Next() {
-    // First try to toggle sides.
-    cur_ids[0]++;
-    if (cur_ids[0] < side_set.size()) return true;
-
-    // Next, cycle sides back to the beginning and try to move to the next restrain.
-    cur_ids[0] = 0;
-    cur_ids[1]++;
-    if (cur_ids[1] < restrain_set.size()) return true;
-
-    // Next, cycle restrain back to the beginning and try to move to the next threshold.
-    cur_ids[1] = 0;
-    cur_ids[2]++;
-    if (cur_ids[2] < threshold_set.size()) return true;
-
-    // If we're done with thresholds, cycle back and try neighbors.
-    cur_ids[2] = 0;
-    cur_ids[3]++;
-    if (cur_ids[3] < neighbor_set.size()) return true;
-
-    // If we made it this far, we are done.  Cycle neighbor back and return false.
-    cur_ids[3] = 0;
-    return false;
-  }
-};
-
 struct World {
   emp::Random random;
+  emp::SettingCombos combos;
   emp::vector<size_t> orgs;
   Config config;
+  bool verbose = false;
+
+  World(int argc, char* argv[]) {
+    combos.AddSetting<uint8_t>(  "restrain",   "Should cells restrain replication?", "-r") = { 0, 1 };
+    combos.AddSetting<size_t>("threshold",  "Resources needed to replicate", "-t") = { 16 };
+    combos.AddSetting<size_t>("neighbors",  "Neighborhood size for replication", "-n") = { 8 };
+    combos.AddSetting<size_t>("cells_side", "Cells on side of (square) multicell", "-c") = { 16 };
+    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", "-d") = { 100 };
+
+    emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+
+    if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
+      PrintHelp(args[0]); exit(0);
+    }
+
+    args = combos.ProcessOptions(args);
+
+    // Scan through remaining args...
+    size_t arg_id = 1;
+    while (arg_id < args.size()) {
+      const std::string cur_arg = args[arg_id++];
+
+      if (cur_arg == "-v" || cur_arg == "--verbose") { verbose = true; }
+      else {
+        std::cerr << "ERROR: Unknown option " << cur_arg << "\n";
+        exit(1);
+      }
+    }
+  }
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
@@ -188,108 +173,51 @@ struct World {
 
     return time;
   }
+
+  // Run all of the configurations in an entire set.
+  void Run(std::ostream & os=std::cout) {
+    const size_t num_runs = combos.GetValue<size_t>("data_count");
+
+    // Print column headers.
+    os << combos.GetHeaders();
+    if (verbose) {
+      for (size_t i=0; i < num_runs; i++) os << ", run" << i;
+    }
+    os << ", ave_time" << std::endl;
+
+    // Loop through configuration combonations to test.
+    do {
+      os << combos.CurString();  // Output current setting combination data.
+      config.Set(combos);        // Store current setting combination in config object.      
+
+      // Conduct all replicates and output the information.    
+      double total_time = 0.0;
+      for (size_t i = 0; i < num_runs; i++) {
+        size_t cur_time = TestMulticell();
+        if (verbose) os << ", " << cur_time;
+        total_time += (double) cur_time;
+      }
+      os << ", " << (total_time / (double) num_runs) << std::endl;
+    } while (combos.Next());
+  }
+
+  void PrintHelp(const std::string & name) {
+    std::cout << "Format: " << name << " [OPTIONS...]\n"
+              << "Options include:\n"
+              << " -c [SIDE_SIZES] : Cells on side of (square) multicell (--cells_side) [16]\n"
+              << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
+              << " -h              : This message (--help).\n"
+              << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
+              << " -r [RESTRAINS]  : Should cells restrain? (--restrains) [0,1].\n"
+              << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
+              << " -v              : Use verbose data printing ALL results (--verbose) [false]"
+              << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
+              << std::endl;
+  }
 };
-
-
-// Run all of the configurations in an entire set.
-void Run(ConfigSet config_set, std::ostream & os=std::cout) {
-  World world;
-
-  // Start with column headers.
-  os << config_set.GetHeaders();
-  if (config_set.verbose) {
-    for (size_t i=0; i < config_set.num_runs; i++) os << ", run" << i;
-  }
-  os << ", ave_time" << std::endl;
-
-  // Build a world of the correct size.
-  const size_t num_configs = config_set.GetSize();
-
-  // Loop through configurations to test.
-  for (size_t i = 0; i < num_configs; i++) {
-    // Get the current config
-    world.config = config_set.GetConfig();
-
-    // Output current config info.
-    os << world.config.AsCSV();
-
-    // Conduct all replicates and output the information.    
-    double total_time = 0.0;
-    for (size_t i = 0; i < config_set.num_runs; i++) {
-      size_t cur_time = world.TestMulticell();
-      if (config_set.verbose) os << ", " << cur_time;
-      total_time += (double) cur_time;
-    }
-    os << ", " << (total_time / (double) config_set.num_runs) << std::endl;
-
-    config_set.Next();
-  }
-}
-
-void PrintHelp(const std::string & name) {
-  std::cout << "Format: " << name << " [OPTIONS...]\n"
-            << "Options include:\n"
-            << " -c [SIDE_SIZES] : Cells on side of (square) multicell (--cells_side) [16]\n"
-            << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
-            << " -h              : This message (--help).\n"
-            << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
-            << " -r [RESTRAINS]  : Should cells restrain? (--restrains) [0,1].\n"
-            << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
-            << " -v              : Use verbose data printing ALL results (--verbose) [false]"
-            << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
-            << std::endl;
-}
-
-void ProcessCommandLine(ConfigSet & config_set, int argc, char* argv[]) {
-  emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
-
-  if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
-    PrintHelp(args[0]); exit(0);
-  }
-
-  size_t arg_id = 1;
-  while (arg_id < args.size()) {
-    const std::string cur_arg = args[arg_id++];
-
-    if (cur_arg == "-c" || cur_arg == "--cells_side") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide side-lengths to use!\n"; exit(1); }
-      config_set.side_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
-    }
-
-    else if (cur_arg == "-d" || cur_arg == "--data_count") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide data count!\n"; exit(1); }
-      config_set.num_runs = emp::from_string<size_t>(args[arg_id++]);
-    }
-
-    else if (cur_arg == "-n" || cur_arg == "--neighbors") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide neighborhood sizes!\n"; exit(1); }
-      config_set.neighbor_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
-    }
-
-    else if (cur_arg == "-r" || cur_arg == "--restrains") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide restrain values!\n"; exit(1); }
-      config_set.restrain_set = emp::from_strings<bool>(emp::slice(args[arg_id++], ','));
-    }
-
-    else if (cur_arg == "-t" || cur_arg == "--thresholds") {
-      if (arg_id >= args.size()) { std::cout << "ERROR: Must provide threshold values!\n"; exit(1); }
-      config_set.threshold_set = emp::from_strings<size_t>(emp::slice(args[arg_id++], ','));
-    }
-
-    else if (cur_arg == "-v" || cur_arg == "--verbose") {
-      config_set.verbose = true;
-    }
-
-    else {
-      std::cerr << "ERROR: Unknown option " << cur_arg << "\n";
-      exit(1);
-    }
-  }
-}
 
 int main(int argc, char* argv[])
 {
-  ConfigSet config_set;
-  ProcessCommandLine(config_set, argc, argv);
-  Run(config_set, std::cout);
+  World world(argc, argv);
+  world.Run(std::cout);
 }
