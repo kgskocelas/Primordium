@@ -26,10 +26,6 @@ struct Config {
   size_t GetHeight() const { return cells_side; }
   size_t GetSize() const { return cells_side * cells_side; }
 
-  std::string AsCSV() const {
-    return emp::to_string(GetWidth(), ", ", GetHeight(), ", ", threshold, ", ", restrain, ", ", neighbors);
-  }
-
   size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
   size_t ToX(size_t pos) const { return pos % cells_side; }
   size_t ToY(size_t pos) const { return pos / cells_side; }
