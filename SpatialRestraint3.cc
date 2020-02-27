@@ -1,14 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include "../../Empirical/source/base/vector.h"
-#include "../../Empirical/source/config/command_line.h"
-#include "../../Empirical/source/config/SettingCombos.h"
-#include "../../Empirical/source/tools/Bool.h"
-#include "../../Empirical/source/tools/BitVector.h"
-#include "../../Empirical/source/tools/Distribution.h"
-#include "../../Empirical/source/tools/Random.h"
-#include "../../Empirical/source/tools/string_utils.h"
-#include "../../Empirical/source/tools/vector_utils.h"
+#include "base/vector.h"
+#include "config/command_line.h"
+#include "config/SettingCombos.h"
+#include "tools/Bool.h"
+#include "tools/BitVector.h"
+#include "tools/Distribution.h"
+#include "tools/Random.h"
+#include "tools/string_utils.h"
+#include "tools/vector_utils.h"
 
 /// Information about a single organism.
 struct Organism {
@@ -260,6 +260,7 @@ struct World {
               << " -c [SIDE_SIZES] : Cells on side of (square) multicell (--cells_side) [16]\n"
               << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
               << " -h              : This message (--help).\n"
+              << " -m [MUT_RATE]   : Probability of mutation in offspring (--mut_prob) [0.0]"
               << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
               << " -r [RESTRAINT]  : How many ones to restrain? (--restrains) [5].\n"
               << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
