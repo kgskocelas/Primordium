@@ -36,8 +36,6 @@ struct Config {
   size_t start_1s = 5;     ///< How many ones in the starting organism?
   double mut_prob = 0.0;   ///< Probability of an offspring being mutated.
 
-  Organism default_org;
-
   bool Set(emp::SettingCombos & combos) {
     cells_side = combos.GetValue<size_t>("cells_side");
     time_range = combos.GetValue<size_t>("time_range");
@@ -49,9 +47,6 @@ struct Config {
 
     // If any setting combinations are impossible, reject.
     if (start_1s > bit_size) return false;
-
-    // Setup the default organism.
-    default_org.num_ones = start_1s;
 
     return true;
   }
@@ -157,7 +152,9 @@ struct World {
     size_t pos = 0;
     for (size_t y = 0; y < config.GetHeight(); y++) {
       for (size_t x = 0; x < config.GetWidth(); x++) {
-      	std::cout << " " << ToChar(orgs[pos++].num_ones);
+        if (orgs[pos].repro_time == 0.0) std::cout << " -";
+      	else std::cout << " " << ToChar(orgs[pos].num_ones);
+        pos++;
       }
       std::cout << std::endl;
     }
@@ -168,7 +165,7 @@ struct World {
     org_set.insert(org);
   }
 
-  void DoBirth(Organism & offspring, Organism & parent, bool do_mutations=true) {
+  void DoBirth(Organism & offspring, const Organism & parent, bool do_mutations=true) {
     // Setup the new offspring, possibly with mutations.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(config.mut_prob)) {
@@ -195,7 +192,7 @@ struct World {
     // Inject a cell in the middle.
     const size_t start_pos = config.ToPos(config.GetWidth()/2, config.GetHeight()/2);
     Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
-    inject_org = config.default_org;         // Initialize injection to proper default;
+    inject_org.num_ones = config.start_1s;   // Initialize injection to proper default;
     SetupOrg(inject_org);                    // Do any extra setup for this organism.
 
     // Loop through updates until cell is full.
