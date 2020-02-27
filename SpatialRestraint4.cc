@@ -69,6 +69,7 @@ struct World {
   emp::Random random;
   emp::SettingCombos combos;
   emp::vector<Organism> orgs;
+  std::set<Organism> org_set; // Organisms waiting to replicate.
   double time = 0.0;
   Config config;
   bool verbose = false;
@@ -164,6 +165,7 @@ struct World {
 
   void SetupOrg(Organism & org) {
     org.repro_time = time + 100.0 + random.GetDouble(config.time_range);
+    org_set.insert(org);
   }
 
   void DoBirth(Organism & offspring, Organism & parent, bool do_mutations=true) {
@@ -188,16 +190,13 @@ struct World {
       orgs[id].id = id;
       orgs[id].repro_time = 0.0;
     }
-
-    // Track the next organism to replicate in a set.
-    std::set<Organism> org_set;
+    org_set.clear();
 
     // Inject a cell in the middle.
     const size_t start_pos = config.ToPos(config.GetWidth()/2, config.GetHeight()/2);
     Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
     inject_org = config.default_org;         // Initialize injection to proper default;
     SetupOrg(inject_org);                    // Do any extra setup for this organism.
-    org_set.insert(inject_org);
 
     // Loop through updates until cell is full.
     while (org_set.size() < mc_size) {
@@ -211,7 +210,6 @@ struct World {
 
       // Reset the parent for its next replication.
       SetupOrg(parent);
-      org_set.insert(parent);
 
       // Find the placement of the offspring.
       size_t next_id = RandomNeighbor(id);
@@ -220,14 +218,12 @@ struct World {
       // If the target is empty, put a new organism there.
       if (next_org.repro_time == 0.0) {
         DoBirth(next_org, parent);
-        org_set.insert(next_org);
       }
 
       // Otherwise if we don't restrain, reset existing organism there.
       else if (next_org.num_ones < config.restrain) {
         org_set.erase(next_org);
         DoBirth(next_org, parent);
-        org_set.insert(next_org);
       }
     }
 
@@ -247,7 +243,7 @@ struct World {
 
     // Loop through configuration combonations to test.
     do {
-      os << combos.CurString();  // Output current setting combination data.
+      os << combos.CurString(", ");  // Output current setting combination data.
       config.Set(combos);        // Store current setting combination in config object.      
 
       // Conduct all replicates and output the information.    
