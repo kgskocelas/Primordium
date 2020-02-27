@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <set>
+
 #include "base/vector.h"
 #include "config/command_line.h"
 #include "config/SettingCombos.h"
@@ -49,8 +51,7 @@ struct Config {
     if (start_1s > bit_size) return false;
 
     // Setup the default organism.
-    default_org.bits.Resize(bit_size);
-    for (size_t i = 0; i < start_1s; i++) default_org.bits[i] = 1;
+    default_org.num_ones = start_1s;
 
     return true;
   }
@@ -72,9 +73,7 @@ struct World {
   Config config;
   bool verbose = false;
 
-  emp::NegativeBinomial threshold_dist;
-
-  World(int argc, char* argv[]) : threshold_dist(0.5, 16) {
+  World(int argc, char* argv[]) {
     combos.AddSetting<size_t>("time_range", "Rep time = 100.0 + random(time_range)", "-t") = { 50 };
     combos.AddSetting<size_t>("neighbors",  "Neighborhood size for replication", "-n") = { 8 };
     combos.AddSetting<size_t>("cells_side", "Cells on side of (square) multicell", "-c") = { 16 };
@@ -157,7 +156,7 @@ struct World {
     size_t pos = 0;
     for (size_t y = 0; y < config.GetHeight(); y++) {
       for (size_t x = 0; x < config.GetWidth(); x++) {
-      	std::cout << " " << ToChar(orgs[pos++].resources);
+      	std::cout << " " << ToChar(orgs[pos++].num_ones);
       }
       std::cout << std::endl;
     }
@@ -172,7 +171,7 @@ struct World {
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(config.mut_prob)) {
       double prob1 = ((double) offspring.num_ones) / (double) config.bit_size;
-      if (P(prob1)) offspring.num_ones--;
+      if (random.P(prob1)) offspring.num_ones--;
       else offspring.num_ones++;
     }
 
@@ -198,7 +197,7 @@ struct World {
     Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
     inject_org = config.default_org;         // Initialize injection to proper default;
     SetupOrg(inject_org);                    // Do any extra setup for this organism.
-    org_set.insert(inject_org)
+    org_set.insert(inject_org);
 
     // Loop through updates until cell is full.
     while (org_set.size() < mc_size) {
@@ -208,25 +207,27 @@ struct World {
       Organism & parent = orgs[id];
 
       // Update time based on when this replication occurred.
-      time = next_org.repro_time;
+      time = parent.repro_time;
 
+      // Reset the parent for its next replication.
       SetupOrg(parent);
-      org_set.insert(parent)
+      org_set.insert(parent);
 
+      // Find the placement of the offspring.
       size_t next_id = RandomNeighbor(id);
       Organism & next_org = orgs[next_id];
 
       // If the target is empty, put a new organism there.
-      if (!next_org.repro_time == 0.0) {
+      if (next_org.repro_time == 0.0) {
         DoBirth(next_org, parent);
-        org_set.insert(next_org)
+        org_set.insert(next_org);
       }
 
       // Otherwise if we don't restrain, reset existing organism there.
-      else if (org.bits.num_ones < config.restrain) {
+      else if (next_org.num_ones < config.restrain) {
         org_set.erase(next_org);
         DoBirth(next_org, parent);
-        org_set.insert(next_org)
+        org_set.insert(next_org);
       }
     }
 
@@ -248,8 +249,6 @@ struct World {
     do {
       os << combos.CurString();  // Output current setting combination data.
       config.Set(combos);        // Store current setting combination in config object.      
-
-      threshold_dist.Setup(0.5, config.threshold);
 
       // Conduct all replicates and output the information.    
       double total_time = 0.0;
