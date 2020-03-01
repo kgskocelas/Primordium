@@ -44,14 +44,14 @@ struct World {
   bool verbose = false;
 
   World(int argc, char* argv[]) {
-    combos.AddSetting<size_t>("time_range", "Rep time = 100.0 + random(time_range)", "-t", time_range) = { 50 };
-    combos.AddSetting<size_t>("neighbors",  "Neighborhood size for replication", "-n", neighbors) = { 8 };
-    combos.AddSetting<size_t>("cells_side", "Cells on side of (square) multicell", "-c", cells_side) = { 16 };
-    combos.AddSetting<size_t>("bit_size",   "Number of bits in genome?", "-b", bit_size) = { 10 };
-    combos.AddSetting<size_t>("restrain",   "Num ones in genome for restraint?", "-r", restrain) = { 5 };
-    combos.AddSetting<size_t>("start_1s",   "How many 1s in starting organism?", "-1", start_1s) = { 5 };
-    combos.AddSetting<double>("mut_prob",   "Probability of mutation in offspring", "-m", mut_prob) = { 0.0 };
-    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", "-d") = { 100 };
+    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
+    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
+    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
+    combos.AddSetting("bit_size",   "Number of bits in genome?", 'b', bit_size) = { 10 };
+    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
+    combos.AddSetting("start_1s",   "How many 1s in starting organism?", '1', start_1s) = { 5 };
+    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
+    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
 
