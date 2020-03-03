@@ -42,6 +42,7 @@ struct World {
   double mut_prob = 0.0;   ///< Probability of an offspring being mutated.
 
   bool verbose = false;
+  bool exit_now = false;
 
   World(int argc, char* argv[]) {
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
@@ -53,13 +54,21 @@ struct World {
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
+    combos.AddAction("help", "Print full list of options", 'h',
+                     [this](){ combos.PrintHelp(); exit_now = true; } );
+    combos.AddAction("verbose", "Use verbose data printing ALL results", 'v',
+                     [this](){ verbose = true; } );
+
     emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+
+    args = combos.ProcessOptions(args);
+
+    if (exit_now) exit(1);
 
     if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
       PrintHelp(args[0]); exit(0);
     }
 
-    args = combos.ProcessOptions(args);
 
     // Scan through remaining args...
     size_t arg_id = 1;
