@@ -32,6 +32,7 @@ struct World {
   emp::vector<Organism> orgs;
   std::set<Organism> org_set; // Organisms waiting to replicate.
   double time = 0.0;
+  std::string exe_name;
 
   size_t cells_side = 32;  ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0; ///< Replication takes 100.0 + a random value up to time_range.
@@ -45,6 +46,9 @@ struct World {
   bool exit_now = false;
 
   World(int argc, char* argv[]) {
+    emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+    exe_name = args[0];
+
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
     combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
@@ -55,11 +59,12 @@ struct World {
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddAction("help", "Print full list of options", 'h',
-                     [this](){ combos.PrintHelp(); exit_now = true; } );
+                     [this](){
+                       combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
+                       exit_now = true;
+                      } );
     combos.AddAction("verbose", "Use verbose data printing ALL results", 'v',
                      [this](){ verbose = true; } );
-
-    emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
 
     args = combos.ProcessOptions(args);
 
