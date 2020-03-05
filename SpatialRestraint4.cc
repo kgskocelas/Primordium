@@ -5,7 +5,6 @@
 #include "base/vector.h"
 #include "config/command_line.h"
 #include "config/SettingCombos.h"
-#include "tools/Bool.h"
 #include "tools/BitVector.h"
 #include "tools/Distribution.h"
 #include "tools/Random.h"
@@ -41,9 +40,7 @@ struct World {
   size_t restrain = 5;     ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;     ///< How many ones in the starting organism?
   double mut_prob = 0.0;   ///< Probability of an offspring being mutated.
-
-  bool verbose = false;
-  bool exit_now = false;
+  bool verbose = false;    ///< Should we print additional information?
 
   World(int argc, char* argv[]) {
     emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
@@ -61,35 +58,21 @@ struct World {
     combos.AddAction("help", "Print full list of options", 'h',
                      [this](){
                        combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
-                       exit_now = true;
+                       exit(1);
                       } );
     combos.AddAction("verbose", "Use verbose data printing ALL results", 'v',
                      [this](){ verbose = true; } );
 
+    // Process the command-line options
     args = combos.ProcessOptions(args);
 
-    if (exit_now) exit(1);
-
-    if (emp::Has<std::string>(args, "-h") || emp::Has<std::string>(args, "--help")) {
-      PrintHelp(args[0]); exit(0);
-    }
-
-
-    // Scan through remaining args...
-    size_t arg_id = 1;
-    while (arg_id < args.size()) {
-      const std::string cur_arg = args[arg_id++];
-
-      if (cur_arg == "-v" || cur_arg == "--verbose") { verbose = true; }
-      else {
-        std::cerr << "ERROR: Unknown option " << cur_arg << "\n";
-        exit(1);
-      }
+    // Fail if there are any unknown args.
+    if (args.size()) {
+      std::cerr << "ERROR: Unknown options: " << emp::to_string(args) << "\n";
+      exit(2);
     }
   }
 
-  size_t GetWidth() const { return cells_side; }
-  size_t GetHeight() const { return cells_side; }
   size_t GetSize() const { return cells_side * cells_side; }
 
   size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
@@ -123,7 +106,7 @@ struct World {
     size_t next_x = (size_t) -1;
     size_t next_y = (size_t) -1;
 
-    while (next_x >= GetWidth() || next_y >= GetHeight()) {
+    while (next_x >= cells_side || next_y >= cells_side) {
       const size_t dir = random.GetUInt(neighbors);  // Direction for offspring.
       switch (dir) {
       case 0: case 5: case 7: next_x = x-1; break;
@@ -146,8 +129,8 @@ struct World {
   void Print() {
     emp_assert(orgs.size() == GetSize());
     size_t pos = 0;
-    for (size_t y = 0; y < GetHeight(); y++) {
-      for (size_t x = 0; x < GetWidth(); x++) {
+    for (size_t y = 0; y < cells_side; y++) {
+      for (size_t x = 0; x < cells_side; x++) {
         if (orgs[pos].repro_time == 0.0) std::cout << " -";
       	else std::cout << " " << ToChar(orgs[pos].num_ones);
         pos++;
@@ -187,7 +170,7 @@ struct World {
     time = 0.0;
 
     // Inject a cell in the middle.
-    const size_t start_pos = ToPos(GetWidth()/2, GetHeight()/2);
+    const size_t start_pos = ToPos(cells_side/2, cells_side/2);
     Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
     inject_org.num_ones = start_1s;   // Initialize injection to proper default;
     SetupOrg(inject_org);                    // Do any extra setup for this organism.
@@ -249,23 +232,6 @@ struct World {
       }
       os << ", " << (total_time / (double) num_runs) << std::endl;
     } while (combos.Next());
-  }
-
-  void PrintHelp(const std::string & name) {
-    std::cout << "Format: " << name << " [OPTIONS...]\n"
-              << "Options include:\n"
-              << " -b [NUM_BITS]   : How many bits should each organism have? (--bit_size) [10]\n"
-              << " -c [SIDE_SIZES] : Cells on side of (square) multicell (--cells_side) [16]\n"
-              << " -d [COUNT]      : How many data replicates should we run? (--data_count) [100]\n"
-              << " -h              : This message (--help).\n"
-              << " -m [MUT_RATE]   : Probability of mutation in offspring (--mut_prob) [0.0]"
-              << " -n [SIZES]      : Comma separated neighborhood sizes (--neighbors) [8].\n"
-              << " -r [RESTRAINT]  : How many ones to restrain? (--restrains) [5].\n"
-              << " -t [THRESHOLDS] : Comma separated cell-repro thresholds (--thresholds) [16].\n"
-              << " -v              : Use verbose data printing ALL results (--verbose) [false]\n"
-              << " -1 [NUM_ONES]   : How many 1's in the starting organism? (--start_1s) [5]\n"
-              << "\nExample:  " << name << " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100\n"
-              << std::endl;
   }
 };
 
