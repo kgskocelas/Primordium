@@ -40,7 +40,7 @@ struct World {
   size_t restrain = 5;     ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;     ///< How many ones in the starting organism?
   double mut_prob = 0.0;   ///< Probability of an offspring being mutated.
-  bool verbose = false;    ///< Should we print additional information?
+  bool print_reps = false; ///< Should we print results for every replicate?
 
   World(int argc, char* argv[]) {
     emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
@@ -51,7 +51,7 @@ struct World {
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
     combos.AddSetting("bit_size",   "Number of bits in genome?", 'b', bit_size) = { 10 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
-    combos.AddSetting("start_1s",   "How many 1s in starting organism?", '1', start_1s) = { 5 };
+    combos.AddSetting("initial_1s", "How many 1s in starting organism?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
@@ -60,8 +60,8 @@ struct World {
                        combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
                        exit(1);
                       } );
-    combos.AddAction("verbose", "Use verbose data printing ALL results", 'v',
-                     [this](){ verbose = true; } );
+    combos.AddAction("print_reps", "Should we print timings for each replicates?", 'P',
+                     [this](){ print_reps = true; } );
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
@@ -125,7 +125,7 @@ struct World {
     return ToPos(next_x, next_y);
   }
 
-  // Print current resource levels in population.
+  // Print current one-counts in population.
   void Print() {
     emp_assert(orgs.size() == GetSize());
     size_t pos = 0;
@@ -213,7 +213,7 @@ struct World {
 
     // Print column headers.
     os << combos.GetHeaders();
-    if (verbose) {
+    if (print_reps) {
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
     }
     os << ", ave_time" << std::endl;
@@ -227,7 +227,7 @@ struct World {
       double total_time = 0.0;
       for (size_t i = 0; i < num_runs; i++) {
         size_t cur_time = TestMulticell();
-        if (verbose) os << ", " << cur_time;
+        if (print_reps) os << ", " << cur_time;
         total_time += (double) cur_time;
       }
       os << ", " << (total_time / (double) num_runs) << std::endl;
