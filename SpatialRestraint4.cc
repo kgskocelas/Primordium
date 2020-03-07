@@ -40,6 +40,12 @@ struct Results {
     for (size_t i=0; i < org_counts.size(); i++) org_counts[i] += in.org_counts[i];
     return *this;
   }
+
+  Results & operator/=(const double denom) {
+    run_time /= denom;
+    for (double & x : org_counts) x /= denom;
+    return *this;
+  }
 };
 
 struct World {
