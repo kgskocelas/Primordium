@@ -30,7 +30,7 @@ struct Results {
   double run_time;                 ///< What was the replication time of this group?
   emp::vector<double> org_counts;  ///< How many organisms have each bit count?
 
-  Results(const size_t num_bits) : run_time(0.0), org_counts(num_bits, 0.0) { ; }
+  Results(const size_t num_bits) : run_time(0.0), org_counts(num_bits+1, 0.0) { ; }
   Results(const Results &) = default;
   Results(Results &&) = default;
 
@@ -247,13 +247,14 @@ struct World {
       os << combos.CurString(", ");  // Output current setting combination data.
 
       // Conduct all replicates and output the information.    
-      double total_time = 0.0;
+      Results total_results(bit_size);
       for (size_t i = 0; i < num_runs; i++) {
         Results cur_results = TestMulticell();
         if (print_reps) os << ", " << cur_results.run_time;
-        total_time += cur_results.run_time;
+        total_results += cur_results;
       }
-      os << ", " << (total_time / (double) num_runs) << std::endl;
+      total_results /= (double) num_runs;
+      os << ", " << total_results.run_time << std::endl;
     } while (combos.Next());
   }
 };
