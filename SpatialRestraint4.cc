@@ -46,6 +46,20 @@ struct Results {
     for (double & x : org_counts) x /= denom;
     return *this;
   }
+
+  /// Count the number of organsims that exhibit restrained behavior.
+  double CountRestrained(size_t threshold) {
+    double total = 0.0;
+    for (size_t i = threshold; i < org_counts.size(); i++) total += org_counts[i];
+    return total;
+  }
+
+  /// Count the number of organsims that DO NOT exhibit restrained behavior.
+  double CountUnrestrained(size_t threshold) {
+    double total = 0.0;
+    for (size_t i = 0; i < threshold; i++) total += org_counts[i];
+    return total;
+  }
 };
 
 struct World {
