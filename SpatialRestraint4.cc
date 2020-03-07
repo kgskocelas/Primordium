@@ -243,7 +243,7 @@ struct World {
       }
 
       // Otherwise if we don't restrain, reset existing organism there.
-      else if (next_org.num_ones < restrain) {
+      else if (parent.num_ones < restrain) {
         org_set.erase(next_org);
         DoBirth(next_org, parent);
       }
@@ -290,8 +290,6 @@ struct World {
       }
       total_results /= (double) num_runs;
       os << ", " << total_results.run_time
-         << ", " << total_results.CountRestrained(restrain)
-         << ", " << (double) GetSize()
          << ", " << (total_results.CountRestrained(restrain) / (double) GetSize())
          << std::endl;
     } while (combos.Next());
