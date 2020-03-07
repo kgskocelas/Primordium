@@ -47,15 +47,18 @@ struct Results {
     return *this;
   }
 
+  /// Count the total number of organism represented.
+  double CountOrgs() const { return emp::Sum(org_counts); }
+
   /// Count the number of organsims that exhibit restrained behavior.
-  double CountRestrained(size_t threshold) {
+  double CountRestrained(size_t threshold) const {
     double total = 0.0;
     for (size_t i = threshold; i < org_counts.size(); i++) total += org_counts[i];
     return total;
   }
 
   /// Count the number of organsims that DO NOT exhibit restrained behavior.
-  double CountUnrestrained(size_t threshold) {
+  double CountUnrestrained(size_t threshold) const {
     double total = 0.0;
     for (size_t i = 0; i < threshold; i++) total += org_counts[i];
     return total;
@@ -241,6 +244,9 @@ struct World {
       }
     }
 
+    // Count up the number of organisms of each type.
+    for (const auto & org : orgs) results.org_counts[org.num_ones] += 1.0;
+
     return results;
   }
 
@@ -253,7 +259,7 @@ struct World {
     if (print_reps) {
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
     }
-    os << ", ave_time" << std::endl;
+    os << ", ave_time, frac_restrain" << std::endl;
 
     // Loop through configuration combonations to test.
     combos.Reset();
@@ -268,7 +274,11 @@ struct World {
         total_results += cur_results;
       }
       total_results /= (double) num_runs;
-      os << ", " << total_results.run_time << std::endl;
+      os << ", " << total_results.run_time
+         << ", " << total_results.CountRestrained(restrain)
+         << ", " << (double) GetSize()
+         << ", " << (total_results.CountRestrained(restrain) / (double) GetSize())
+         << std::endl;
     } while (combos.Next());
   }
 };
