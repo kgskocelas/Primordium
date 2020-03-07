@@ -73,14 +73,15 @@ struct World {
   double time = 0.0;
   std::string exe_name;
 
-  size_t cells_side = 32;  ///< How many cells are on a side of the (square) multi-cell?
-  size_t time_range = 1.0; ///< Replication takes 100.0 + a random value up to time_range.
-  size_t neighbors = 8;    ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
-  size_t bit_size = 10;    ///< How many bits in genome?
-  size_t restrain = 5;     ///< How many ones in bit sequence for restraint?
-  size_t start_1s = 5;     ///< How many ones in the starting organism?
-  double mut_prob = 0.0;   ///< Probability of an offspring being mutated.
-  bool print_reps = false; ///< Should we print results for every replicate?
+  size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
+  size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
+  size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
+  size_t bit_size = 10;     ///< How many bits in genome?
+  size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
+  size_t start_1s = 5;      ///< How many ones in the starting organism?
+  double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
+  bool print_reps = false;  ///< Should we print results for every replicate?
+  bool print_trace = false; ///< Should we show each step of a multicell?
 
   World(int argc, char* argv[]) {
     emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
@@ -102,6 +103,8 @@ struct World {
                       } );
     combos.AddAction("print_reps", "Should we print timings for each replicates?", 'P',
                      [this](){ print_reps = true; } );
+    combos.AddAction("trace", "Should we show each step of a multicell?", 'T',
+                     [this](){ print_trace = true; } );
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
@@ -207,23 +210,25 @@ struct World {
       orgs[id].repro_time = 0.0;
     }
     org_set.clear();
-    Results results(bit_size);
+    size_t last_count = 0;                   // Track orgs from last time (for traces)
+    time = 0.0;                              // Reset current time.
 
     // Inject a cell in the middle.
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
     Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
-    inject_org.num_ones = start_1s;   // Initialize injection to proper default;
+    inject_org.num_ones = start_1s;          // Initialize injection to proper default;
     SetupOrg(inject_org);                    // Do any extra setup for this organism.
 
     // Loop through updates until cell is full.
     while (org_set.size() < mc_size) {
       // Pop the next organism to replicate.
       size_t id = org_set.begin()->id;
+      emp_assert(*org_set.begin() == orgs[id]);
       org_set.erase(org_set.begin());
       Organism & parent = orgs[id];
 
       // Update time based on when this replication occurred.
-      results.run_time = parent.repro_time;
+      time = parent.repro_time;
 
       // Reset the parent for its next replication.
       SetupOrg(parent);
@@ -242,9 +247,19 @@ struct World {
         org_set.erase(next_org);
         DoBirth(next_org, parent);
       }
+
+      if (print_trace && last_count != org_set.size()) {
+        last_count = org_set.size();
+        std::cout << "\nTime: " << time
+                  << "  Orgs: " << last_count
+                  << "\n";
+        Print();
+      }
     }
 
-    // Count up the number of organisms of each type.
+    // Setup the results and return them.
+    Results results(bit_size);
+    results.run_time = time;
     for (const auto & org : orgs) results.org_counts[org.num_ones] += 1.0;
 
     return results;
