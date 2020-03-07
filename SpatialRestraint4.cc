@@ -25,6 +25,23 @@ struct Organism {
   }
 };
 
+/// Results from a single run.
+struct Results {
+  double rep_time;                 ///< What was the replication time of this group?
+  emp::vector<double> org_counts;  ///< How many organisms have each bit count?
+
+  Results(const size_t num_bits) : rep_time(0.0), org_counts(num_bits, 0.0) { ; }
+  Results(const Results &) = default;
+  Results(Results &&) = default;
+
+  Results & operator+=(const Results & in) {
+    emp_assert(org_counts.size() == in.org_counts.size());
+    rep_time += in.rep_time;
+    for (size_t i=0; i < org_counts.size(); i++) org_counts[i] += in.org_counts[i];
+    return *this;
+  }
+};
+
 struct World {
   emp::Random random;
   emp::SettingCombos combos;
