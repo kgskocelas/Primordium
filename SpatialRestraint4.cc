@@ -27,16 +27,16 @@ struct Organism {
 
 /// Results from a single run.
 struct Results {
-  double rep_time;                 ///< What was the replication time of this group?
+  double run_time;                 ///< What was the replication time of this group?
   emp::vector<double> org_counts;  ///< How many organisms have each bit count?
 
-  Results(const size_t num_bits) : rep_time(0.0), org_counts(num_bits, 0.0) { ; }
+  Results(const size_t num_bits) : run_time(0.0), org_counts(num_bits, 0.0) { ; }
   Results(const Results &) = default;
   Results(Results &&) = default;
 
   Results & operator+=(const Results & in) {
     emp_assert(org_counts.size() == in.org_counts.size());
-    rep_time += in.rep_time;
+    run_time += in.run_time;
     for (size_t i=0; i < org_counts.size(); i++) org_counts[i] += in.org_counts[i];
     return *this;
   }
@@ -174,7 +174,7 @@ struct World {
     SetupOrg(offspring);
   }
   
-  double TestMulticell() {
+  Results TestMulticell() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = GetSize();
     orgs.resize(0);         // Clear out any current organisms.
@@ -184,7 +184,7 @@ struct World {
       orgs[id].repro_time = 0.0;
     }
     org_set.clear();
-    time = 0.0;
+    Results results(bit_size);
 
     // Inject a cell in the middle.
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
@@ -200,7 +200,7 @@ struct World {
       Organism & parent = orgs[id];
 
       // Update time based on when this replication occurred.
-      time = parent.repro_time;
+      results.run_time = parent.repro_time;
 
       // Reset the parent for its next replication.
       SetupOrg(parent);
@@ -221,7 +221,7 @@ struct World {
       }
     }
 
-    return time;
+    return results;
   }
 
   // Run all of the configurations in an entire set.
@@ -243,9 +243,9 @@ struct World {
       // Conduct all replicates and output the information.    
       double total_time = 0.0;
       for (size_t i = 0; i < num_runs; i++) {
-        size_t cur_time = TestMulticell();
-        if (print_reps) os << ", " << cur_time;
-        total_time += (double) cur_time;
+        Results cur_results = TestMulticell();
+        if (print_reps) os << ", " << cur_results.run_time;
+        total_time += cur_results.run_time;
       }
       os << ", " << (total_time / (double) num_runs) << std::endl;
     } while (combos.Next());
