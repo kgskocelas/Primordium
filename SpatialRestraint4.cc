@@ -76,7 +76,7 @@ struct World {
   size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
   size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
-  size_t bit_size = 10;     ///< How many bits in genome?
+  size_t genome_size = 10;     ///< How many bits in genome?
   size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;      ///< How many ones in the starting organism?
   double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
@@ -90,7 +90,7 @@ struct World {
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
     combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
-    combos.AddSetting("bit_size",   "Number of bits in genome?", 'b', bit_size) = { 10 };
+    combos.AddSetting("genome_size","Number of bits in genome?", 'g', genome_size) = { 10 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
     combos.AddSetting("initial_1s", "How many 1s in starting organism?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
@@ -191,7 +191,7 @@ struct World {
     // Setup the new offspring, possibly with mutations.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(mut_prob)) {
-      double prob1 = ((double) offspring.num_ones) / (double) bit_size;
+      double prob1 = ((double) offspring.num_ones) / (double) genome_size;
       if (random.P(prob1)) offspring.num_ones--;
       else offspring.num_ones++;
     }
@@ -258,7 +258,7 @@ struct World {
     }
 
     // Setup the results and return them.
-    Results results(bit_size);
+    Results results(genome_size);
     results.run_time = time;
     for (const auto & org : orgs) results.org_counts[org.num_ones] += 1.0;
 
@@ -282,7 +282,7 @@ struct World {
       os << combos.CurString(", ");  // Output current setting combination data.
 
       // Conduct all replicates and output the information.    
-      Results total_results(bit_size);
+      Results total_results(genome_size);
       for (size_t i = 0; i < num_runs; i++) {
         Results cur_results = TestMulticell();
         if (print_reps) os << ", " << cur_results.run_time;
