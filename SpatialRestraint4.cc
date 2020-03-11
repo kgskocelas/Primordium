@@ -76,7 +76,8 @@ struct World {
   size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
   size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
-  size_t genome_size = 10;     ///< How many bits in genome?
+  size_t genome_size = 10;  ///< How many bits in genome?
+  size_t birth_tries = 1;   ///< How many attempts should restrained orgs make to find empty cell?
   size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;      ///< How many ones in the starting organism?
   double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
@@ -91,6 +92,7 @@ struct World {
     combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
     combos.AddSetting("genome_size","Number of bits in genome?", 'g', genome_size) = { 10 };
+    combos.AddSetting("birth_tries","Restrained attempts to find empty cell", 'b', birth_tries) = { 1 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
     combos.AddSetting("initial_1s", "How many 1s in starting organism?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
@@ -246,6 +248,17 @@ struct World {
       else if (parent.num_ones < restrain) {
         org_set.erase(next_org);
         DoBirth(next_org, parent);
+      }
+
+      // Otherwise it is restrained and not empty; keep looking?
+      else {
+        for (size_t i = 1; i < birth_tries; i++) {
+          next_id = RandomNeighbor(id);
+          if (orgs[next_id].repro_time == 0.0) {
+            DoBirth(orgs[next_id], parent);
+            break;
+          }
+        }
       }
 
       if (print_trace && last_count != org_set.size()) {
