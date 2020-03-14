@@ -26,15 +26,15 @@
 #include "tools/string_utils.h"
 #include "tools/vector_utils.h"
 
-/// Information about a single organism.
-struct Organism {
+/// Information about a single cell.
+struct Cell {
   size_t id;
-  double repro_time = 0.0;  ///< When will this organism replicate?
+  double repro_time = 0.0;  ///< When will this cell replicate?
   size_t num_ones = 0;      ///< How many ones in genome?
 
-  bool operator==(const Organism & _in) const { return id == _in.id; }
-  bool operator!=(const Organism & _in) const { return id != _in.id; }
-  bool operator<(const Organism & _in) const {
+  bool operator==(const Cell & _in) const { return id == _in.id; }
+  bool operator!=(const Cell & _in) const { return id != _in.id; }
+  bool operator<(const Cell & _in) const {
     if (repro_time == _in.repro_time) return (id < _in.id);
     return (repro_time < _in.repro_time);
   }
@@ -43,39 +43,39 @@ struct Organism {
 /// Results from a single run.
 struct Results {
   double run_time;                 ///< What was the replication time of this group?
-  emp::vector<double> org_counts;  ///< How many organisms have each bit count?
+  emp::vector<double> cell_counts;  ///< How many cells have each bit count?
 
-  Results(const size_t num_bits) : run_time(0.0), org_counts(num_bits+1, 0.0) { ; }
+  Results(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
   Results(const Results &) = default;
   Results(Results &&) = default;
 
   Results & operator+=(const Results & in) {
-    emp_assert(org_counts.size() == in.org_counts.size());
+    emp_assert(cell_counts.size() == in.cell_counts.size());
     run_time += in.run_time;
-    for (size_t i=0; i < org_counts.size(); i++) org_counts[i] += in.org_counts[i];
+    for (size_t i=0; i < cell_counts.size(); i++) cell_counts[i] += in.cell_counts[i];
     return *this;
   }
 
   Results & operator/=(const double denom) {
     run_time /= denom;
-    for (double & x : org_counts) x /= denom;
+    for (double & x : cell_counts) x /= denom;
     return *this;
   }
 
-  /// Count the total number of organism represented.
-  double CountOrgs() const { return emp::Sum(org_counts); }
+  /// Count the total number of cells represented.
+  double CountCells() const { return emp::Sum(cell_counts); }
 
-  /// Count the number of organsims that exhibit restrained behavior.
+  /// Count the number of cells that exhibit restrained behavior.
   double CountRestrained(size_t threshold) const {
     double total = 0.0;
-    for (size_t i = threshold; i < org_counts.size(); i++) total += org_counts[i];
+    for (size_t i = threshold; i < cell_counts.size(); i++) total += cell_counts[i];
     return total;
   }
 
-  /// Count the number of organsims that DO NOT exhibit restrained behavior.
+  /// Count the number of cells that DO NOT exhibit restrained behavior.
   double CountUnrestrained(size_t threshold) const {
     double total = 0.0;
-    for (size_t i = 0; i < threshold; i++) total += org_counts[i];
+    for (size_t i = 0; i < threshold; i++) total += cell_counts[i];
     return total;
   }
 };
@@ -83,8 +83,8 @@ struct Results {
 struct World {
   emp::Random random;
   emp::SettingCombos combos;
-  emp::vector<Organism> orgs;
-  std::set<Organism> org_set; // Organisms waiting to replicate.
+  emp::vector<Cell> cells;
+  std::set<Cell> cell_set; // Cells waiting to replicate.
   double time = 0.0;
   std::string exe_name;
 
@@ -92,9 +92,9 @@ struct World {
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
   size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
   size_t genome_size = 10;  ///< How many bits in genome?
-  size_t birth_tries = 1;   ///< How many attempts should restrained orgs make to find empty cell?
+  size_t birth_tries = 1;   ///< How many attempts should restrained cells make to find empty cell?
   size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
-  size_t start_1s = 5;      ///< How many ones in the starting organism?
+  size_t start_1s = 5;      ///< How many ones in the starting cell?
   double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
   bool print_reps = false;  ///< Should we print results for every replicate?
   bool print_trace = false; ///< Should we show each step of a multicell?
@@ -109,7 +109,7 @@ struct World {
     combos.AddSetting("genome_size","Number of bits in genome?", 'g', genome_size) = { 10 };
     combos.AddSetting("birth_tries","Restrained attempts to find empty cell", 'b', birth_tries) = { 1 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
-    combos.AddSetting("initial_1s", "How many 1s in starting organism?", 'i', start_1s) = { 5 };
+    combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
@@ -187,24 +187,24 @@ struct World {
 
   // Print current one-counts in population.
   void Print() {
-    emp_assert(orgs.size() == GetSize());
+    emp_assert(cells.size() == GetSize());
     size_t pos = 0;
     for (size_t y = 0; y < cells_side; y++) {
       for (size_t x = 0; x < cells_side; x++) {
-        if (orgs[pos].repro_time == 0.0) std::cout << " -";
-      	else std::cout << " " << ToChar(orgs[pos].num_ones);
+        if (cells[pos].repro_time == 0.0) std::cout << " -";
+      	else std::cout << " " << ToChar(cells[pos].num_ones);
         pos++;
       }
       std::cout << std::endl;
     }
   }
 
-  void SetupOrg(Organism & org) {
-    org.repro_time = time + 100.0 + random.GetDouble(time_range);
-    org_set.insert(org);
+  void SetupCell(Cell & cell) {
+    cell.repro_time = time + 100.0 + random.GetDouble(time_range);
+    cell_set.insert(cell);
   }
 
-  void DoBirth(Organism & offspring, const Organism & parent, bool do_mutations=true) {
+  void DoBirth(Cell & offspring, const Cell & parent, bool do_mutations=true) {
     // Setup the new offspring, possibly with mutations.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(mut_prob)) {
@@ -214,72 +214,72 @@ struct World {
     }
 
     // And launch it in the population.
-    SetupOrg(offspring);
+    SetupCell(offspring);
   }
   
   Results TestMulticell() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = GetSize();
-    orgs.resize(0);         // Clear out any current organisms.
-    orgs.resize(mc_size);   // Put in new organsims initialized to 0.
+    cells.resize(0);         // Clear out any current cells.
+    cells.resize(mc_size);   // Put in new cells initialized to 0.
     for (size_t id = 0; id < mc_size; id++) {
-      orgs[id].id = id;
-      orgs[id].repro_time = 0.0;
+      cells[id].id = id;
+      cells[id].repro_time = 0.0;
     }
-    org_set.clear();
-    size_t last_count = 0;                   // Track orgs from last time (for traces)
+    cell_set.clear();
+    size_t last_count = 0;                   // Track cells from last time (for traces)
     time = 0.0;                              // Reset current time.
 
     // Inject a cell in the middle.
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
-    Organism & inject_org = orgs[start_pos]; // Find the org position to inject.
-    inject_org.num_ones = start_1s;          // Initialize injection to proper default;
-    SetupOrg(inject_org);                    // Do any extra setup for this organism.
+    Cell & inject_cell = cells[start_pos]; // Find the cell position to inject.
+    inject_cell.num_ones = start_1s;          // Initialize injection to proper default;
+    SetupCell(inject_cell);                    // Do any extra setup for this cell.
 
     // Loop through updates until cell is full.
-    while (org_set.size() < mc_size) {
-      // Pop the next organism to replicate.
-      size_t id = org_set.begin()->id;
-      emp_assert(*org_set.begin() == orgs[id]);
-      org_set.erase(org_set.begin());
-      Organism & parent = orgs[id];
+    while (cell_set.size() < mc_size) {
+      // Pop the next cell to replicate.
+      size_t id = cell_set.begin()->id;
+      emp_assert(*cell_set.begin() == cells[id]);
+      cell_set.erase(cell_set.begin());
+      Cell & parent = cells[id];
 
       // Update time based on when this replication occurred.
       time = parent.repro_time;
 
       // Reset the parent for its next replication.
-      SetupOrg(parent);
+      SetupCell(parent);
 
       // Find the placement of the offspring.
       size_t next_id = RandomNeighbor(id);
-      Organism & next_org = orgs[next_id];
+      Cell & next_cell = cells[next_id];
 
-      // If the target is empty, put a new organism there.
-      if (next_org.repro_time == 0.0) {
-        DoBirth(next_org, parent);
+      // If the target is empty, put a new cell there.
+      if (next_cell.repro_time == 0.0) {
+        DoBirth(next_cell, parent);
       }
 
-      // Otherwise if we don't restrain, reset existing organism there.
+      // Otherwise if we don't restrain, reset existing cell there.
       else if (parent.num_ones < restrain) {
-        org_set.erase(next_org);
-        DoBirth(next_org, parent);
+        cell_set.erase(next_cell);
+        DoBirth(next_cell, parent);
       }
 
       // Otherwise it is restrained and not empty; keep looking?
       else {
         for (size_t i = 1; i < birth_tries; i++) {
           next_id = RandomNeighbor(id);
-          if (orgs[next_id].repro_time == 0.0) {
-            DoBirth(orgs[next_id], parent);
+          if (cells[next_id].repro_time == 0.0) {
+            DoBirth(cells[next_id], parent);
             break;
           }
         }
       }
 
-      if (print_trace && last_count != org_set.size()) {
-        last_count = org_set.size();
+      if (print_trace && last_count != cell_set.size()) {
+        last_count = cell_set.size();
         std::cout << "\nTime: " << time
-                  << "  Orgs: " << last_count
+                  << "  Cells: " << last_count
                   << "\n";
         Print();
       }
@@ -288,7 +288,7 @@ struct World {
     // Setup the results and return them.
     Results results(genome_size);
     results.run_time = time;
-    for (const auto & org : orgs) results.org_counts[org.num_ones] += 1.0;
+    for (const auto & cell : cells) results.cell_counts[cell.num_ones] += 1.0;
 
     return results;
   }
