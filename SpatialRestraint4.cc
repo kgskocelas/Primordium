@@ -42,7 +42,7 @@ struct Cell {
 
 /// Results from a single run.
 struct Results {
-  double run_time;                 ///< What was the replication time of this group?
+  double run_time;                  ///< What was the replication time of this group?
   emp::vector<double> cell_counts;  ///< How many cells have each bit count?
 
   Results(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
@@ -84,9 +84,9 @@ struct World {
   emp::Random random;
   emp::SettingCombos combos;
   emp::vector<Cell> cells;
-  std::set<Cell> cell_set; // Cells waiting to replicate.
-  double time = 0.0;
-  std::string exe_name;
+  std::set<Cell> cell_set;  ///< Cells waiting to replicate.
+  double time = 0.0;        ///< Current time in multicell
+  std::string exe_name;     ///< Name of executable used to start this run.
 
   size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
@@ -152,8 +152,9 @@ struct World {
   //  0 * 1
   //  5 3 6
   //
-  // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8 neighborhood.
-  // (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the full set.
+  // Thus 0-1 is a 1D size 2 neighborhood; 0-3 are a 2D size-4 neighborhood; 0-7 is a 2D size 8
+  // neighborhood.  (0-5 behaves like a hex-map) Larger assumes popoulation size and returns the
+  // full set.
 
   size_t RandomNeighbor(size_t pos)
   {
@@ -232,9 +233,9 @@ struct World {
 
     // Inject a cell in the middle.
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
-    Cell & inject_cell = cells[start_pos]; // Find the cell position to inject.
-    inject_cell.num_ones = start_1s;          // Initialize injection to proper default;
-    SetupCell(inject_cell);                    // Do any extra setup for this cell.
+    Cell & inject_cell = cells[start_pos];   // Find the cell position to inject.
+    inject_cell.num_ones = start_1s;         // Initialize injection to proper default;
+    SetupCell(inject_cell);                  // Do any extra setup for this cell.
 
     // Loop through updates until cell is full.
     while (cell_set.size() < mc_size) {
