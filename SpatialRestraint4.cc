@@ -84,9 +84,12 @@ struct World {
   emp::Random random;
   emp::SettingCombos combos;
   emp::vector<Cell> cells;
-  std::set<Cell> cell_set;  ///< Cells waiting to replicate.
   double time = 0.0;        ///< Current time in multicell
+  size_t num_cells = 0;     ///< How many cells are currnetly in the multicell?
   std::string exe_name;     ///< Name of executable used to start this run.
+
+  emp::vector<Cell> cell_queue;  ///< Cells waiting to replicate.
+  emp::vector<Cell> cell_buffer; ///< Unsorted cells
 
   size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
@@ -146,7 +149,7 @@ struct World {
     if (count < 62) return 'A' + (count-36);
     return '+';
   }
-  
+
   // Neighborhood layout:
   //  7 2 4
   //  0 * 1
@@ -200,13 +203,40 @@ struct World {
     }
   }
 
-  void SetupCell(Cell & cell) {
-    cell.repro_time = time + 100.0 + random.GetDouble(time_range);
-    cell_set.insert(cell);
+  // If cell queue is empty, pull more from buffer.
+  bool UpdateCellQueue() {
+    cell_queue.resize(0);
+    if (cell_buffer.size() == 0) return false;  // No cells left!
+
+    // First scan the buffer to determine the earliest time.
+    double first_time = cell_buffer[0].repro_time;
+    for (const Cell & x : cell_buffer) {
+      if (x.repro_time < first_time) first_time = x.repro_time;
+    }
+
+    // Move all cells that will replicate in the next 100 timesteps to cell_queue.
+    double last_time = first_time + 100.0;
+    size_t keep_count = 0;
+    for (size_t i = 0; i < cell_buffer.size(); i++) {
+      if (cell_buffer[i].repro_time <= last_time) cell_queue.push_back(cell_buffer[i]);
+      else cell_buffer[keep_count++] = cell_buffer[i];
+    }
+    cell_buffer.resize(keep_count);
+
+    // Sort the cell queue so that it's ready to go.
+    emp::Sort(cell_queue);
+
+    return true;
   }
 
+  void SetupCell(Cell & cell) {
+    cell.repro_time = time + 100.0 + random.GetDouble(time_range);
+    cell_buffer.push_back(cell);
+  }
+
+  // Setup the new offspring, possibly with mutations.
   void DoBirth(Cell & offspring, const Cell & parent, bool do_mutations=true) {
-    // Setup the new offspring, possibly with mutations.
+    if (offspring.repro_time == 0.0) num_cells++;  // If offspring was empty, this is a new cell.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(mut_prob)) {
       double prob1 = ((double) offspring.num_ones) / (double) genome_size;
@@ -227,7 +257,8 @@ struct World {
       cells[id].id = id;
       cells[id].repro_time = 0.0;
     }
-    cell_set.clear();
+    cell_buffer.resize(0);
+    cell_queue.resize(0);
     size_t last_count = 0;                   // Track cells from last time (for traces)
     time = 0.0;                              // Reset current time.
 
@@ -236,54 +267,48 @@ struct World {
     Cell & inject_cell = cells[start_pos];   // Find the cell position to inject.
     inject_cell.num_ones = start_1s;         // Initialize injection to proper default;
     SetupCell(inject_cell);                  // Do any extra setup for this cell.
+    num_cells = 1;
 
     // Loop through updates until cell is full.
-    while (cell_set.size() < mc_size) {
-      // Pop the next cell to replicate.
-      size_t id = cell_set.begin()->id;
-      emp_assert(*cell_set.begin() == cells[id]);
-      cell_set.erase(cell_set.begin());
-      Cell & parent = cells[id];
+    while (num_cells < mc_size) {
+      // Loop through all cells in the queue.      
+      for (Cell & parent : cell_queue) {
+        // If this cell has been updated since being bufferred, skip it.
+        if (parent.repro_time != cells[parent.id].repro_time) continue;
 
-      // Update time based on when this replication occurred.
-      time = parent.repro_time;
+        time = parent.repro_time;                   // Update time to when replication occurs.
+        SetupCell(parent);                          // Reset parent for next replication.
+        size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
+        Cell & next_cell = cells[next_id];
 
-      // Reset the parent for its next replication.
-      SetupCell(parent);
+        // If the target is empty or we don't restrain, put a new cell there.
+        if (next_cell.repro_time == 0.0 || parent.num_ones < restrain) {
+          DoBirth(next_cell, parent);
+        }
 
-      // Find the placement of the offspring.
-      size_t next_id = RandomNeighbor(id);
-      Cell & next_cell = cells[next_id];
-
-      // If the target is empty, put a new cell there.
-      if (next_cell.repro_time == 0.0) {
-        DoBirth(next_cell, parent);
-      }
-
-      // Otherwise if we don't restrain, reset existing cell there.
-      else if (parent.num_ones < restrain) {
-        cell_set.erase(next_cell);
-        DoBirth(next_cell, parent);
-      }
-
-      // Otherwise it is restrained and not empty; keep looking?
-      else {
-        for (size_t i = 1; i < birth_tries; i++) {
-          next_id = RandomNeighbor(id);
-          if (cells[next_id].repro_time == 0.0) {
-            DoBirth(cells[next_id], parent);
-            break;
+        // Otherwise it is restrained and not empty; keep looking?
+        else {
+          for (size_t i = 1; i < birth_tries; i++) {
+            next_id = RandomNeighbor(parent.id);
+            if (cells[next_id].repro_time == 0.0) {
+              DoBirth(cells[next_id], parent);
+              break;
+            }
           }
+        }
+
+        // If we are tracing, output data.
+        if (print_trace && last_count != num_cells) {
+          last_count = num_cells;
+          std::cout << "\nTime: " << time
+                    << "  Cells: " << last_count
+                    << "\n";
+         Print();
         }
       }
 
-      if (print_trace && last_count != cell_set.size()) {
-        last_count = cell_set.size();
-        std::cout << "\nTime: " << time
-                  << "  Cells: " << last_count
-                  << "\n";
-        Print();
-      }
+      // Refill queue before the next loop.
+      UpdateCellQueue();
     }
 
     // Setup the results and return them.
