@@ -229,7 +229,8 @@ struct World {
     return true;
   }
 
-  void SetupCell(Cell & cell) {
+  void SetupCell(size_t id) {
+    Cell & cell = cells[id];
     cell.repro_time = time + 100.0 + random.GetDouble(time_range);
     cell_buffer.push_back(cell);
   }
@@ -245,9 +246,24 @@ struct World {
     }
 
     // And launch it in the population.
-    SetupCell(offspring);
+    SetupCell(offspring.id);
   }
-  
+
+  void Debug() {
+    std::cout << "DEBUG: ... cell_buffer=[";
+    for (auto x : cell_buffer) { std::cout << " " << x.id << "(" << x.repro_time << ")"; }
+    std::cout << "]  cell_queue=[";
+    for (auto x : cell_queue) { std::cout << " " << x.id << "(" << x.repro_time << ")"; }
+    std::cout << "]\n";
+    std::cout << "           cells: ";
+    for (size_t pos=0; pos < cells.size(); pos++) {
+      if (cells[pos].repro_time) {
+        std::cout << pos << " (" << cells[pos].repro_time << ")";
+      }
+    }
+    std::cout << std::endl;
+  }
+
   Results TestMulticell() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
     const size_t mc_size = GetSize();
@@ -266,18 +282,20 @@ struct World {
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
     Cell & inject_cell = cells[start_pos];   // Find the cell position to inject.
     inject_cell.num_ones = start_1s;         // Initialize injection to proper default;
-    SetupCell(inject_cell);                  // Do any extra setup for this cell.
+    SetupCell(start_pos);                    // Do any extra setup for this cell.
     num_cells = 1;
 
     // Loop through updates until cell is full.
     while (num_cells < mc_size) {
+      emp_assert(cell_buffer.size()+cell_queue.size() > 0);
+
       // Loop through all cells in the queue.      
       for (Cell & parent : cell_queue) {
         // If this cell has been updated since being bufferred, skip it.
         if (parent.repro_time != cells[parent.id].repro_time) continue;
 
         time = parent.repro_time;                   // Update time to when replication occurs.
-        SetupCell(parent);                          // Reset parent for next replication.
+        SetupCell(parent.id);                          // Reset parent for next replication.
         size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
         Cell & next_cell = cells[next_id];
 
