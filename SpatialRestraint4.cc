@@ -264,19 +264,22 @@ struct World {
     std::cout << std::endl;
   }
 
-  Results TestMulticell() {
+  /// Once we have current settings locked in, reset all non-setting values appropriately.
+  void SetupConfig() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
-    const size_t mc_size = GetSize();
     cells.resize(0);         // Clear out any current cells.
-    cells.resize(mc_size);   // Put in new cells initialized to 0.
-    for (size_t id = 0; id < mc_size; id++) {
+    cells.resize(GetSize());   // Put in new cells initialized to 0.
+    for (size_t id = 0; id < cells.size(); id++) {
       cells[id].id = id;
       cells[id].repro_time = 0.0;
     }
     cell_buffer.resize(0);
     cell_queue.resize(0);
-    size_t last_count = 0;                   // Track cells from last time (for traces)
-    time = 0.0;                              // Reset current time.
+    time = 0.0;
+  }
+
+  Results TestMulticell() {
+    SetupConfig();
 
     // Inject a cell in the middle.
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
@@ -286,7 +289,8 @@ struct World {
     num_cells = 1;
 
     // Loop through updates until cell is full.
-    while (num_cells < mc_size) {
+    size_t last_count = 0;                   // Track cells from last time (for traces)
+    while (num_cells < cells.size()) {
       emp_assert(cell_buffer.size()+cell_queue.size() > 0);
 
       // Loop through all cells in the queue.      
