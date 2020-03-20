@@ -87,6 +87,8 @@ struct World {
   double time = 0.0;        ///< Current time in multicell
   size_t num_cells = 0;     ///< How many cells are currnetly in the multicell?
   std::string exe_name;     ///< Name of executable used to start this run.
+  size_t mask_side = 31;    ///< Bit mask for a side (for id -> x pos)
+  size_t log2_side = 5;     ///< Log base 2 of the number of cells on a side (for id -> y pos).
 
   emp::vector<Cell> cell_queue;  ///< Cells waiting to replicate.
   emp::vector<Cell> cell_buffer; ///< Unsorted cells
@@ -276,6 +278,13 @@ struct World {
     cell_buffer.resize(0);
     cell_queue.resize(0);
     time = 0.0;
+
+    if (emp::count_bits(cells_side) != 1) {
+      std::cerr << "\nERROR: Cannot have " << cells_side << "cells on a side; must be a power of 2!\n";
+      exit(1);
+    }
+    mask_side = cells_side - 1;
+    log2_side = emp::count_bits(mask_side);
   }
 
   Results TestMulticell() {
