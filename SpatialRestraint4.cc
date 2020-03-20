@@ -141,8 +141,10 @@ struct World {
   size_t GetSize() const { return cells_side * cells_side; }
 
   size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
-  size_t ToX(size_t pos) const { return pos % cells_side; }
-  size_t ToY(size_t pos) const { return pos / cells_side; }
+  // size_t ToX(size_t pos) const { return pos % cells_side; }
+  // size_t ToY(size_t pos) const { return pos / cells_side; }
+  size_t ToX(size_t pos) const { return pos & mask_side; }
+  size_t ToY(size_t pos) const { return pos >> log2_side; }
 
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
