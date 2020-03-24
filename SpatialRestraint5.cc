@@ -295,8 +295,8 @@ struct World {
       else offspring.num_ones++;
     }
 
-    // And launch it in the population.
-    SetupCell(offspring.id);
+    SetupCell(offspring.id);    // Launch cell in the population.
+    is_full[offspring.id] = 0;  // Mark local region as NOT FULL.
   }
 
   void Debug() {
@@ -371,7 +371,7 @@ struct World {
           DoBirth(next_cell, parent);
         }
 
-        // Otherwise it is restrained and not empty; keep looking?
+        // Otherwise it is restrained and not empty; keep looking!
         else {
           next_id = EmptyNeighbor(parent.id);
           if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
