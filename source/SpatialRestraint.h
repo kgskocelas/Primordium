@@ -41,22 +41,22 @@ struct Cell {
 };
 
 /// Results from a single run.
-struct Results {
+struct RunResults {
   double run_time;                  ///< What was the replication time of this group?
   emp::vector<double> cell_counts;  ///< How many cells have each bit count?
 
-  Results(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
-  Results(const Results &) = default;
-  Results(Results &&) = default;
+  RunResults(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
+  RunResults(const RunResults &) = default;
+  RunResults(RunResults &&) = default;
 
-  Results & operator+=(const Results & in) {
+  RunResults & operator+=(const RunResults & in) {
     emp_assert(cell_counts.size() == in.cell_counts.size());
     run_time += in.run_time;
     for (size_t i=0; i < cell_counts.size(); i++) cell_counts[i] += in.cell_counts[i];
     return *this;
   }
 
-  Results & operator/=(const double denom) {
+  RunResults & operator/=(const double denom) {
     run_time /= denom;
     for (double & x : cell_counts) x /= denom;
     return *this;
@@ -337,7 +337,7 @@ struct World {
     log2_side = emp::count_bits(mask_side);
   }
 
-  Results TestMulticell() {
+  RunResults TestMulticell() {
     SetupConfig();
 
     // Inject a cell in the middle.
@@ -392,7 +392,7 @@ struct World {
     }
 
     // Setup the results and return them.
-    Results results(genome_size);
+    RunResults results(genome_size);
     results.run_time = time;
     for (const auto & cell : cells) results.cell_counts[cell.num_ones] += 1.0;
 
@@ -416,9 +416,9 @@ struct World {
       os << combos.CurString(", ");  // Output current setting combination data.
 
       // Conduct all replicates and output the information.    
-      Results total_results(genome_size);
+      RunResults total_results(genome_size);
       for (size_t i = 0; i < num_runs; i++) {
-        Results cur_results = TestMulticell();
+        RunResults cur_results = TestMulticell();
         if (print_reps) os << ", " << cur_results.run_time;
         total_results += cur_results;
       }
