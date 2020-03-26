@@ -1,70 +1,47 @@
+# Project-specific settings
+PROJECT := SpatialRestraint
 EMP_DIR := ../../Empirical/source
 
 # Flags to use regardless of compiler
-CFLAGS_all := -Wall -Wno-unused-function -I$(EMP_DIR)/
-CFLAGS_version := -std=c++17
+CFLAGS_all := -Wall -Wno-unused-function -std=c++17 -I$(EMP_DIR)/
+
+# Native compiler information
+CXX_nat := g++
+CFLAGS_nat := -O3 -DNDEBUG $(CFLAGS_all)
+CFLAGS_nat_debug := -g $(CFLAGS_all)
 
 # Emscripten compiler information
 CXX_web := emcc
-CXX_native := g++
+OFLAGS_web_all := -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']" -s TOTAL_MEMORY=67108864 --js-library $(EMP_DIR)/web/library_emp.js -s EXPORTED_FUNCTIONS="['_main', '_empCppCallback']" -s DISABLE_EXCEPTION_CATCHING=1 -s NO_EXIT_RUNTIME=1 #--embed-file configs
+OFLAGS_web := -Oz -DNDEBUG
+OFLAGS_web_debug := -g4 -Oz -pedantic -Wno-dollar-in-identifier-extension
 
-OFLAGS_native_opt := -O3 -DNDEBUG
-OFLAGS_native_debug := -g -pedantic -DEMP_TRACK_MEM  -Wnon-virtual-dtor -Wcast-align
-OFLAGS_native_grumpy := -g -pedantic -DEMP_TRACK_MEM  -Wnon-virtual-dtor -Wcast-align -Wconversion -Weffc++
+CFLAGS_web := $(CFLAGS_all) $(OFLAGS_web) $(OFLAGS_web_all)
+CFLAGS_web_debug := $(CFLAGS_all) $(OFLAGS_web_debug) $(OFLAGS_web_all)
 
-OFLAGS_web_opt := -Os -DNDEBUG -s TOTAL_MEMORY=67108864
-OFLAGS_web_debug := -g4 -pedantic -Wno-dollar-in-identifier-extension -s TOTAL_MEMORY=67108864 -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1 # -s SAFE_HEAP=1
 
-CFLAGS_native_opt := $(CFLAGS_all) $(OFLAGS_native_opt)
-CFLAGS_native_debug := $(CFLAGS_all) $(OFLAGS_native_debug)
-CFLAGS_native_grumpy := $(CFLAGS_all) $(OFLAGS_native_grumpy)
+default: $(PROJECT)
+native: $(PROJECT)
+web: $(PROJECT).js
+all: $(PROJECT) $(PROJECT).js
 
-CFLAGS_web_debug := $(CFLAGS_all) $(OFLAGS_web_debug) --js-library $(EMP_DIR)/web/library_emp.js -s EXPORTED_FUNCTIONS="['_main', '_empCppCallback']" -s NO_EXIT_RUNTIME=1
-CFLAGS_web_opt := $(CFLAGS_all) $(OFLAGS_web_opt) --js-library $(EMP_DIR)/web/library_emp.js -s EXPORTED_FUNCTIONS="['_main', '_empCppCallback']" -s NO_EXIT_RUNTIME=1
-#CFLAGS_web := $(CFLAGS_all) $(OFLAGS_web) --js-library $(EMP_DIR)/web/library_emp.js -s EXPORTED_FUNCTIONS="['_main', '_empCppCallback']" -s DISABLE_EXCEPTION_CATCHING=1 -s NO_EXIT_RUNTIME=1
+debug:	CFLAGS_nat := $(CFLAGS_nat_debug)
+debug:	$(PROJECT)
 
-#TARGETS := SpatialRestraint SpatialRestraint2 SpatialRestraint3 SpatialRestraint4 SpatialRestraint5
-TARGETS := SpatialRestraint
+debug-web:	CFLAGS_web := $(CFLAGS_web_debug)
+debug-web:	$(PROJECT).js
 
-default: native
+web-debug:	debug-web
 
-CXX := $(CXX_native)
-CFLAGS := $(CFLAGS_native_opt)
+$(PROJECT):	source/native/$(PROJECT).cc
+	$(CXX_nat) $(CFLAGS_nat) source/native/$(PROJECT).cc -o $(PROJECT)
+	@echo To build the web version use: make web
 
-debug: CFLAGS := $(CFLAGS_native_debug)
-debug: all
-
-grumpy: CFLAGS := $(CFLAGS_native_grumpy)
-grumpy: all
-
-web: CXX := $(CXX_web)
-web: CFLAGS := $(CFLAGS_web_opt)
-web: all
-
-web-debug: CXX := $(CXX_web)
-web-debug: CFLAGS := $(CFLAGS_web_debug)
-web-debug: all
-
-native: all
-
-all: $(TARGETS)
-
-$(TARGETS): % : %.cc
-	$(CXX) $(CFLAGS_version) $(CFLAGS) $< -o $@
-
-$(JS_TARGETS): %.js : %.cc
-	$(CXX_web) $(CFLAGS_web) $< -o $@
-
-debug-%: $*.cc
-	$(CXX) $(CFLAGS_version) $(CFLAGS_native_debug) $< -o $@
+$(PROJECT).js: source/web/$(PROJECT)-web.cc
+	$(CXX_web) $(CFLAGS_web) source/web/$(PROJECT)-web.cc -o web/$(PROJECT).js
 
 clean:
-	rm -rf debug-* *~ *.dSYM $(TARGETS)
-#	rm -rf debug-* *~ *.dSYM $(JS_TARGETS)
-
-new: clean
-new: native
+	rm -f $(PROJECT) web/$(PROJECT).js web/*.js.map web/*.js.map *~ source/*.o
 
 # Debugging information
-#print-%: ; @echo $*=$($*)
 print-%: ; @echo '$(subst ','\'',$*=$($*))'
