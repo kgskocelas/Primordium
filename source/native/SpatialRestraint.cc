@@ -13,7 +13,7 @@
  *  - Unrestrained cells replicate into a random position, regardless of if anything is there.
  */
 
-#include "SpatialRestraint.h"
+#include "../SpatialRestraint.h"
 
 int main(int argc, char* argv[])
 {
