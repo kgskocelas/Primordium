@@ -57,6 +57,7 @@ struct RunResults {
   }
 
   RunResults & operator/=(const double denom) {
+    emp_assert(denom != 0.0);
     run_time /= denom;
     for (double & x : cell_counts) x /= denom;
     return *this;
@@ -104,13 +105,12 @@ struct World {
   bool print_reps = false;  ///< Should we print results for every replicate?
   bool print_trace = false; ///< Should we show each step of a multicell?
 
-  World(int argc, char* argv[]) {
-    emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
+  World(emp::vector<std::string> & args) {
     exe_name = args[0];
 
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
     combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
-    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 16 };
+    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 32 };
     combos.AddSetting("genome_size","Number of bits in genome?", 'g', genome_size) = { 10 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
     combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s) = { 5 };
@@ -140,8 +140,6 @@ struct World {
   size_t GetSize() const { return cells_side * cells_side; }
 
   size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
-  // size_t ToX(size_t pos) const { return pos % cells_side; }
-  // size_t ToY(size_t pos) const { return pos / cells_side; }
   size_t ToX(size_t pos) const { return pos & mask_side; }
   size_t ToY(size_t pos) const { return pos >> log2_side; }
 
@@ -399,6 +397,20 @@ struct World {
     return results;
   }
 
+  RunResults SummarizeTreatment(std::ostream & os=std::cout) {
+    const size_t num_runs = combos.GetValue<size_t>("data_count");
+
+    // Conduct all replicates and output the information.    
+    RunResults total_results(genome_size);
+    for (size_t i = 0; i < num_runs; i++) {
+      RunResults cur_results = TestMulticell();
+      if (print_reps) os << ", " << cur_results.run_time;
+      total_results += cur_results;
+    }
+
+    return total_results /= (double) num_runs;
+  }
+
   // Run all of the configurations in an entire set.
   void Run(std::ostream & os=std::cout) {
     const size_t num_runs = combos.GetValue<size_t>("data_count");
@@ -415,16 +427,10 @@ struct World {
     do {
       os << combos.CurString(", ");  // Output current setting combination data.
 
-      // Conduct all replicates and output the information.    
-      RunResults total_results(genome_size);
-      for (size_t i = 0; i < num_runs; i++) {
-        RunResults cur_results = TestMulticell();
-        if (print_reps) os << ", " << cur_results.run_time;
-        total_results += cur_results;
-      }
-      total_results /= (double) num_runs;
-      os << ", " << total_results.run_time
-         << ", " << (total_results.CountRestrained(restrain) / (double) GetSize())
+      RunResults treatment_results = SummarizeTreatment(os);
+
+      os << ", " << treatment_results.run_time
+         << ", " << (treatment_results.CountRestrained(restrain) / (double) GetSize())
          << std::endl;
     } while (combos.Next());
   }
