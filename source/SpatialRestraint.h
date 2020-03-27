@@ -45,9 +45,13 @@ struct RunResults {
   double run_time;                  ///< What was the replication time of this group?
   emp::vector<double> cell_counts;  ///< How many cells have each bit count?
 
+  RunResults() : run_time(0.0), cell_counts(0) { ; }
   RunResults(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
   RunResults(const RunResults &) = default;
   RunResults(RunResults &&) = default;
+
+  RunResults & operator=(const RunResults &) = default;
+  RunResults & operator=(RunResults &&) = default;
 
   RunResults & operator+=(const RunResults & in) {
     emp_assert(cell_counts.size() == in.cell_counts.size());
@@ -397,6 +401,19 @@ struct World {
     return results;
   }
 
+  emp::vector<RunResults> RunTreatment(std::ostream & os=std::cout) {
+    const size_t num_runs = combos.GetValue<size_t>("data_count");
+    emp::vector<RunResults> result_set(num_runs);
+
+    // Conduct all replicates and output the information.    
+    for (size_t i = 0; i < num_runs; i++) {
+      result_set[i] = TestMulticell();
+      if (print_reps) os << ", " << result_set[i].run_time;
+    }
+
+    return result_set;
+  }
+
   RunResults SummarizeTreatment(std::ostream & os=std::cout) {
     const size_t num_runs = combos.GetValue<size_t>("data_count");
 
@@ -413,11 +430,10 @@ struct World {
 
   // Run all of the configurations in an entire set.
   void Run(std::ostream & os=std::cout) {
-    const size_t num_runs = combos.GetValue<size_t>("data_count");
-
     // Print column headers.
     os << combos.GetHeaders();
     if (print_reps) {
+      const size_t num_runs = combos.GetValue<size_t>("data_count");
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
     }
     os << ", ave_time, frac_restrain" << std::endl;
