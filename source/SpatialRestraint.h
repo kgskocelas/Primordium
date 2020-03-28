@@ -99,13 +99,14 @@ struct World {
   emp::vector<Cell> cell_queue;  ///< Cells waiting to replicate.
   emp::vector<Cell> cell_buffer; ///< Unsorted cells
 
-  size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
   size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
+  size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
   size_t genome_size = 10;  ///< How many bits in genome?
   size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;      ///< How many ones in the starting cell?
   double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
+  size_t gen_count = 0;     ///< Num generations to evolve (zero for analyze multicells)
   bool print_reps = false;  ///< Should we print results for every replicate?
   bool print_trace = false; ///< Should we show each step of a multicell?
 
@@ -115,10 +116,11 @@ struct World {
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
     combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 32 };
-    combos.AddSetting("genome_size","Number of bits in genome?", 'g', genome_size) = { 10 };
+    combos.AddSetting("size",       "Number of bits in genome?", 's', genome_size) = { 10 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
     combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
+    combos.AddSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count) = { 0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -428,8 +430,8 @@ struct World {
     return total_results /= (double) num_runs;
   }
 
-  // Run all of the configurations in an entire set.
-  void Run(std::ostream & os=std::cout) {
+  /// Step through all configurations and collect multicell data for each.
+  void RunMulticells(std::ostream & os) {
     // Print column headers.
     os << combos.GetHeaders();
     if (print_reps) {
@@ -449,5 +451,15 @@ struct World {
          << ", " << (treatment_results.CountRestrained(restrain) / (double) GetSize())
          << std::endl;
     } while (combos.Next());
+  }
+
+  void RunEvolution(std::ostream & os) {
+    os << gen_count << " generations of evolution go here!" << std::endl;
+  }
+
+  // Run all of the configurations in an entire set.
+  void Run(std::ostream & os=std::cout) {
+    if (combos.Values<size_t>("gen_count")[0]) RunEvolution(os);
+    else RunMulticells(os);
   }
 };
