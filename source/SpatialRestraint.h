@@ -40,6 +40,15 @@ struct Cell {
   }
 };
 
+/// Information about a full multi-cell organism
+struct Organism {
+  size_t start_ones = 0;
+};
+
+struct Population {
+  emp::vector<Organism> orgs;
+};
+
 /// Results from a single run.
 struct RunResults {
   double run_time;                  ///< What was the replication time of this group?
@@ -454,7 +463,11 @@ struct World {
   }
 
   void RunEvolution(std::ostream & os) {
-    os << gen_count << " generations of evolution go here!" << std::endl;
+    combos.Reset();
+    do {
+
+      RunResults treatment_results = SummarizeTreatment(os);
+    } while (combos.Next());
   }
 
   // Run all of the configurations in an entire set.
