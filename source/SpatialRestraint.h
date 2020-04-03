@@ -24,6 +24,7 @@
 #include "tools/Distribution.h"
 #include "tools/Random.h"
 #include "tools/string_utils.h"
+#include "tools/TimeQueue.h"
 #include "tools/vector_utils.h"
 
 /// Information about a single cell.
@@ -99,27 +100,25 @@ struct World {
   emp::SettingCombos combos;
   emp::vector<Cell> cells;   ///< All cells in this multicell
   emp::vector<char> is_full; ///< Is the local neighborhood full?
-  double time = 0.0;         ///< Current time in multicell
   size_t num_cells = 0;      ///< How many cells are currnetly in the multicell?
   std::string exe_name;      ///< Name of executable used to start this run.
   size_t mask_side = 31;     ///< Bit mask for a side (for id -> x pos)
   size_t log2_side = 5;      ///< Log base 2 of the number of cells on a side (for id -> y pos).
 
-  emp::vector<Cell> cell_queue;  ///< Cells waiting to replicate.
-  emp::vector<Cell> cell_buffer; ///< Unsorted cells
+  emp::TimeQueue<size_t> cell_queue; ///< Cells waiting to replicate.
 
-  size_t time_range = 1.0;  ///< Replication takes 100.0 + a random value up to time_range.
-  size_t neighbors = 8;     ///< Num neighbors to consider for offspring (0=well mixed; 4,6,8 => 2D)
-  size_t cells_side = 32;   ///< How many cells are on a side of the (square) multi-cell?
-  size_t genome_size = 10;  ///< How many bits in genome?
-  size_t restrain = 5;      ///< How many ones in bit sequence for restraint?
-  size_t start_1s = 5;      ///< How many ones in the starting cell?
-  double mut_prob = 0.0;    ///< Probability of an offspring being mutated.
-  size_t gen_count = 0;     ///< Num generations to evolve (zero for analyze multicells)
-  bool print_reps = false;  ///< Should we print results for every replicate?
-  bool print_trace = false; ///< Should we show each step of a multicell?
+  size_t time_range = 50.0;  ///< Replication takes 100.0 + a random value up to time_range.
+  size_t neighbors = 8;      ///< Num neighbors in grid for offspring (0=well mixed; 4,6,8 => 2D)
+  size_t cells_side = 32;    ///< How many cells are on a side of the (square) multi-cell?
+  size_t genome_size = 10;   ///< How many bits in genome?
+  size_t restrain = 5;       ///< How many ones in bit sequence for restraint?
+  size_t start_1s = 5;       ///< How many ones in the starting cell?
+  double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
+  size_t gen_count = 0;      ///< Num generations to evolve (zero for analyze multicells)
+  bool print_reps = false;   ///< Should we print results for every replicate?
+  bool print_trace = false;  ///< Should we show each step of a multicell?
 
-  World(emp::vector<std::string> & args) {
+  World(emp::vector<std::string> & args) : cell_queue(100.0) {
     exe_name = args[0];
 
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
@@ -266,36 +265,9 @@ struct World {
     }
   }
 
-  // If cell queue is empty, pull more from buffer.
-  bool UpdateCellQueue() {
-    cell_queue.resize(0);
-    if (cell_buffer.size() == 0) return false;  // No cells left!
-
-    // First scan the buffer to determine the earliest time.
-    double first_time = cell_buffer[0].repro_time;
-    for (const Cell & x : cell_buffer) {
-      if (x.repro_time < first_time) first_time = x.repro_time;
-    }
-
-    // Move all cells that will replicate in the next 100 timesteps to cell_queue.
-    double last_time = first_time + 100.0;
-    size_t keep_count = 0;
-    for (size_t i = 0; i < cell_buffer.size(); i++) {
-      if (cell_buffer[i].repro_time <= last_time) cell_queue.push_back(cell_buffer[i]);
-      else cell_buffer[keep_count++] = cell_buffer[i];
-    }
-    cell_buffer.resize(keep_count);
-
-    // Sort the cell queue so that it's ready to go.
-    emp::Sort(cell_queue);
-
-    return true;
-  }
-
-  void SetupCell(size_t id) {
-    Cell & cell = cells[id];
-    cell.repro_time = time + 100.0 + random.GetDouble(time_range);
-    cell_buffer.push_back(cell);
+  void SetupCell(Cell & cell) {
+    cell.repro_time = cell_queue.GetTime() + 100.0 + random.GetDouble(time_range);
+    cell_queue.Insert(cell.id, cell.repro_time);
   }
 
   // Setup the new offspring, possibly with mutations.
@@ -308,23 +280,8 @@ struct World {
       else offspring.num_ones++;
     }
 
-    SetupCell(offspring.id);    // Launch cell in the population.
+    SetupCell(offspring);    // Launch cell in the population.
     is_full[offspring.id] = 0;  // Mark local region as NOT FULL.
-  }
-
-  void Debug() {
-    std::cout << "DEBUG: ... cell_buffer=[";
-    for (auto x : cell_buffer) { std::cout << " " << x.id << "(" << x.repro_time << ")"; }
-    std::cout << "]  cell_queue=[";
-    for (auto x : cell_queue) { std::cout << " " << x.id << "(" << x.repro_time << ")"; }
-    std::cout << "]\n";
-    std::cout << "           cells: ";
-    for (size_t pos=0; pos < cells.size(); pos++) {
-      if (cells[pos].repro_time) {
-        std::cout << pos << " (" << cells[pos].repro_time << ")";
-      }
-    }
-    std::cout << std::endl;
   }
 
   /// Once we have current settings locked in, reset all non-setting values appropriately.
@@ -338,9 +295,7 @@ struct World {
     }
     is_full.resize(0);
     is_full.resize(GetSize(), 0);
-    cell_buffer.resize(0);
-    cell_queue.resize(0);
-    time = 0.0;
+    cell_queue.Clear();
 
     if (emp::count_bits(cells_side) != 1) {
       std::cerr << "\nERROR: Cannot have " << cells_side << "cells on a side; must be a power of 2!\n";
@@ -357,56 +312,54 @@ struct World {
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
     Cell & inject_cell = cells[start_pos];   // Find the cell position to inject.
     inject_cell.num_ones = start_1s;         // Initialize injection to proper default;
-    SetupCell(start_pos);                    // Do any extra setup for this cell.
+    SetupCell(inject_cell);                    // Do any extra setup for this cell.
     num_cells = 1;
+
+    std::cout << cell_queue.AsString() << "\n";
 
     // Loop through updates until cell is full.
     size_t last_count = 0;                   // Track cells from last time (for traces)
     while (num_cells < cells.size()) {
-      emp_assert(cell_buffer.size()+cell_queue.size() > 0);
+      std::cout << cell_queue.AsString() << "\n";
 
-      // Loop through all cells in the queue.      
-      for (Cell & parent : cell_queue) {
-        // If this cell has been updated since being bufferred, skip it.
-        if (parent.repro_time != cells[parent.id].repro_time) continue;
+      emp_assert(cell_queue.GetSize() > 0);
 
-        time = parent.repro_time;                   // Update time to when replication occurs.
+      Cell & parent = cells[cell_queue.Next()];
 
-        // If neighborhood is full, don't place offspring OR replace parent.
-        if (is_full[parent.id]) continue; 
+      // If this cell has been updated since being bufferred, skip it.
+      if (parent.repro_time != cell_queue.GetTime()) continue;
 
-        SetupCell(parent.id);                       // Reset parent for next replication.
-        size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
-        Cell & next_cell = cells[next_id];
+      // Neighborhood is only marked full for restrained orgs; if so, fail divide.
+      if (is_full[parent.id]) continue; 
 
-        // If the target is empty or we don't restrain, put a new cell there.
-        if (next_cell.repro_time == 0.0 || parent.num_ones < restrain) {
-          DoBirth(next_cell, parent);
-        }
+      SetupCell(parent);                          // Reset parent for next replication.
+      size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
+      Cell & next_cell = cells[next_id];
 
-        // Otherwise it is restrained and not empty; keep looking!
-        else {
-          next_id = EmptyNeighbor(parent.id);
-          if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
-        }
-
-        // If we are tracing, output data.
-        if (print_trace && last_count != num_cells) {
-          last_count = num_cells;
-          std::cout << "\nTime: " << time
-                    << "  Cells: " << last_count
-                    << "\n";
-         Print();
-        }
+      // If the target is empty or we don't restrain, put a new cell there.
+      if (next_cell.repro_time == 0.0 || parent.num_ones < restrain) {
+        DoBirth(next_cell, parent);
       }
 
-      // Refill queue before the next loop.
-      UpdateCellQueue();
+      // Otherwise it is restrained and not empty; keep looking!
+      else {
+        next_id = EmptyNeighbor(parent.id);
+        if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
+      }
+
+      // If we are tracing, output data.
+      if (print_trace && last_count != num_cells) {
+        last_count = num_cells;
+        std::cout << "\nTime: " << cell_queue.GetTime()
+                  << "  Cells: " << last_count
+                  << "\n";
+        Print();
+      }
     }
 
     // Setup the results and return them.
     RunResults results(genome_size);
-    results.run_time = time;
+    results.run_time = cell_queue.GetTime();
     for (const auto & cell : cells) results.cell_counts[cell.num_ones] += 1.0;
 
     return results;
