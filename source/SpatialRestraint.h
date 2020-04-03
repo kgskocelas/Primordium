@@ -280,7 +280,7 @@ struct World {
       else offspring.num_ones++;
     }
 
-    SetupCell(offspring);    // Launch cell in the population.
+    SetupCell(offspring);       // Launch cell in the population.
     is_full[offspring.id] = 0;  // Mark local region as NOT FULL.
   }
 
@@ -312,16 +312,12 @@ struct World {
     const size_t start_pos = ToPos(cells_side/2, cells_side/2);
     Cell & inject_cell = cells[start_pos];   // Find the cell position to inject.
     inject_cell.num_ones = start_1s;         // Initialize injection to proper default;
-    SetupCell(inject_cell);                    // Do any extra setup for this cell.
+    SetupCell(inject_cell);                  // Do any extra setup for this cell.
     num_cells = 1;
-
-    std::cout << cell_queue.AsString() << "\n";
 
     // Loop through updates until cell is full.
     size_t last_count = 0;                   // Track cells from last time (for traces)
     while (num_cells < cells.size()) {
-      std::cout << cell_queue.AsString() << "\n";
-
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
@@ -332,7 +328,6 @@ struct World {
       // Neighborhood is only marked full for restrained orgs; if so, fail divide.
       if (is_full[parent.id]) continue; 
 
-      SetupCell(parent);                          // Reset parent for next replication.
       size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
       Cell & next_cell = cells[next_id];
 
@@ -346,6 +341,8 @@ struct World {
         next_id = EmptyNeighbor(parent.id);
         if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
       }
+
+      SetupCell(parent);  // Reset parent for its next replication.
 
       // If we are tracing, output data.
       if (print_trace && last_count != num_cells) {
