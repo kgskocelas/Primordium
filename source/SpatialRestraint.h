@@ -23,6 +23,7 @@
 #include "tools/BitVector.h"
 #include "tools/Distribution.h"
 #include "tools/Random.h"
+#include "tools/StreamManager.h"
 #include "tools/string_utils.h"
 #include "tools/TimeQueue.h"
 #include "tools/vector_utils.h"
@@ -118,6 +119,9 @@ struct World {
   bool print_reps = false;   ///< Should we print results for every replicate?
   bool print_trace = false;  ///< Should we show each step of a multicell?
 
+  std::string evolution_filename;  ///< Output filename for evolution summary data.
+  std::string multicell_filename;  ///< Output filename for multicell summary data.
+
   World(emp::vector<std::string> & args) : cell_queue(100.0) {
     exe_name = args[0];
 
@@ -140,6 +144,10 @@ struct World {
                      [this](){ print_reps = true; } );
     combos.AddAction("trace", "Should we show each step of a multicell?", 'T',
                      [this](){ print_trace = true; } );
+    combos.AddSetting("evolution_filename", "Filename for multicell data", 'E', evolution_filename)
+      = { "evolution.dat" };
+    combos.AddSetting("multicell_filename", "Filename for multicell data", 'M', multicell_filename)
+      = { "multicell.dat" };
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
@@ -421,8 +429,17 @@ struct World {
   }
 
   // Run all of the configurations in an entire set.
-  void Run(std::ostream & os=std::cout) {
-    if (combos.Values<size_t>("gen_count")[0]) RunEvolution(os);
-    else RunMulticells(os);
+  void Run() {
+    size_t gen_count = combos.Values<size_t>("gen_count")[0];
+    std::string evolution_filename = combos.Values<std::string>("evolution_filename")[0];
+    std::string multicell_filename = combos.Values<std::string>("multicell_filename")[0];
+
+    emp::StreamManager stream_manager;
+
+    // Always collect information on multicells.
+    RunMulticells(stream_manager.get_ostream(multicell_filename));
+
+    // If we have a generation count, also collect evolution data.
+    if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
   }
 };
