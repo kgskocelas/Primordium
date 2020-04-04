@@ -19,5 +19,5 @@ int main(int argc, char* argv[])
 {
   emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
   World world(args);
-  world.Run(std::cout);
+  world.Run();
 }
