@@ -122,6 +122,11 @@ struct World {
   std::string evolution_filename;  ///< Output filename for evolution summary data.
   std::string multicell_filename;  ///< Output filename for multicell summary data.
 
+  using TreatmentResults = emp::vector<RunResults>;
+  using MulticellResults = emp::vector<TreatmentResults>;
+
+  MulticellResults exp_results;
+
   World(emp::vector<std::string> & args) : cell_queue(100.0) {
     exe_name = args[0];
 
@@ -132,7 +137,7 @@ struct World {
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
     combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s) = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
-    combos.AddSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count) = { 0 };
+    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count) = { 0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -144,9 +149,9 @@ struct World {
                      [this](){ print_reps = true; } );
     combos.AddAction("trace", "Should we show each step of a multicell?", 'T',
                      [this](){ print_trace = true; } );
-    combos.AddSetting("evolution_filename", "Filename for multicell data", 'E', evolution_filename)
+    combos.AddSingleSetting("evolution_filename", "Filename for multicell data", 'E', evolution_filename)
       = { "evolution.dat" };
-    combos.AddSetting("multicell_filename", "Filename for multicell data", 'M', multicell_filename)
+    combos.AddSingleSetting("multicell_filename", "Filename for multicell data", 'M', multicell_filename)
       = { "multicell.dat" };
 
     // Process the command-line options
