@@ -125,19 +125,27 @@ struct World {
   using TreatmentResults = emp::vector<RunResults>;
   using MulticellResults = emp::vector<TreatmentResults>;
 
-  MulticellResults exp_results;
+  MulticellResults base_results;
 
   World(emp::vector<std::string> & args) : cell_queue(100.0) {
     exe_name = args[0];
 
-    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range, "TimeUnits...") = { 50 };
-    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors, "Sizes...") = { 8 };
-    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side, "NumCells...") = { 32 };
-    combos.AddSetting("size",       "Number of bits in genome?", 's', genome_size, "NumBits...") = { 10 };
-    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain, "NumOnes...") = { 5 };
-    combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s, "NumOnes...") = { 5 };
-    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob, "Probs...") = { 0.0 };
-    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count, "NumGens") = { 0 };
+    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range,
+                      "TimeUnits...") = { 50 };
+    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors,
+                      "Sizes...") = { 8 };
+    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side,
+                      "NumCells...") = { 32 };
+    combos.AddSetting("size",       "Number of bits in genome?", 's', genome_size,
+                      "NumBits...") = { 10 };
+    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain,
+                      "NumOnes...") = { 5 };
+    combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s,
+                      "NumOnes...") = { 5 };
+    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob,
+                      "Probs...") = { 0.0 };
+    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g',
+                      gen_count, "NumGens") = { 0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -390,13 +398,18 @@ struct World {
 
   RunResults SummarizeTreatment(std::ostream & os=std::cout) {
     const size_t num_runs = combos.GetValue<size_t>("data_count");
+    const size_t combo_id = combos.GetComboID();
+
+    // Setup room for the data being collected.
+    TreatmentResults & treatment_results = base_results[combo_id];
+    treatment_results.resize(num_runs);
 
     // Conduct all replicates and output the information.    
     RunResults total_results(genome_size);
     for (size_t i = 0; i < num_runs; i++) {
-      RunResults cur_results = TestMulticell();
-      if (print_reps) os << ", " << cur_results.run_time;
-      total_results += cur_results;
+      treatment_results[i] = TestMulticell();
+      if (print_reps) os << ", " << treatment_results[i].run_time;
+      total_results += treatment_results[i];
     }
 
     return total_results /= (double) num_runs;
@@ -411,6 +424,9 @@ struct World {
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
     }
     os << ", ave_time, frac_restrain" << std::endl;
+
+    // Setup the correct collection for the treatments.
+    base_results.resize(combos.CountCombos());
 
     // Loop through configuration combonations to test.
     combos.Reset();
