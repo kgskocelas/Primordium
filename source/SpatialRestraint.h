@@ -130,14 +130,14 @@ struct World {
   World(emp::vector<std::string> & args) : cell_queue(100.0) {
     exe_name = args[0];
 
-    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range) = { 50 };
-    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors) = { 8 };
-    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side) = { 32 };
-    combos.AddSetting("size",       "Number of bits in genome?", 's', genome_size) = { 10 };
-    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain) = { 5 };
-    combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s) = { 5 };
-    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob) = { 0.0 };
-    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count) = { 0 };
+    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't', time_range, "TimeUnits...") = { 50 };
+    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n', neighbors, "Sizes...") = { 8 };
+    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c', cells_side, "NumCells...") = { 32 };
+    combos.AddSetting("size",       "Number of bits in genome?", 's', genome_size, "NumBits...") = { 10 };
+    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r', restrain, "NumOnes...") = { 5 };
+    combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i', start_1s, "NumOnes...") = { 5 };
+    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm', mut_prob, "Probs...") = { 0.0 };
+    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g', gen_count, "NumGens") = { 0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -145,14 +145,14 @@ struct World {
                        combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
                        exit(1);
                       } );
-    combos.AddAction("print_reps", "Should we print timings for each replicates?", 'P',
+    combos.AddAction("print_reps", "Print timings for each replicate", 'P',
                      [this](){ print_reps = true; } );
-    combos.AddAction("trace", "Should we show each step of a multicell?", 'T',
+    combos.AddAction("trace", "Show each step of a multicell", 'T',
                      [this](){ print_trace = true; } );
-    combos.AddSingleSetting("evolution_filename", "Filename for multicell data", 'E', evolution_filename)
-      = { "evolution.dat" };
-    combos.AddSingleSetting("multicell_filename", "Filename for multicell data", 'M', multicell_filename)
-      = { "multicell.dat" };
+    combos.AddSingleSetting("evolution_filename", "Filename for multicell data", 'E',
+                            evolution_filename, "Filename") = { "evolution.dat" };
+    combos.AddSingleSetting("multicell_filename", "Filename for multicell data", 'M',
+                            multicell_filename, "Filename") = { "multicell.dat" };
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
