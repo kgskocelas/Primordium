@@ -383,17 +383,19 @@ struct World {
     return results;
   }
 
-  emp::vector<RunResults> RunTreatment(std::ostream & os=std::cout) {
+  TreatmentResults & RunTreatment(std::ostream & os=std::cout) {
     const size_t num_runs = combos.GetValue<size_t>("data_count");
-    emp::vector<RunResults> result_set(num_runs);
+    const size_t combo_id = combos.GetComboID();
+    TreatmentResults & treatment_results = base_results[combo_id];
+    treatment_results.resize(num_runs);
 
     // Conduct all replicates and output the information.    
     for (size_t i = 0; i < num_runs; i++) {
-      result_set[i] = TestMulticell();
-      if (print_reps) os << ", " << result_set[i].run_time;
+      treatment_results[i] = TestMulticell();
+      if (print_reps) os << ", " << treatment_results[i].run_time;
     }
 
-    return result_set;
+    return treatment_results;
   }
 
   RunResults SummarizeTreatment(std::ostream & os=std::cout) {
