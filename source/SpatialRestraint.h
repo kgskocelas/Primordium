@@ -13,6 +13,9 @@
  *  - Unrestrained cells replicate into a random position, regardless of if anything is there.
  */
 
+#ifndef SPATIAL_RESTRAINT_H
+#define SPATIAL_RESTRAINT_H
+
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -28,19 +31,7 @@
 #include "tools/TimeQueue.h"
 #include "tools/vector_utils.h"
 
-/// Information about a single cell.
-struct Cell {
-  size_t id;
-  double repro_time = 0.0;  ///< When will this cell replicate?
-  size_t num_ones = 0;      ///< How many ones in genome?
-
-  bool operator==(const Cell & _in) const { return id == _in.id; }
-  bool operator!=(const Cell & _in) const { return id != _in.id; }
-  bool operator<(const Cell & _in) const {
-    if (repro_time == _in.repro_time) return (id < _in.id);
-    return (repro_time < _in.repro_time);
-  }
-};
+#include "Multicell.h"
 
 /// Information about a full multi-cell organism
 struct Organism {
@@ -466,3 +457,5 @@ struct World {
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
   }
 };
+
+#endif
