@@ -177,7 +177,6 @@ struct Experiment {
   void RunEvolution(std::ostream & os) {
     combos.Reset();
     do {
-
       RunResults treatment_results = SummarizeTreatment(os);
     } while (combos.Next());
   }
@@ -190,11 +189,11 @@ struct Experiment {
 
     emp::StreamManager stream_manager;
 
-    // Always collect information on multicells.
-    RunMulticells(stream_manager.get_ostream(multicell_filename));
-
-    // If we have a generation count, also collect evolution data.
+    // If we have a generation count, collect evolution data.
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
+
+    // Otherwise collect information on multicells.
+    else RunMulticells(stream_manager.get_ostream(multicell_filename));
   }
 };
 
