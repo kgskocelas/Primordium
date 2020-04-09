@@ -32,11 +32,26 @@
 
 /// Information about a full multi-cell organism
 struct Organism {
-  size_t start_ones = 0;
+  size_t num_ones = 0;
+  size_t gen = 0;
+
+  Organism(size_t in_ones) : num_ones(in_ones) { }
+  Organism(const Organism &) = default;
+  Organism & operator=(const Organism &) = default;
 };
 
 struct Population {
   emp::vector<Organism> orgs;
+  size_t num_samples;
+  Multicell & multicell;
+  emp::vector< emp::vector<double> > repro_cache;
+
+  Population(size_t pop_size, size_t initial_1s, size_t _samples, Multicell & _mc)
+    : orgs(pop_size, initial_1s), num_samples(_samples), multicell(_mc)
+    , repro_cache(multicell.genome_size + 1)
+  {
+    for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
+  }
 };
 
 struct Experiment {
@@ -46,6 +61,7 @@ struct Experiment {
   Multicell multicell;
 
   size_t gen_count = 0;      ///< Num generations to evolve (zero for analyze multicells)
+  size_t pop_size = 200;     ///< Num organisms in the population.
   bool print_reps = false;   ///< Should we print results for every replicate?
   bool print_trace = false;  ///< Should we show each step of a multicell?
 
@@ -74,9 +90,12 @@ struct Experiment {
                       multicell.start_1s, "NumOnes...") = { 5 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm',
                       multicell.mut_prob, "Probs...") = { 0.0 };
+    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
+
     combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g',
                       gen_count, "NumGens") = { 0 };
-    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
+    combos.AddSingleSetting("pop_size",  "Number of organisms in the population.", 'p',
+                      pop_size, "NumOrgs") = { 200 };
 
     combos.AddAction("help", "Print full list of options", 'h',
                      [this](){
@@ -148,6 +167,20 @@ struct Experiment {
     return total_results /= (double) num_runs;
   }
 
+  void EvolveTreatment(std::ostream & os=std::cout) {
+    // Setup the results cache.
+    const size_t num_samples = combos.GetValue<size_t>("data_count");
+    const size_t pop_size = combos.GetValue<size_t>("pop_size");
+    const size_t initial_1s = combos.GetValue<size_t>("initial_1s");
+
+    Population pop(pop_size, initial_1s, num_samples, multicell);
+
+    // Run through the generations.
+    for (size_t gen=0; gen <= gen_count; gen++) {
+
+    }
+  }
+
   /// Step through all configurations and collect multicell data for each.
   void RunMulticells(std::ostream & os) {
     // Print column headers.
@@ -177,7 +210,7 @@ struct Experiment {
   void RunEvolution(std::ostream & os) {
     combos.Reset();
     do {
-      RunResults treatment_results = SummarizeTreatment(os);
+      EvolveTreatment(os);
     } while (combos.Next());
   }
 
