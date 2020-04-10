@@ -143,14 +143,17 @@ struct Population {
   void PrintData(std::ostream & os=std::cout) {
     // Count up the number of organism with each bit count.
     emp::vector<size_t> bit_counts(repro_cache.size(), 0);
+    double total_bits = 0.0;
     for (Organism & org : orgs) {
       bit_counts[org.num_ones]++;
+      total_bits += (double) org.num_ones;
     }
 
     // And print the results.
     for (size_t i = 0; i < bit_counts.size(); i++) {
-      if (bit_counts[i]) os << i << " : " << bit_counts[i] << std::endl;
+      os << ", " << bit_counts[i];
     }
+    os << ", " << total_bits / (double) orgs.size();
   }
 };
 
@@ -284,7 +287,10 @@ struct Experiment {
 
     Population pop(pop_size, initial_1s, num_samples, multicell, random);
     pop.Run(gen_count, verbose);
-    pop.PrintData();
+
+    os << combos.CurString(", ");  // Output current setting combination data.
+    pop.PrintData(os);             // Output data for THIS population.
+    os << std::endl;
   }
 
   /// Step through all configurations and collect multicell data for each.
@@ -314,6 +320,12 @@ struct Experiment {
   }
 
   void RunEvolution(std::ostream & os) {
+    // Print column headers.
+    os << combos.GetHeaders();
+    const size_t max_bits = combos.MaxValue<size_t>("bit_size");
+    for (size_t i=0; i < max_bits; i++) os << ", " << i << "-ones";
+    os << ", ave_ones" << std::endl;
+
     combos.Reset();
     do {
       EvolveTreatment(os);
