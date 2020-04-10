@@ -33,7 +33,8 @@
 /// Information about a full multi-cell organism
 struct Organism {
   size_t num_ones = 0;
-  size_t gen = 0;
+  double gen = 0.0;
+  double repro_time = 0.0;
 
   Organism(size_t in_ones) : num_ones(in_ones) { }
   Organism(const Organism &) = default;
@@ -44,13 +45,65 @@ struct Population {
   emp::vector<Organism> orgs;
   size_t num_samples;
   Multicell & multicell;
+  emp::Random & random;
+  emp::TimeQueue<size_t> org_queue;
+  double ave_gen = 0.0;
   emp::vector< emp::vector<double> > repro_cache;
 
-  Population(size_t pop_size, size_t initial_1s, size_t _samples, Multicell & _mc)
-    : orgs(pop_size, initial_1s), num_samples(_samples), multicell(_mc)
+  Population(size_t pop_size, size_t initial_1s, size_t _samples,
+             Multicell & _mc, emp::Random & _rand)
+    : orgs(pop_size, initial_1s), num_samples(_samples), multicell(_mc), random(_rand)
     , repro_cache(multicell.genome_size + 1)
   {
     for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
+  }
+
+  double CalcBirthTime(size_t num_ones) {
+    auto & cur_cache = repro_cache[num_ones];
+    size_t sample_id = random.GetUInt(num_samples);
+    if (sample_id < cur_cache.size()) return cur_cache[sample_id] + org_queue.GetTime();
+
+    multicell.start_1s = num_ones;
+    multicell.SetupConfig();
+    multicell.InjectCell(multicell.MiddlePos());
+    double run_time = multicell.Run().run_time;
+
+    cur_cache.push_back(run_time);
+    return run_time + org_queue.GetTime();
+  }
+
+  void NextBirth() {
+    size_t parent_id = org_queue.Next();
+    Organism & parent = orgs[parent_id];
+
+    // If this organism has updated, skip it.
+    if (parent.repro_time != org_queue.GetTime()) return;
+
+    // Figure out where the offspring would go.
+    size_t offspring_id = random.GetUInt(orgs.size());
+    Organism & offspring = orgs[offspring_id];
+
+    ave_gen -= offspring.gen / (double) orgs.size();      // Remove old org from gen average.
+    if (parent_id != offspring_id) {                      // If the parent is not being replaced...
+      offspring = parent;                                 //   copy parent to offspring.
+      parent.repro_time = CalcBirthTime(parent.num_ones); //   figure out parent's NEXT repro time.
+      org_queue.Insert(parent_id, parent.repro_time);     //   schedule parent for next repro
+    }
+    offspring.gen += 1.0;                                 // Update offspring's generation.
+    ave_gen += offspring.gen / (double) orgs.size();      // Add new org to gen average.
+
+    // Setup offspring to give birth.
+    offspring.repro_time = CalcBirthTime(offspring.num_ones);
+    org_queue.Insert(offspring_id, offspring.repro_time);
+  }
+
+  void Run(double max_gen) {
+    // Setup the time queue.
+    for (size_t i = 0; i < orgs.size(); i++) {
+      org_queue.Insert(i, CalcBirthTime(orgs[i].num_ones));
+    }
+
+    while (ave_gen < max_gen) { NextBirth(); }
   }
 };
 
@@ -177,13 +230,10 @@ struct Experiment {
     const size_t num_samples = combos.GetValue<size_t>("sample_size");
     const size_t pop_size = combos.GetValue<size_t>("pop_size");
     const size_t initial_1s = combos.GetValue<size_t>("initial_1s");
+    const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
-    Population pop(pop_size, initial_1s, num_samples, multicell);
-
-    // Run through the generations.
-    for (size_t gen=0; gen <= gen_count; gen++) {
-
-    }
+    Population pop(pop_size, initial_1s, num_samples, multicell, random);
+    pop.Run(gen_count);
   }
 
   /// Step through all configurations and collect multicell data for each.
