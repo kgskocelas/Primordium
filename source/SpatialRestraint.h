@@ -62,6 +62,7 @@ struct Experiment {
 
   size_t gen_count = 0;      ///< Num generations to evolve (zero for analyze multicells)
   size_t pop_size = 200;     ///< Num organisms in the population.
+  size_t sample_size = 100;  ///< Num multicells to sample for each genotype.
   bool print_reps = false;   ///< Should we print results for every replicate?
   bool print_trace = false;  ///< Should we show each step of a multicell?
 
@@ -82,7 +83,7 @@ struct Experiment {
                       multicell.neighbors, "Sizes...") = { 8 };
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c',
                       multicell.cells_side, "NumCells...") = { 32 };
-    combos.AddSetting("size",       "Number of bits in genome?", 's',
+    combos.AddSetting("bit_size",   "Number of bits in genome?", 'b',
                       multicell.genome_size, "NumBits...") = { 10 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r',
                       multicell.restrain, "NumOnes...") = { 5 };
@@ -92,10 +93,13 @@ struct Experiment {
                       multicell.mut_prob, "Probs...") = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
-    combos.AddSingleSetting("gen_count",  "Num generations to evolve (0=analyze only)", 'g',
+    combos.AddSingleSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
                       gen_count, "NumGens") = { 0 };
-    combos.AddSingleSetting("pop_size",  "Number of organisms in the population.", 'p',
+    combos.AddSingleSetting("pop_size",    "Number of organisms in the population.", 'p',
                       pop_size, "NumOrgs") = { 200 };
+    combos.AddSingleSetting("sample_size", "Num. multicells sampled for fitness distribution.", 's',
+                      sample_size, "NumSamples") = { 200 };
+                      
 
     combos.AddAction("help", "Print full list of options", 'h',
                      [this](){
@@ -167,9 +171,10 @@ struct Experiment {
     return total_results /= (double) num_runs;
   }
 
+  /// Given the current configuration options, evolve a set of runs.
   void EvolveTreatment(std::ostream & os=std::cout) {
     // Setup the results cache.
-    const size_t num_samples = combos.GetValue<size_t>("data_count");
+    const size_t num_samples = combos.GetValue<size_t>("sample_size");
     const size_t pop_size = combos.GetValue<size_t>("pop_size");
     const size_t initial_1s = combos.GetValue<size_t>("initial_1s");
 
