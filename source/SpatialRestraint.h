@@ -55,7 +55,7 @@ struct Population {
     : orgs(pop_size, initial_1s), num_samples(_samples), multicell(_mc), random(_rand)
     , repro_cache(multicell.genome_size + 1)
   {
-    for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
+    // for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
   }
 
   double CalcBirthTime(size_t num_ones) {
@@ -67,6 +67,7 @@ struct Population {
     multicell.SetupConfig();
     multicell.InjectCell(multicell.MiddlePos());
     double run_time = multicell.Run().run_time;
+    std::cout << "run_time = " << run_time << std::endl;
 
     cur_cache.push_back(run_time);
     return run_time + org_queue.GetTime();
@@ -76,12 +77,20 @@ struct Population {
     size_t parent_id = org_queue.Next();
     Organism & parent = orgs[parent_id];
 
+    // std::cout << "DEBUG: NextBirth with parent_id=" << parent_id << std::endl;
+
     // If this organism has updated, skip it.
-    if (parent.repro_time != org_queue.GetTime()) return;
+    if (parent.repro_time != org_queue.GetTime()) {
+      // std::cout << "DEBUG: ...skipped; parent.repro_time=" << parent.repro_time
+      //           << ", but real time=" << org_queue.GetTime() << std::endl;
+      return;
+    }
 
     // Figure out where the offspring would go.
     size_t offspring_id = random.GetUInt(orgs.size());
     Organism & offspring = orgs[offspring_id];
+
+    // std::cout << "DEBUG: ...offspring_id=" << offspring_id << std::endl;
 
     ave_gen -= offspring.gen / (double) orgs.size();      // Remove old org from gen average.
     if (parent_id != offspring_id) {                      // If the parent is not being replaced...
@@ -100,10 +109,32 @@ struct Population {
   void Run(double max_gen) {
     // Setup the time queue.
     for (size_t i = 0; i < orgs.size(); i++) {
-      org_queue.Insert(i, CalcBirthTime(orgs[i].num_ones));
+      double repro_time = CalcBirthTime(orgs[i].num_ones);
+      org_queue.Insert(i, repro_time);
+      orgs[i].repro_time = repro_time;
     }
 
-    while (ave_gen < max_gen) { NextBirth(); }
+    double next_gen = 0.0;
+    while (ave_gen < max_gen) {
+      if (ave_gen > next_gen) {
+        std::cout << "Generation = " << (size_t) next_gen << std::endl;
+        next_gen += 1.0;
+      }
+      NextBirth();
+    }
+  }
+
+  void PrintData(std::ostream & os=std::cout) {
+    // Count up the number of organism with each bit count.
+    emp::vector<size_t> bit_counts(repro_cache.size(), 0);
+    for (Organism & org : orgs) {
+      bit_counts[org.num_ones]++;
+    }
+
+    // And print the results.
+    for (size_t i = 0; i < bit_counts.size(); i++) {
+      if (bit_counts[i]) os << i << " : " << bit_counts[i] << std::endl;
+    }
   }
 };
 
@@ -234,6 +265,7 @@ struct Experiment {
 
     Population pop(pop_size, initial_1s, num_samples, multicell, random);
     pop.Run(gen_count);
+    pop.PrintData();
   }
 
   /// Step through all configurations and collect multicell data for each.
