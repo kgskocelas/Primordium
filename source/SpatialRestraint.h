@@ -67,7 +67,7 @@ struct Population {
     multicell.SetupConfig();
     multicell.InjectCell(multicell.MiddlePos());
     double run_time = multicell.Run().run_time;
-    std::cout << "run_time = " << run_time << std::endl;
+    // std::cout << "run_time = " << run_time << std::endl;
 
     cur_cache.push_back(run_time);
     return run_time + org_queue.GetTime();
@@ -101,12 +101,20 @@ struct Population {
     offspring.gen += 1.0;                                 // Update offspring's generation.
     ave_gen += offspring.gen / (double) orgs.size();      // Add new org to gen average.
 
-    // Setup offspring to give birth.
+    // Handle mutations in the offspring.
+    if (random.P(multicell.mut_prob)) {
+      double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+      if (random.P(prob1)) offspring.num_ones--;
+      else offspring.num_ones++;
+    }
+
+
+    // Schedule offspring to give birth.
     offspring.repro_time = CalcBirthTime(offspring.num_ones);
     org_queue.Insert(offspring_id, offspring.repro_time);
   }
 
-  void Run(double max_gen) {
+  void Run(double max_gen, bool verbose=false) {
     // Setup the time queue.
     for (size_t i = 0; i < orgs.size(); i++) {
       double repro_time = CalcBirthTime(orgs[i].num_ones);
@@ -114,13 +122,21 @@ struct Population {
       orgs[i].repro_time = repro_time;
     }
 
-    double next_gen = 0.0;
-    while (ave_gen < max_gen) {
-      if (ave_gen > next_gen) {
-        std::cout << "Generation = " << (size_t) next_gen << std::endl;
-        next_gen += 1.0;
+    if (verbose) {
+      double next_gen = 0.0;
+      while (ave_gen < max_gen) {
+        if (verbose && ave_gen > next_gen) {
+          std::cout << "Generation = " << (size_t) next_gen << std::endl;
+          next_gen += 1.0;
+        }
+        NextBirth();
       }
-      NextBirth();
+    }
+
+    else {
+      while (ave_gen < max_gen) {
+        NextBirth();
+      }
     }
   }
 
@@ -149,6 +165,7 @@ struct Experiment {
   size_t sample_size = 100;  ///< Num multicells to sample for each genotype.
   bool print_reps = false;   ///< Should we print results for every replicate?
   bool print_trace = false;  ///< Should we show each step of a multicell?
+  bool verbose = false;      ///< Should we print extra information during the run?
 
   std::string evolution_filename;  ///< Output filename for evolution summary data.
   std::string multicell_filename;  ///< Output filename for multicell summary data.
@@ -168,11 +185,11 @@ struct Experiment {
     combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c',
                       multicell.cells_side, "NumCells...") = { 32 };
     combos.AddSetting("bit_size",   "Number of bits in genome?", 'b',
-                      multicell.genome_size, "NumBits...") = { 10 };
+                      multicell.genome_size, "NumBits...") = { 100 };
     combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r',
-                      multicell.restrain, "NumOnes...") = { 5 };
+                      multicell.restrain, "NumOnes...") = { 50 };
     combos.AddSetting("initial_1s", "How many 1s in starting cell?", 'i',
-                      multicell.start_1s, "NumOnes...") = { 5 };
+                      multicell.start_1s, "NumOnes...") = { 50 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm',
                       multicell.mut_prob, "Probs...") = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
@@ -198,6 +215,8 @@ struct Experiment {
                             evolution_filename, "Filename") = { "evolution.dat" };
     combos.AddSingleSetting("multicell_filename", "Filename for multicell data", 'M',
                             multicell_filename, "Filename") = { "multicell.dat" };
+    combos.AddAction("verbose", "Print extra information during the run", 'v',
+                     [this](){ verbose = true; } );
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
@@ -264,7 +283,7 @@ struct Experiment {
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
     Population pop(pop_size, initial_1s, num_samples, multicell, random);
-    pop.Run(gen_count);
+    pop.Run(gen_count, verbose);
     pop.PrintData();
   }
 
