@@ -280,17 +280,22 @@ struct Experiment {
   /// Given the current configuration options, evolve a set of runs.
   void EvolveTreatment(std::ostream & os=std::cout) {
     // Setup the results cache.
+    const size_t num_runs = combos.GetValue<size_t>("data_count");
     const size_t num_samples = combos.GetValue<size_t>("sample_size");
     const size_t pop_size = combos.GetValue<size_t>("pop_size");
     const size_t initial_1s = combos.GetValue<size_t>("initial_1s");
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
-    Population pop(pop_size, initial_1s, num_samples, multicell, random);
-    pop.Run(gen_count, verbose);
+    for (size_t run_id = 0; run_id < num_runs; run_id++) {
+      if (verbose) std::cout << "START Treatment # " << combos.GetComboID()
+                             << " : Run " << run_id << std::endl;
+      Population pop(pop_size, initial_1s, num_samples, multicell, random);
+      pop.Run(gen_count, verbose);
 
-    os << combos.CurString(", ");  // Output current setting combination data.
-    pop.PrintData(os);             // Output data for THIS population.
-    os << std::endl;
+      os << combos.CurString(", ");  // Output current setting combination data.
+      pop.PrintData(os);             // Output data for THIS population.
+      os << std::endl;
+    }
   }
 
   /// Step through all configurations and collect multicell data for each.
