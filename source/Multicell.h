@@ -73,6 +73,8 @@ struct RunResults {
   }
 };
 
+/// A single "multicell" organism.
+
 struct Multicell {
   emp::Random & random;
 
