@@ -44,18 +44,28 @@ struct Organism {
 struct Population {
   emp::vector<Organism> orgs;
   size_t num_samples;
-  Multicell & multicell;
-  emp::Random & random;
   emp::TimeQueue<size_t> org_queue;
   double ave_gen = 0.0;
   emp::vector< emp::vector<double> > repro_cache;
 
+  // Shared resources with Experiment
+  Multicell & multicell;
+  emp::Random & random;
+  emp::StreamManager & stream_manager;
+
   Population(size_t pop_size, size_t initial_1s, size_t _samples,
-             Multicell & _mc, emp::Random & _rand)
-    : orgs(pop_size, initial_1s), num_samples(_samples), multicell(_mc), random(_rand)
-    , repro_cache(multicell.genome_size + 1)
+             Multicell & _mc, emp::Random & _rand, emp::StreamManager & _smanager)
+    : orgs(pop_size, initial_1s), num_samples(_samples)
+    , repro_cache(_mc.genome_size + 1)
+    , multicell(_mc), random(_rand), stream_manager(_smanager)
   {
     // for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
+  }
+
+  double CalcAveOneCount() {
+    double total_bits = 0.0;
+    for (Organism & org : orgs) total_bits += (double) org.num_ones;
+    return total_bits / (double) orgs.size();
   }
 
   double CalcBirthTime(size_t num_ones) {
@@ -114,7 +124,7 @@ struct Population {
     org_queue.Insert(offspring_id, offspring.repro_time);
   }
 
-  void Run(double max_gen, bool verbose=false) {
+  void Run(double max_gen, const std::string run_name="", bool verbose=false) {
     // Setup the time queue.
     for (size_t i = 0; i < orgs.size(); i++) {
       double repro_time = CalcBirthTime(orgs[i].num_ones);
@@ -122,12 +132,17 @@ struct Population {
       orgs[i].repro_time = repro_time;
     }
 
-    if (verbose) {
-      double next_gen = 0.0;
+    // If verbose or print_reps is turned on, we need to track the current generation.
+    if (verbose || run_name.size()) {
+      std::ostream & os(stream_manager.get_ostream(run_name));
+
+      os << "generation, ave_ones\n";
+
+      double next_gen = -1.0;
       while (ave_gen < max_gen) {
-        if (verbose && ave_gen > next_gen) {
-          std::cout << "Generation = " << (size_t) next_gen << std::endl;
+        if (ave_gen > next_gen) {
           next_gen += 1.0;
+          os << (size_t) next_gen << ", " << CalcAveOneCount() << std::endl;
         }
         NextBirth();
       }
@@ -143,17 +158,13 @@ struct Population {
   void PrintData(std::ostream & os=std::cout) {
     // Count up the number of organism with each bit count.
     emp::vector<size_t> bit_counts(repro_cache.size(), 0);
-    double total_bits = 0.0;
-    for (Organism & org : orgs) {
-      bit_counts[org.num_ones]++;
-      total_bits += (double) org.num_ones;
-    }
+    for (Organism & org : orgs) bit_counts[org.num_ones]++;
 
     // And print the results.
     for (size_t i = 0; i < bit_counts.size(); i++) {
       os << ", " << bit_counts[i];
     }
-    os << ", " << total_bits / (double) orgs.size();
+    os << ", " << CalcAveOneCount();
   }
 };
 
@@ -170,8 +181,9 @@ struct Experiment {
   bool print_trace = false;  ///< Should we show each step of a multicell?
   bool verbose = false;      ///< Should we print extra information during the run?
 
-  std::string evolution_filename;  ///< Output filename for evolution summary data.
-  std::string multicell_filename;  ///< Output filename for multicell summary data.
+  emp::StreamManager stream_manager;  ///< Manage files
+  std::string evolution_filename;     ///< Output filename for evolution summary data.
+  std::string multicell_filename;     ///< Output filename for multicell summary data.
 
   using TreatmentResults = emp::vector<RunResults>;
   using MulticellResults = emp::vector<TreatmentResults>;
@@ -210,7 +222,7 @@ struct Experiment {
                        combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
                        exit(1);
                       } );
-    combos.AddAction("print_reps", "Print timings for each replicate", 'P',
+    combos.AddAction("print_reps", "Print data for each replicate", 'P',
                      [this](){ print_reps = true; } );
     combos.AddAction("trace", "Show each step of a multicell", 'T',
                      [this](){ print_trace = true; } );
@@ -289,8 +301,8 @@ struct Experiment {
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
       if (verbose) std::cout << "START Treatment # " << combos.GetComboID()
                              << " : Run " << run_id << std::endl;
-      Population pop(pop_size, initial_1s, num_samples, multicell, random);
-      pop.Run(gen_count, verbose);
+      Population pop(pop_size, initial_1s, num_samples, multicell, random, stream_manager);
+      pop.Run(gen_count, "", verbose);
 
       os << combos.CurString(", ");  // Output current setting combination data.
       pop.PrintData(os);             // Output data for THIS population.
@@ -342,8 +354,6 @@ struct Experiment {
     size_t gen_count = combos.Values<size_t>("gen_count")[0];
     std::string evolution_filename = combos.Values<std::string>("evolution_filename")[0];
     std::string multicell_filename = combos.Values<std::string>("multicell_filename")[0];
-
-    emp::StreamManager stream_manager;
 
     // If we have a generation count, collect evolution data.
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
