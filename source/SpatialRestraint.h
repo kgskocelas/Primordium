@@ -76,7 +76,7 @@ struct Population {
     multicell.start_1s = num_ones;
     multicell.SetupConfig();
     multicell.InjectCell(multicell.MiddlePos());
-    double run_time = multicell.Run().run_time;
+    double run_time = multicell.Run().GetReproTime();
     // std::cout << "run_time = " << run_time << std::endl;
 
     cur_cache.push_back(run_time);
@@ -272,7 +272,7 @@ struct Experiment {
     // Conduct all replicates and output the information.    
     for (size_t i = 0; i < num_runs; i++) {
       treatment_results[i] = TestMulticell();
-      if (print_reps) os << ", " << treatment_results[i].run_time;
+      if (print_reps) os << ", " << treatment_results[i].GetReproTime();
     }
 
     return treatment_results;
@@ -290,7 +290,7 @@ struct Experiment {
     RunResults total_results(multicell.genome_size);
     for (size_t i = 0; i < num_runs; i++) {
       treatment_results[i] = TestMulticell();
-      if (print_reps) os << ", " << treatment_results[i].run_time;
+      if (print_reps) os << ", " << treatment_results[i].GetReproTime();
       total_results += treatment_results[i];
     }
 
@@ -340,7 +340,7 @@ struct Experiment {
 
       RunResults treatment_results = SummarizeTreatment(os);
 
-      os << ", " << treatment_results.run_time
+      os << ", " << treatment_results.GetReproTime()
          << ", " << (treatment_results.CountRestrained(multicell.restrain) / (double) multicell.GetSize())
          << std::endl;
     } while (combos.Next());
