@@ -32,6 +32,7 @@ struct Cell {
 struct RunResults {
   double run_time;                  ///< What was the replication time of this group?
   emp::vector<double> cell_counts;  ///< How many cells have each bit count?
+  double extra_cost;                ///< Extra cost due to unrestrained cells.
 
   RunResults() : run_time(0.0), cell_counts(0) { ; }
   RunResults(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
@@ -71,6 +72,9 @@ struct RunResults {
     for (size_t i = 0; i < threshold; i++) total += cell_counts[i];
     return total;
   }
+
+  /// Caclulate the full replication time.
+  double GetReproTime() const { return run_time + extra_cost; }
 };
 
 /// A single "multicell" organism.
@@ -93,6 +97,7 @@ struct Multicell {
   size_t restrain = 5;       ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;       ///< How many ones in the starting cell?
   double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
+  double unrestrained_cost = 0.0; ///< Extra cost for each unrestrained cell when full.
 
   Multicell(emp::Random & _random) : random(_random), cell_queue(100.0) { }
 
@@ -306,7 +311,12 @@ struct Multicell {
     // Setup the results and return them.
     RunResults results(genome_size);
     results.run_time = cell_queue.GetTime();
-    for (const auto & cell : cells) results.cell_counts[cell.num_ones] += 1.0;
+    size_t unrestrained_count = 0;
+    for (const auto & cell : cells) {
+      if (cell.num_ones < restrain) unrestrained_count++;
+      results.cell_counts[cell.num_ones] += 1.0;
+    }
+    results.extra_cost = unrestrained_count * unrestrained_cost;
 
     return results;
   }
