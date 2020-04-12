@@ -136,13 +136,19 @@ struct Population {
     if (verbose || run_name.size()) {
       std::ostream & os(stream_manager.get_ostream(run_name));
 
+      bool print_both = verbose && run_name.size();  // Should we send output to both places?
+
       os << "generation, ave_ones\n";
+      if (print_both) std::cout << "generation, ave_ones\n";
 
       double next_gen = -1.0;
+      std::string out_line = "";
       while (ave_gen < max_gen) {
         if (ave_gen > next_gen) {
           next_gen += 1.0;
-          os << (size_t) next_gen << ", " << CalcAveOneCount() << std::endl;
+          out_line = emp::to_string((size_t) next_gen, ", ", CalcAveOneCount());
+          os << out_line << std::endl;
+          if (print_both) std::cout << out_line << std::endl;
         }
         NextBirth();
       }
@@ -224,7 +230,7 @@ struct Experiment {
                       } );
     combos.AddAction("print_reps", "Print data for each replicate", 'P',
                      [this](){ print_reps = true; } );
-    combos.AddAction("trace", "Show each step of a multicell", 'T',
+    combos.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
                      [this](){ print_trace = true; } );
     combos.AddSingleSetting("evolution_filename", "Filename for multicell data", 'E',
                             evolution_filename, "Filename") = { "evolution.dat" };
@@ -301,8 +307,10 @@ struct Experiment {
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
       if (verbose) std::cout << "START Treatment # " << combos.GetComboID()
                              << " : Run " << run_id << std::endl;
+      std::string run_name =
+        print_trace ? emp::to_string('t',combos.GetComboID(),'r',run_id,".dat") : "";
       Population pop(pop_size, initial_1s, num_samples, multicell, random, stream_manager);
-      pop.Run(gen_count, "", verbose);
+      pop.Run(gen_count, run_name, verbose);
 
       os << combos.CurString(", ");  // Output current setting combination data.
       pop.PrintData(os);             // Output data for THIS population.
