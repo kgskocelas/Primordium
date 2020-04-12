@@ -46,6 +46,7 @@ struct RunResults {
     emp_assert(cell_counts.size() == in.cell_counts.size());
     run_time += in.run_time;
     for (size_t i=0; i < cell_counts.size(); i++) cell_counts[i] += in.cell_counts[i];
+    extra_cost += extra_cost;
     return *this;
   }
 
@@ -53,6 +54,7 @@ struct RunResults {
     emp_assert(denom != 0.0);
     run_time /= denom;
     for (double & x : cell_counts) x /= denom;
+    extra_cost /= denom;
     return *this;
   }
 
