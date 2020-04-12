@@ -36,7 +36,8 @@ struct Organism {
   double gen = 0.0;
   double repro_time = 0.0;
 
-  Organism(size_t in_ones) : num_ones(in_ones) { }
+  Organism(size_t in_ones, double in_gen=0.0, double in_repro_time=0.0)
+   : num_ones(in_ones), gen(in_gen), repro_time(in_repro_time) { }
   Organism(const Organism &) = default;
   Organism & operator=(const Organism &) = default;
 };
@@ -62,16 +63,34 @@ struct Population {
     // for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
   }
 
-  double CalcAveOneCount() {
+  double CalcAveOnes() {
     double total_bits = 0.0;
     for (Organism & org : orgs) total_bits += (double) org.num_ones;
     return total_bits / (double) orgs.size();
   }
 
-  double CalcBirthTime(size_t num_ones) {
+  double CalcAveGen() {
+    double total_gen = 0.0;
+    for (Organism & org : orgs) total_gen += org.gen;
+    return total_gen / (double) orgs.size();
+  }
+
+  Organism CalcAveOrg() {
+    Organism total_org(0);
+    for (Organism & org : orgs) {
+      total_org.num_ones += (double) org.num_ones;
+      total_org.gen += org.gen;
+      total_org.repro_time += org.repro_time;
+    }
+    return Organism(total_org.num_ones/orgs.size(),
+                    total_org.gen / (double) orgs.size(),
+                    total_org.repro_time / (double) orgs.size());
+  }
+
+  double CalcReproDuration(size_t num_ones) {
     auto & cur_cache = repro_cache[num_ones];
     size_t sample_id = random.GetUInt(num_samples);
-    if (sample_id < cur_cache.size()) return cur_cache[sample_id] + org_queue.GetTime();
+    if (sample_id < cur_cache.size()) return cur_cache[sample_id];
 
     multicell.start_1s = num_ones;
     multicell.SetupConfig();
@@ -80,7 +99,17 @@ struct Population {
     // std::cout << "run_time = " << run_time << std::endl;
 
     cur_cache.push_back(run_time);
-    return run_time + org_queue.GetTime();
+    return run_time;
+  }
+
+  double CalcBirthTime(size_t num_ones) {
+    return CalcReproDuration(num_ones) + org_queue.GetTime();
+  }
+
+  double CalcAveReproDuration() {
+    double total_rt = 0.0;
+    for (Organism & org : orgs) total_rt += CalcReproDuration(org.num_ones);
+    return total_rt / (double) orgs.size();
   }
 
   void NextBirth() {
@@ -138,15 +167,18 @@ struct Population {
 
       bool print_both = verbose && run_name.size();  // Should we send output to both places?
 
-      os << "generation, ave_ones\n";
-      if (print_both) std::cout << "generation, ave_ones\n";
+      os << "generation, ave_ones, ave_repro_time\n";
+      if (print_both) std::cout << "generation, ave_ones, ave_repro_time\n";
 
       double next_gen = -1.0;
       std::string out_line = "";
       while (ave_gen < max_gen) {
         if (ave_gen > next_gen) {
           next_gen += 1.0;
-          out_line = emp::to_string((size_t) next_gen, ", ", CalcAveOneCount());
+          out_line = emp::to_string((size_t) next_gen,
+                                    ", ", CalcAveOnes(),
+                                    ", ", CalcAveReproDuration()
+                                   );
           os << out_line << std::endl;
           if (print_both) std::cout << out_line << std::endl;
         }
@@ -170,7 +202,7 @@ struct Population {
     for (size_t i = 0; i < bit_counts.size(); i++) {
       os << ", " << bit_counts[i];
     }
-    os << ", " << CalcAveOneCount();
+    os << ", " << CalcAveOnes();
   }
 };
 
