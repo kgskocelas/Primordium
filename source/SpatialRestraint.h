@@ -213,6 +213,8 @@ struct Experiment {
                       multicell.start_1s, "NumOnes...") = { 50 };
     combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm',
                       multicell.mut_prob, "Probs...") = { 0.0 };
+    combos.AddSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
+                      multicell.unrestrained_cost, "Costs...") = { 0.0 };
     combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
 
     combos.AddSingleSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
