@@ -167,8 +167,8 @@ struct Population {
 
       bool print_both = verbose && run_name.size();  // Should we send output to both places?
 
-      os << "generation, ave_ones, ave_repro_time\n";
-      if (print_both) std::cout << "generation, ave_ones, ave_repro_time\n";
+      os << "#generation, ave_ones, ave_repro_time\n";
+      if (print_both) std::cout << "#generation, ave_ones, ave_repro_time\n";
 
       double next_gen = -1.0;
       std::string out_line = "";
@@ -339,7 +339,7 @@ struct Experiment {
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
-      if (verbose) std::cout << "START Treatment # " << combos.GetComboID()
+      if (verbose) std::cout << "START Treatment #" << combos.GetComboID()
                              << " : Run " << run_id << std::endl;
       std::string run_name =
         print_trace ? emp::to_string('t',combos.GetComboID(),'r',run_id,".dat") : "";
@@ -355,7 +355,7 @@ struct Experiment {
   /// Step through all configurations and collect multicell data for each.
   void RunMulticells(std::ostream & os) {
     // Print column headers.
-    os << combos.GetHeaders();
+    os << "#" << combos.GetHeaders();
     if (print_reps) {
       const size_t num_runs = combos.GetValue<size_t>("data_count");
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
@@ -380,9 +380,9 @@ struct Experiment {
 
   void RunEvolution(std::ostream & os) {
     // Print column headers.
-    os << combos.GetHeaders();
+    os << "#" << combos.GetHeaders();
     const size_t max_bits = combos.MaxValue<size_t>("bit_size");
-    for (size_t i=0; i < max_bits; i++) os << ", " << i << "-ones";
+    for (size_t i=0; i <= max_bits; i++) os << ", " << i << "-ones";
     os << ", ave_ones" << std::endl;
 
     combos.Reset();
