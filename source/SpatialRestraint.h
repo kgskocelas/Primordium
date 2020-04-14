@@ -43,11 +43,16 @@ struct Organism {
 };
 
 struct Population {
-  emp::vector<Organism> orgs;
-  size_t num_samples;
-  emp::TimeQueue<size_t> org_queue;
-  double ave_gen = 0.0;
-  emp::vector< emp::vector<double> > repro_cache;
+  emp::vector<Organism> orgs;        ///< Actual organisms in this population.
+  size_t num_samples;                ///< Number of samples used to approximate repro distributions.
+  emp::TimeQueue<size_t> org_queue;  ///< Track times for when orgs will replicate.
+  double ave_gen = 0.0;              ///< Current generation of population (ave across orgs)
+
+  /// We need to store the time distribution for reproduction.
+  /// The outer vector is the number of ones.  The inner vector is a set of
+  /// how long multicells took to replicate with that number of ones.
+  /// Dimensions are GENOME_SIZE+1 -by- NUM_SAMPLES
+  emp::vector< emp::vector<double> > repro_cache;  
 
   // Shared resources with Experiment
   Multicell & multicell;
@@ -60,7 +65,6 @@ struct Population {
     , repro_cache(_mc.genome_size + 1)
     , multicell(_mc), random(_rand), stream_manager(_smanager)
   {
-    // for (auto & size_cache : repro_cache) size_cache.resize(num_samples, 0.0);
   }
 
   double CalcAveOnes() {
@@ -88,7 +92,7 @@ struct Population {
   }
 
   double CalcReproDuration(size_t num_ones) {
-    auto & cur_cache = repro_cache[num_ones];
+    emp::vector<double> & cur_cache = repro_cache[num_ones];
     size_t sample_id = random.GetUInt(num_samples);
     if (sample_id < cur_cache.size()) return cur_cache[sample_id];
 
@@ -253,8 +257,10 @@ struct Experiment {
                       gen_count, "NumGens") = { 0 };
     combos.AddSingleSetting("pop_size",    "Number of organisms in the population.", 'p',
                       pop_size, "NumOrgs") = { 200 };
-    combos.AddSingleSetting("sample_size", "Num. multicells sampled for fitness distribution.", 's',
+    combos.AddSingleSetting("sample_size", "Num multicells sampled for distributions.", 's',
                       sample_size, "NumSamples") = { 200 };
+    combos.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
+                     [this](){ multicell.one_check = true; } );
                       
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -331,7 +337,6 @@ struct Experiment {
 
   /// Given the current configuration options, evolve a set of runs.
   void EvolveTreatment(std::ostream & os=std::cout) {
-    // Setup the results cache.
     const size_t num_runs = combos.GetValue<size_t>("data_count");
     const size_t num_samples = combos.GetValue<size_t>("sample_size");
     const size_t pop_size = combos.GetValue<size_t>("pop_size");
@@ -339,8 +344,8 @@ struct Experiment {
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
-      if (verbose) std::cout << "START Treatment #" << combos.GetComboID()
-                             << " : Run " << run_id << std::endl;
+      std::cout << "START Treatment #" << combos.GetComboID()
+                << " : Run " << run_id << std::endl;
       std::string run_name =
         print_trace ? emp::to_string('t',combos.GetComboID(),'r',run_id,".dat") : "";
       Population pop(pop_size, initial_1s, num_samples, multicell, random, stream_manager);
