@@ -251,7 +251,7 @@ struct Multicell {
   /// Once we have current settings locked in, reset all non-setting values appropriately.
   void SetupConfig() {
     // Setup initial multicell to be empty; keep count of resources in each cell.
-    cells.resize(0);         // Clear out any current cells.
+    cells.resize(0);           // Clear out any current cells.
     cells.resize(GetSize());   // Put in new cells initialized to 0.
     for (size_t id = 0; id < cells.size(); id++) {
       cells[id].id = id;
@@ -259,7 +259,7 @@ struct Multicell {
     }
     is_full.resize(0);
     is_full.resize(GetSize(), 0);
-    cell_queue.Clear();
+    cell_queue.Reset();
     num_cells = 0;
 
     if (emp::count_bits(cells_side) != 1) {
