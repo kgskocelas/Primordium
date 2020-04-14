@@ -100,6 +100,7 @@ struct Multicell {
   size_t start_1s = 5;       ///< How many ones in the starting cell?
   double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
   double unrestrained_cost = 0.0; ///< Extra cost for each unrestrained cell when full.
+  bool one_check = false;    ///< Should restrained check only one cell to find empty?
 
   Multicell(emp::Random & _random) : random(_random), cell_queue(100.0) { }
 
@@ -292,8 +293,8 @@ struct Multicell {
         DoBirth(next_cell, parent);
       }
 
-      // Otherwise it is restrained and not empty; keep looking!
-      else {
+      // Otherwise it is restrained and not empty; unless limited  to one, keep looking!
+      else if (!one_check) {
         next_id = EmptyNeighbor(parent.id);
         if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
       }
