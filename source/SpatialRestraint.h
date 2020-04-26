@@ -421,9 +421,9 @@ struct Experiment {
 
   // Run all of the configurations in an entire set.
   void Run() {
-    size_t gen_count = config.ComboValues<size_t>("gen_count")[0];
-    std::string evolution_filename = config.ComboValues<std::string>("evolution_filename")[0];
-    std::string multicell_filename = config.ComboValues<std::string>("multicell_filename")[0];
+    size_t gen_count = config.GetValue<size_t>("gen_count");
+    std::string evolution_filename = config.GetValue<std::string>("evolution_filename");
+    std::string multicell_filename = config.GetValue<std::string>("multicell_filename");
 
     // If we have a generation count, collect evolution data.
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
