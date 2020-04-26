@@ -20,8 +20,7 @@
 #include <fstream>
 #include <set>
 
-#include "config/command_line.h"
-#include "config/SettingCombos.h"
+#include "config/SettingConfig.h"
 #include "tools/BitVector.h"
 #include "tools/Distribution.h"
 #include "tools/StreamManager.h"
@@ -223,17 +222,18 @@ struct Population {
 
 struct Experiment {
   emp::Random random;
-  emp::SettingCombos combos;
+  emp::SettingConfig config;
   std::string exe_name;      ///< Name of executable used to start this run.
   Multicell multicell;
 
-  size_t gen_count = 0;      ///< Num generations to evolve (zero for analyze multicells)
-  size_t pop_size = 200;     ///< Num organisms in the population.
-  size_t sample_size = 100;  ///< Num multicells to sample for each genotype.
-  bool reset_cache = false;  ///< Share the cache by default.
-  bool print_reps = false;   ///< Should we print results for every replicate?
-  bool print_trace = false;  ///< Should we show each step of a multicell?
-  bool verbose = false;      ///< Should we print extra information during the run?
+  size_t gen_count = 0;          ///< Num generations to evolve (zero for analyze multicells)
+  size_t pop_size = 200;         ///< Num organisms in the population.
+  size_t sample_size = 100;      ///< Num multicells to sample for each genotype.
+  bool balance_predict = false;  ///< Try to predict the mutation-selection balance.
+  bool print_reps = false;       ///< Should we print results for every replicate?
+  bool print_trace = false;      ///< Should we show each step of a multicell?
+  bool reset_cache = false;      ///< Share the cache by default.
+  bool verbose = false;          ///< Should we print extra information during the run?
 
   emp::StreamManager stream_manager;  ///< Manage files
   std::string evolution_filename;     ///< Output filename for evolution summary data.
@@ -251,60 +251,62 @@ struct Experiment {
     // letters are used to control model parameters, while capital letters are used to control
     // output.  The one exception is -h for '--help' which is otherwise too standard.
     // The order below sets the order that combinations are tested in. 
-    // AVAILABLE OPTION FLAGS: efjklqwxyz ABCDFGHIJKLNOQRSUVWXYZ
+    // AVAILABLE OPTION FLAGS: efjklqwxyz ACDFGHIJKLNOQRSUVWXYZ
 
-    combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't',
-                       multicell.time_range, "TimeUnits...") = { 50 };
-    combos.AddSetting("neighbors",  "Neighborhood size for replication", 'n',
-                      multicell.neighbors, "Sizes...") = { 8 };
-    combos.AddSetting("cells_side", "Cells on side of (square) multicell", 'c',
-                      multicell.cells_side, "NumCells...") = { 32 };
-    combos.AddSetting("bit_size",   "Number of bits in genome?", 'b',
-                      multicell.genome_size, "NumBits...") = { 100 };
-    combos.AddSetting("restrain",   "Num ones in genome for restraint?", 'r',
-                      multicell.restrain, "NumOnes...") = { 50 };
-    combos.AddSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
-                      multicell.start_1s, "NumOnes...") = { 50 };
-    combos.AddSetting("mut_prob",   "Probability of mutation in offspring", 'm',
-                      multicell.mut_prob, "Probs...") = { 0.0 };
-    combos.AddSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
-                      multicell.unrestrained_cost, "Costs...") = { 0.0 };
-    combos.AddSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
-    combos.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
+    config.AddComboSetting("time_range", "Rep time = 100.0 + random(time_range)", 't',
+                           multicell.time_range, "TimeUnits...") = { 50 };
+    config.AddComboSetting("neighbors",  "Neighborhood size for replication", 'n',
+                           multicell.neighbors, "Sizes...") = { 8 };
+    config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
+                           multicell.cells_side, "NumCells...") = { 32 };
+    config.AddComboSetting("bit_size",   "Number of bits in genome?", 'b',
+                           multicell.genome_size, "NumBits...") = { 100 };
+    config.AddComboSetting("restrain",   "Num ones in genome for restraint?", 'r',
+                           multicell.restrain, "NumOnes...") = { 50 };
+    config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
+                           multicell.start_1s, "NumOnes...") = { 50 };
+    config.AddComboSetting("mut_prob",   "Probability of mutation in offspring", 'm',
+                           multicell.mut_prob, "Probs...") = { 0.0 };
+    config.AddComboSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
+                           multicell.unrestrained_cost, "Costs...") = { 0.0 };
+    config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
+    config.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
                      [this](){ multicell.one_check = true; } );
 
-    combos.AddSingleSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
+    config.AddSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
                       gen_count, "NumGens") = { 0 };
-    combos.AddSingleSetting("pop_size",    "Number of organisms in the population.", 'p',
+    config.AddSetting("pop_size",    "Number of organisms in the population.", 'p',
                       pop_size, "NumOrgs") = { 200 };
-    combos.AddSingleSetting("sample_size", "Num multicells sampled for distributions.", 's',
+    config.AddSetting("sample_size", "Num multicells sampled for distributions.", 's',
                       sample_size, "NumSamples") = { 200 };
                       
 
-    combos.AddAction("help", "Print full list of options", 'h',
+    config.AddAction("balance_predict", "Predict the mutation-selection balance [NOT YET IMPLEMENTED!]", 'B',
+                     [this](){ balance_predict = true; } );
+    config.AddAction("help", "Print full list of options", 'h',
                      [this](){
-                       combos.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
+                       config.PrintHelp(exe_name, " -n 0,4,8 -r 0,1 -t 4,8,16,32 -d 100");
                        exit(1);
                       } );
-    combos.AddSingleSetting("evolution_filename", "Filename for multicell data", 'E',
-                            evolution_filename, "Filename") = { "evolution.dat" };
-    combos.AddAction("independent_caches", "Use a distinct cache for each run", 'i',
+    config.AddSetting("evolution_filename", "Filename for multicell data", 'E',
+                      evolution_filename, "Filename") = "evolution.dat";
+    config.AddAction("independent_caches", "Use a distinct cache for each run", 'i',
                      [this](){ reset_cache = true; } );
-    combos.AddSingleSetting("multicell_filename", "Filename for multicell data", 'M',
-                            multicell_filename, "Filename") = { "multicell.dat" };
-    combos.AddAction("print_reps", "Print data for each replicate", 'P',
+    config.AddSetting("multicell_filename", "Filename for multicell data", 'M',
+                      multicell_filename, "Filename") = "multicell.dat";
+    config.AddAction("print_reps", "Print data for each replicate", 'P',
                      [this](){ print_reps = true; } );
-    combos.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
+    config.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
                      [this](){ print_trace = true; } );
-    combos.AddAction("verbose", "Print extra information during the run", 'v',
+    config.AddAction("verbose", "Print extra information during the run", 'v',
                      [this](){ verbose = true; } );
 
     // Process the command-line options
-    args = combos.ProcessOptions(args);
+    config.ProcessOptions(args);
 
     // Fail if there are any unknown args.
-    if (args.size()) {
-      std::cerr << "ERROR: Unknown options: " << emp::to_string(args) << "\n";
+    if (config.HasUnusedArgs()) {
+      std::cerr << "ERROR: Unknown options: " << emp::to_string(config.GetUnusedArgs()) << "\n";
       exit(2);
     }
   }
@@ -322,8 +324,8 @@ struct Experiment {
   }
 
   TreatmentResults & RunTreatment(std::ostream & os=std::cout) {
-    const size_t num_runs = combos.GetValue<size_t>("data_count");
-    const size_t combo_id = combos.GetComboID();
+    const size_t num_runs = config.GetValue<size_t>("data_count");
+    const size_t combo_id = config.GetComboID();
     TreatmentResults & treatment_results = base_results[combo_id];
     treatment_results.resize(num_runs);
 
@@ -337,8 +339,8 @@ struct Experiment {
   }
 
   RunResults SummarizeTreatment(std::ostream & os=std::cout) {
-    const size_t num_runs = combos.GetValue<size_t>("data_count");
-    const size_t combo_id = combos.GetComboID();
+    const size_t num_runs = config.GetValue<size_t>("data_count");
+    const size_t combo_id = config.GetComboID();
 
     // Setup room for the data being collected.
     TreatmentResults & treatment_results = base_results[combo_id];
@@ -357,22 +359,22 @@ struct Experiment {
 
   /// Given the current configuration options, evolve a set of runs.
   void EvolveTreatment(std::ostream & os=std::cout) {
-    const size_t num_runs = combos.GetValue<size_t>("data_count");
-    const size_t num_samples = combos.GetValue<size_t>("sample_size");
-    const size_t pop_size = combos.GetValue<size_t>("pop_size");
-    const size_t ancestor_1s = combos.GetValue<size_t>("ancestor_1s");
-    const size_t gen_count = combos.Values<size_t>("gen_count")[0];
+    const size_t num_runs = config.GetValue<size_t>("data_count");
+    const size_t num_samples = config.GetValue<size_t>("sample_size");
+    const size_t pop_size = config.GetValue<size_t>("pop_size");
+    const size_t ancestor_1s = config.GetValue<size_t>("ancestor_1s");
+    const size_t gen_count = config.ComboValues<size_t>("gen_count")[0];
 
     Population pop(pop_size, ancestor_1s, num_samples, multicell, random, stream_manager);
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
-      std::cout << "START Treatment #" << combos.GetComboID()
+      std::cout << "START Treatment #" << config.GetComboID()
                 << " : Run " << run_id << std::endl;
       std::string run_name =
-        print_trace ? emp::to_string('t',combos.GetComboID(),'r',run_id,".dat") : "";
+        print_trace ? emp::to_string('t',config.GetComboID(),'r',run_id,".dat") : "";
       pop.Reset(pop_size, ancestor_1s, reset_cache);
       pop.Run(gen_count, run_name, verbose);
 
-      os << combos.CurString(", ");  // Output current setting combination data.
+      os << config.CurComboString(", ");  // Output current setting combination data.
       pop.PrintData(os);             // Output data for THIS population.
       os << std::endl;
     }
@@ -381,47 +383,47 @@ struct Experiment {
   /// Step through all configurations and collect multicell data for each.
   void RunMulticells(std::ostream & os) {
     // Print column headers.
-    os << "#" << combos.GetHeaders();
+    os << "#" << config.GetComboHeaders();
     if (print_reps) {
-      const size_t num_runs = combos.GetValue<size_t>("data_count");
+      const size_t num_runs = config.GetValue<size_t>("data_count");
       for (size_t i=0; i < num_runs; i++) os << ", run" << i;
     }
     os << ", ave_time, frac_restrain" << std::endl;
 
     // Setup the correct collection for the treatments.
-    base_results.resize(combos.CountCombos());
+    base_results.resize(config.CountCombos());
 
     // Loop through configuration combonations to test.
-    combos.Reset();
+    config.ResetCombos();
     do {
-      os << combos.CurString(", ");  // Output current setting combination data.
+      os << config.CurComboString(", ");  // Output current setting combination data.
 
       RunResults treatment_results = SummarizeTreatment(os);
 
       os << ", " << treatment_results.GetReproTime()
          << ", " << (treatment_results.CountRestrained(multicell.restrain) / (double) multicell.GetSize())
          << std::endl;
-    } while (combos.Next());
+    } while (config.NextCombo());
   }
 
   void RunEvolution(std::ostream & os) {
     // Print column headers.
-    os << "#" << combos.GetHeaders();
-    const size_t max_bits = combos.MaxValue<size_t>("bit_size");
+    os << "#" << config.GetComboHeaders();
+    const size_t max_bits = config.MaxValue<size_t>("bit_size");
     for (size_t i=0; i <= max_bits; i++) os << ", " << i << "-ones";
     os << ", ave_ones" << std::endl;
 
-    combos.Reset();
+    config.ResetCombos();
     do {
       EvolveTreatment(os);
-    } while (combos.Next());
+    } while (config.NextCombo());
   }
 
   // Run all of the configurations in an entire set.
   void Run() {
-    size_t gen_count = combos.Values<size_t>("gen_count")[0];
-    std::string evolution_filename = combos.Values<std::string>("evolution_filename")[0];
-    std::string multicell_filename = combos.Values<std::string>("multicell_filename")[0];
+    size_t gen_count = config.ComboValues<size_t>("gen_count")[0];
+    std::string evolution_filename = config.ComboValues<std::string>("evolution_filename")[0];
+    std::string multicell_filename = config.ComboValues<std::string>("multicell_filename")[0];
 
     // If we have a generation count, collect evolution data.
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
