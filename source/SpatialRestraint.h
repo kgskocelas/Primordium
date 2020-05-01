@@ -253,23 +253,24 @@ struct Experiment {
     // The order below sets the order that combinations are tested in. 
     // AVAILABLE OPTION FLAGS: efjklqwxyz ACDFGHIJKLNOQRSUVWXYZ
 
+    config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
+    config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
+                           multicell.start_1s, "NumOnes...") = { 50 };
+    config.AddComboSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
+                           multicell.unrestrained_cost, "Costs...") = { 0.0 };
+    config.AddComboSetting("mut_prob",   "Probability of mutation in offspring", 'm',
+                           multicell.mut_prob, "Probs...") = { 0.0 };
     config.AddComboSetting("time_range", "Rep time = 100.0 + random(time_range)", 't',
                            multicell.time_range, "TimeUnits...") = { 50 };
     config.AddComboSetting("neighbors",  "Neighborhood size for replication", 'n',
                            multicell.neighbors, "Sizes...") = { 8 };
-    config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
-                           multicell.cells_side, "NumCells...") = { 32 };
-    config.AddComboSetting("bit_size",   "Number of bits in genome?", 'b',
-                           multicell.genome_size, "NumBits...") = { 100 };
     config.AddComboSetting("restrain",   "Num ones in genome for restraint?", 'r',
                            multicell.restrain, "NumOnes...") = { 50 };
-    config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
-                           multicell.start_1s, "NumOnes...") = { 50 };
-    config.AddComboSetting("mut_prob",   "Probability of mutation in offspring", 'm',
-                           multicell.mut_prob, "Probs...") = { 0.0 };
-    config.AddComboSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
-                           multicell.unrestrained_cost, "Costs...") = { 0.0 };
-    config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
+    config.AddComboSetting("bit_size",   "Number of bits in genome?", 'b',
+                           multicell.genome_size, "NumBits...") = { 100 };
+    config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
+                           multicell.cells_side, "NumCells...") = { 32 };
+
     config.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
                      [this](){ multicell.one_check = true; } );
 
@@ -349,6 +350,7 @@ struct Experiment {
     // Conduct all replicates and output the information.    
     RunResults total_results(multicell.genome_size);
     for (size_t i = 0; i < num_runs; i++) {
+      if (verbose) std::cout << " ... run " << i << std::endl;
       treatment_results[i] = TestMulticell();
       if (print_reps) os << ", " << treatment_results[i].GetReproTime();
       total_results += treatment_results[i];
@@ -396,6 +398,12 @@ struct Experiment {
     // Loop through configuration combonations to test.
     config.ResetCombos();
     do {
+      std::cout << "START Treatment #" << config.GetComboID()
+                << " / " << base_results.size()
+                << std::endl
+                << "  " << config.CurComboString(", ", true, true)
+                << std::endl;
+
       os << config.CurComboString(", ");  // Output current setting combination data.
 
       RunResults treatment_results = SummarizeTreatment(os);
