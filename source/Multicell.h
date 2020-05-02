@@ -12,6 +12,7 @@
 
 #include "base/vector.h"
 #include "tools/Random.h"
+#include "tools/stats.h"
 #include "tools/TimeQueue.h"
 
 /// Information about a single cell.
