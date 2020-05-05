@@ -14,7 +14,7 @@ input_filename = '~/research/rogue_cell/SpatialRestraint/scraped_data/512_timing
     # NOTE: this is formatted such that data will be saved to subdirectories of the path specified
         # For example, if output_dir = '/foo/bar/', the script may save it in /for/bar/512/50.dat
     # NOTE: this assumes those subdirectories ALREADY exist, else it will fail
-ouput_dir= '~/research/rogue_cell/SpatialRestraint/distribution_samples/'
+output_dir= '~/research/rogue_cell/SpatialRestraint/distribution_samples/'
 
 #### END CONFIGURATION ####
 
@@ -29,7 +29,7 @@ for(cells_side in unique(data$cells_side)){
     for(num_ones in unique(data_size$ancestor_1s)){
         # Save that data!
         data_ones = data_size[data_size$ancestor_1s == num_ones,]
-        write(data_ones$rep_time, paste0('./', cells_side, '/', num_ones, '.dat'), ncolumns = 1)
+        write(data_ones$rep_time, paste0(output_dir,cells_side, '/', num_ones, '.dat'), ncolumns = 1)
     }
 }
 
