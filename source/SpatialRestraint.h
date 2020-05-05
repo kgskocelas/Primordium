@@ -67,6 +67,50 @@ struct Population {
   {
   }
 
+  // Fill the reproduction time distributions from samples stored on disk. 
+  // Only loads in what we actually find
+  void LoadSamplesFromDisk(std::string samples_directory){
+    std::cout << "Loading samples from disk!" << std::endl;
+    std::stringstream filename_stream;
+    std::ifstream fp_in;
+    std::string line;
+    size_t line_count;
+    // Attempt to load file for each value of ones [0, genom_size]
+    for(size_t num_ones = 0; num_ones < repro_cache.size(); ++num_ones){
+      filename_stream.str("");
+      filename_stream << samples_directory << num_ones << ".dat";
+      fp_in.open(filename_stream.str(), std::ios::in);
+      if(!fp_in.is_open()){
+        std::cout << "File not found: " << filename_stream.str() << "! Skipping!" << std::endl;
+        continue;
+      }
+      // Count the number of lines
+      line_count = 0;
+      while(std::getline(fp_in, line))
+          ++line_count;
+      // If the file has more samples than we are prepared for, throw an error!
+      if(line_count > num_samples){
+        std::cerr << "Error! Trying to load more samples than were specified on command line!" 
+                  << std::endl;
+        std::cerr << "Specified: " << num_samples << std::endl;
+        std::cerr << "Present in " << filename_stream.str() << ": " << line_count << std::endl;
+        exit(1);
+      } 
+      // Resize cache to handle that many entries
+      repro_cache[num_ones].resize(line_count);
+      // Reset file pointer to top of file
+      fp_in.clear();
+      fp_in.seekg(0, fp_in.beg);
+      // Load samples one at a time
+      for(size_t val_idx = 0; val_idx < line_count; ++val_idx){
+          fp_in >> repro_cache[num_ones][val_idx];
+      }
+      std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
+                << repro_cache[num_ones].size() << std::endl;
+      fp_in.close();
+    }
+  }  
+
   void Reset(size_t pop_size, size_t ancestor_1s, bool reset_cache=true) {
     orgs.resize(0, ancestor_1s);
     orgs.resize(pop_size, ancestor_1s);
@@ -238,6 +282,8 @@ struct Experiment {
   emp::StreamManager stream_manager;  ///< Manage files
   std::string evolution_filename;     ///< Output filename for evolution summary data.
   std::string multicell_filename;     ///< Output filename for multicell summary data.
+  std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples
+                                            // Where X is a value for ancestor_1s
 
   using TreatmentResults = emp::vector<RunResults>;
   using MulticellResults = emp::vector<TreatmentResults>;
@@ -279,6 +325,8 @@ struct Experiment {
                       pop_size, "NumOrgs") = { 200 };
     combos.AddSingleSetting("sample_size", "Num multicells sampled for distributions.", 's',
                       sample_size, "NumSamples") = { 200 };
+    combos.AddSingleSetting("load_samples", "Load pre-computer multicell data from directory", 'L',
+                      sample_input_directory, "Path") = {"" };
                       
 
     combos.AddAction("help", "Print full list of options", 'h',
@@ -364,6 +412,9 @@ struct Experiment {
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
     Population pop(pop_size, ancestor_1s, num_samples, multicell, random, stream_manager);
+    // If directory was specified, load in pre-computed sample data
+    if(sample_input_directory.length() > 1)
+        pop.LoadSamplesFromDisk(sample_input_directory);
     for (size_t run_id = 0; run_id < num_runs; run_id++) {
       std::cout << "START Treatment #" << combos.GetComboID()
                 << " : Run " << run_id << std::endl;
@@ -425,7 +476,6 @@ struct Experiment {
 
     // If we have a generation count, collect evolution data.
     if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
-
     // Otherwise collect information on multicells.
     else RunMulticells(stream_manager.get_ostream(multicell_filename));
   }
