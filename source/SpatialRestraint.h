@@ -47,7 +47,7 @@ struct Population {
   size_t num_samples;                ///< Number of samples used to approximate repro distributions.
   emp::TimeQueue<size_t> org_queue;  ///< Track times for when orgs will replicate.
   double ave_gen = 0.0;              ///< Current generation of population (ave across orgs)
-
+  bool enforce_data_bounds = false;  ///< If using pre-gen data and exceed bounds, do we exit?
   /// We need to store the time distribution for reproduction.
   /// The outer vector is the number of ones.  The inner vector is a set of
   /// how long multicells took to replicate with that number of ones.
@@ -60,10 +60,12 @@ struct Population {
   emp::StreamManager & stream_manager;
 
   Population(size_t pop_size, size_t ancestor_1s, size_t _samples,
-             Multicell & _mc, emp::Random & _rand, emp::StreamManager & _smanager)
+             Multicell & _mc, emp::Random & _rand, emp::StreamManager & _smanager, 
+            bool _enforce_data_bounds)
     : orgs(pop_size, ancestor_1s), num_samples(_samples)
     , repro_cache(_mc.genome_size + 1)
     , multicell(_mc), random(_rand), stream_manager(_smanager)
+    , enforce_data_bounds(_enforce_data_bounds)
   {
   }
 
@@ -150,6 +152,12 @@ struct Population {
     emp::vector<double> & cur_cache = repro_cache[num_ones];
     size_t sample_id = random.GetUInt(num_samples);
     if (sample_id < cur_cache.size()) return cur_cache[sample_id];
+    if(enforce_data_bounds){
+        std::cout << "Error! requested sample that isn't pre-generated!" << std::endl;
+        std::cout << "Number of ones: "<< num_ones << std::endl;
+        std::cout << "Exiting..." << std::endl;
+        exit(-1);
+    }
 
     multicell.start_1s = num_ones;
     multicell.SetupConfig();
@@ -271,13 +279,14 @@ struct Experiment {
   std::string exe_name;      ///< Name of executable used to start this run.
   Multicell multicell;
 
-  size_t gen_count = 0;      ///< Num generations to evolve (zero for analyze multicells)
-  size_t pop_size = 200;     ///< Num organisms in the population.
-  size_t sample_size = 100;  ///< Num multicells to sample for each genotype.
-  bool reset_cache = false;  ///< Share the cache by default.
-  bool print_reps = false;   ///< Should we print results for every replicate?
-  bool print_trace = false;  ///< Should we show each step of a multicell?
-  bool verbose = false;      ///< Should we print extra information during the run?
+  size_t gen_count = 0;             ///< Num generations to evolve (zero for analyze multicells)
+  size_t pop_size = 200;            ///< Num organisms in the population.
+  size_t sample_size = 100;         ///< Num multicells to sample for each genotype.
+  bool reset_cache = false;         ///< Share the cache by default.
+  bool print_reps = false;          ///< Should we print results for every replicate?
+  bool print_trace = false;         ///< Should we show each step of a multicell?
+  bool verbose = false;             ///< Should we print extra information during the run?
+  bool enforce_data_bounds = false;  ///< If we are using pre-gen data and needed missing data, exit?
 
   emp::StreamManager stream_manager;  ///< Manage files
   std::string evolution_filename;     ///< Output filename for evolution summary data.
@@ -297,7 +306,7 @@ struct Experiment {
     // letters are used to control model parameters, while capital letters are used to control
     // output.  The one exception is -h for '--help' which is otherwise too standard.
     // The order below sets the order that combinations are tested in. 
-    // AVAILABLE OPTION FLAGS: efjklqwxyz ABCDFGHIJKLNOQRSUVWXYZ
+    // AVAILABLE OPTION FLAGS: fjklqwxyz ABCDFGHIJKNOQRSUVWXYZ
 
     combos.AddSetting("time_range", "Rep time = 100.0 + random(time_range)", 't',
                        multicell.time_range, "TimeUnits...") = { 50 };
@@ -346,6 +355,8 @@ struct Experiment {
                      [this](){ print_trace = true; } );
     combos.AddAction("verbose", "Print extra information during the run", 'v',
                      [this](){ verbose = true; } );
+    combos.AddAction("enforce", "Enforeces population stays within bounds of data loaded with -L. Exits if boudns exceeded", 'e',
+                     [this](){ enforce_data_bounds= true; } );
 
     // Process the command-line options
     args = combos.ProcessOptions(args);
@@ -411,7 +422,8 @@ struct Experiment {
     const size_t ancestor_1s = combos.GetValue<size_t>("ancestor_1s");
     const size_t gen_count = combos.Values<size_t>("gen_count")[0];
 
-    Population pop(pop_size, ancestor_1s, num_samples, multicell, random, stream_manager);
+    Population pop(pop_size, ancestor_1s, num_samples, multicell, random, stream_manager, 
+        enforce_data_bounds);
     // If directory was specified, load in pre-computed sample data
     if(sample_input_directory.length() > 1)
         pop.LoadSamplesFromDisk(sample_input_directory);
