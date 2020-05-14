@@ -99,7 +99,7 @@ for condition_dict in combo_list:
             command_str += ' -u ' + str(condition_dict['COST'])
             command_str += ' -p ' + str(condition_dict['POP'])
             if(use_distribution_data):
-                command_str += ' -L ' + distribution_data_dir
+                command_str += ' -L ' + distribution_data_dir + str(condition_dict['MCSIZE']) + '/'
             
             command_str += ' ' + extra_flags + ' '
             
