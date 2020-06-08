@@ -14,6 +14,7 @@
 #include "tools/Random.h"
 #include "tools/TimeQueue.h"
 
+
 /// Information about a single cell.
 struct Cell {
   size_t id;
@@ -101,8 +102,11 @@ struct Multicell {
   double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
   double unrestrained_cost = 0.0; ///< Extra cost for each unrestrained cell when full.
   bool one_check = false;    ///< Should restrained check only one cell to find empty?
-
-  Multicell(emp::Random & _random) : random(_random), cell_queue(100.0) { }
+  size_t last_count = 0;
+  size_t last_placed_cell_id = 0;
+  bool cell_placed_last_step = false;
+  Multicell(emp::Random & _random) : random(_random), cell_queue(100.0) {
+  }
 
   size_t GetSize() const { return cells_side * cells_side; }
 
@@ -112,6 +116,10 @@ struct Multicell {
 
   size_t MiddlePos() const { return ToPos(cells_side/2, cells_side/2); }
 
+
+  std::vector<uint8_t> buffer;
+  size_t delay = 1;
+  
   // Convert a resource count to a character.
   static constexpr char ToChar(size_t count) {
     if (count < 10) return '0' + count;
@@ -270,20 +278,21 @@ struct Multicell {
     log2_side = emp::count_bits(mask_side);
   }
 
-  /// Run the multicell until it is full.
-  RunResults Run(bool print_trace=false, std::ostream & os=std::cout) {
-    size_t last_count = 0;                   // Track cells from last time (for traces)
-
-    while (num_cells < cells.size()) {
+  // Oversee replication of the next cell in the queue 
+  void DoStep(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout){
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
 
+      cell_placed_last_step = false;
+      last_placed_cell_id = 0;
+
       // If this cell has been updated since being bufferred, skip it.
-      if (parent.repro_time != cell_queue.GetTime()) continue;
+      if (parent.repro_time != cell_queue.GetTime()) return;
+
 
       // Neighborhood is only marked full for restrained orgs; if so, fail divide.
-      if (is_full[parent.id]) continue; 
+      if (is_full[parent.id]) return;
 
       size_t next_id = RandomNeighbor(parent.id); // Find the placement of the offspring.
       Cell & next_cell = cells[next_id];
@@ -291,24 +300,39 @@ struct Multicell {
       // If the target is empty or we don't restrain, put a new cell there.
       if (next_cell.repro_time == 0.0 || parent.num_ones < restrain) {
         DoBirth(next_cell, parent);
+        cell_placed_last_step = true;
+        last_placed_cell_id = next_id;
       }
 
       // Otherwise it is restrained and not empty; unless limited  to one, keep looking!
       else if (!one_check) {
         next_id = EmptyNeighbor(parent.id);
-        if (next_id != (size_t) -1) DoBirth(cells[next_id], parent);
+        if (next_id != (size_t) -1){ 
+          DoBirth(cells[next_id], parent);
+          cell_placed_last_step = true;
+          last_placed_cell_id = next_id;
+        }
       }
 
       SetupCell(parent);  // Reset parent for its next replication.
 
       // If we are tracing, output data.
-      if (print_trace && last_count != num_cells) {
-        last_count = num_cells;
-        os << "\nTime: " << cell_queue.GetTime()
-           << "  Cells: " << last_count
-           << "\n";
-        Print();
+      if(last_count != num_cells){
+          last_count = num_cells;
+          if (print_trace) {
+            os << "\nTime: " << cell_queue.GetTime()
+               << "  Cells: " << last_count
+               << "\n";
+            Print();
+          }
       }
+  }
+
+  /// Run the multicell until it is full.
+  RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
+    last_count = 0;                   // Track cells from last time (for traces)
+    while (num_cells < cells.size()) {
+      DoStep(print_trace, frames_per_anim, os);
     }
 
     // Setup the results and return them.
@@ -320,7 +344,6 @@ struct Multicell {
       results.cell_counts[cell.num_ones] += 1.0;
     }
     results.extra_cost = unrestrained_count * unrestrained_cost;
-
     return results;
   }
 };
