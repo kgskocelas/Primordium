@@ -209,7 +209,8 @@ struct Population {
 
     // Handle mutations in the offspring.
     if (random.P(multicell.mut_prob)) {
-      double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+      // double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+      constexpr double prob1 = 0.5;
       if (random.P(prob1)) offspring.num_ones--;
       else offspring.num_ones++;
     }
