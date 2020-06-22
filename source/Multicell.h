@@ -13,6 +13,7 @@
 #include "base/vector.h"
 #include "base/map.h"
 #include "tools/Random.h"
+#include "tools/stats.h"
 #include "tools/TimeQueue.h"
 
 
