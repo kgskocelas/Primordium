@@ -167,15 +167,7 @@
       cur_cache.push_back(run_time);
       return run_time;
     }
-    offspring.gen += 1.0;                                 // Update offspring's generation.
-    ave_gen += offspring.gen / (double) orgs.size();      // Add new org to gen average.
 
-    // Handle mutations in the offspring.
-    if (random.P(multicell.mut_prob)) {
-      // double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
-      constexpr double prob1 = 0.5;
-      if (random.P(prob1)) offspring.num_ones--;
-      else offspring.num_ones++;
 
     double CalcBirthTime(size_t num_ones) {
       return CalcReproDuration(num_ones) + org_queue.GetTime();
@@ -217,7 +209,8 @@
 
       // Handle mutations in the offspring.
       if (random.P(multicell.mut_prob)) {
-        double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+        //double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+        constexpr double prob1 = 0.5;
         if (random.P(prob1)) offspring.num_ones--;
         else offspring.num_ones++;
       }
