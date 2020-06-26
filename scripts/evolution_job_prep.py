@@ -76,7 +76,7 @@ for condition_dict in combo_list:
             fp_job.write('#SBATCH --ntasks=1' + '\n')
             fp_job.write('#SBATCH --cpus-per-task=1' + '\n')
             fp_job.write('#SBATCH --mem-per-cpu=1G' + '\n')
-            fp_job.write('#SBATCH --job-name Spatial_Restraint' + '\n')
+            fp_job.write('#SBATCH --job-name infinite_genome' + '\n')
             fp_job.write('#SBATCH --array=1-1' + '\n')
             fp_job.write('#SBATCH --output='  + \
                 scratch_dir + filename_prefix + '_%a__slurm.out' + \
