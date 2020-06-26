@@ -151,7 +151,7 @@
 
       if (repro_cache.size() <= num_ones) {
         // repro_cache.push_back(emp::vector<double>(num_ones));
-        repro_cache.resize(num_ones);
+        repro_cache.resize(num_ones + 1);
       }
 
       emp::vector<double> & cur_cache = repro_cache[num_ones];
