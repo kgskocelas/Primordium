@@ -148,6 +148,12 @@
     }
 
     double CalcReproDuration(size_t num_ones) {
+
+      if (repro_cache.size() <= num_ones) {
+        // repro_cache.push_back(emp::vector<double>(num_ones));
+        repro_cache.resize(num_ones);
+      }
+
       emp::vector<double> & cur_cache = repro_cache[num_ones];
       size_t sample_id = random.GetUInt(num_samples);
       if (sample_id < cur_cache.size()) return cur_cache[sample_id];

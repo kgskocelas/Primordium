@@ -353,7 +353,8 @@ struct Multicell {
     size_t unrestrained_count = 0;
     for (const auto & cell : cells) {
       if (cell.num_ones < restrain) unrestrained_count++;
-      results.cell_counts[cell.num_ones] += 1.0;
+      if (emp::Has(results.cell_counts, cell.num_ones)) results.cell_counts[cell.num_ones] += 1.0;
+      else results.cell_counts[cell.num_ones] = 1.0;
     }
     results.extra_cost = unrestrained_count * unrestrained_cost;
     return results;
