@@ -22,6 +22,7 @@ struct Cell {
   size_t id;
   double repro_time = 0.0;  ///< When will this cell replicate?
   size_t num_ones = 0;      ///< How many ones in genome?
+  size_t cell_gen_num = 0;       ///< What generation is the cell in its cell line?
 
   bool operator==(const Cell & _in) const { return id == _in.id; }
   bool operator!=(const Cell & _in) const { return id != _in.id; }
@@ -34,10 +35,12 @@ struct Cell {
 /// Results from a single run.
 struct RunResults {
   double run_time;                    ///< What was the replication time of this group?
+  double avg_cell_gen;                ///< What was the average cell generation of this group?
   emp::map<int, double> cell_counts;  ///< How many cells have each bit count?
+  emp::map<int, double> cell_gens;    ///< How many cells from each generation are there?
   double extra_cost;                  ///< Extra cost due to unrestrained cells.
 
-  RunResults() : run_time(0.0) { ; }
+  RunResults() : run_time(0.0), avg_cell_gen(0.0) { ; }
   RunResults(const size_t num_bits) : run_time(0.0) { ; }
   RunResults(const RunResults &) = default;
   RunResults(RunResults &&) = default;
@@ -50,6 +53,10 @@ struct RunResults {
     for (auto [key,value] : in.cell_counts) {
       if (emp::Has(cell_counts,key)) cell_counts[key] += value;
       else cell_counts[key] = value;
+    }
+    for (auto [key,value] : in.cell_gens) {
+      if (emp::Has(cell_gens,key)) cell_gens[key] += value;
+      else cell_gens[key] = value;
     }
     extra_cost += extra_cost;
     return *this;
@@ -91,7 +98,6 @@ struct RunResults {
 };
 
 /// A single "multicell" organism.
-
 struct Multicell {
   emp::Random & random;
 
@@ -238,6 +244,20 @@ struct Multicell {
     }
   }
 
+  // Print current cell generation numbers in population.
+  void PrintGens() {
+    emp_assert(cells.size() == GetSize());
+    size_t pos = 0;
+    for (size_t y = 0; y < cells_side; y++) {
+      for (size_t x = 0; x < cells_side; x++) {
+        if (cells[pos].repro_time == 0.0) std::cout << " -";
+      	else std::cout << " " << ToChar(cells[pos].cell_gen_num);
+        pos++;
+      }
+      std::cout << std::endl;
+    }
+  }
+
   void SetupCell(Cell & cell) {
     cell.repro_time = cell_queue.GetTime() + 100.0 + random.GetDouble(time_range);
     cell_queue.Insert(cell.id, cell.repro_time);
@@ -256,6 +276,7 @@ struct Multicell {
   void DoBirth(Cell & offspring, const Cell & parent, bool do_mutations=true) {
     if (offspring.repro_time == 0.0) num_cells++;  // If offspring was empty, this is a new cell.
     offspring.num_ones = parent.num_ones;
+    offspring.cell_gen_num = parent.cell_gen_num + 1;
     if (do_mutations && random.P(mut_prob)) {
       // double prob1 = ((double) offspring.num_ones) / (double) genome_size; // for set genome length
 
@@ -291,7 +312,7 @@ struct Multicell {
   }
 
   // Oversee replication of the next cell in the queue 
-  void DoStep(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout){
+  void DoStep(bool print_trace=false, bool print_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout){
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
@@ -337,14 +358,20 @@ struct Multicell {
                << "\n";
             Print();
           }
+          if (print_gens) {
+            os << "\nTime: " << cell_queue.GetTime()
+               << "  Cells: " << last_count
+               << "\n";
+            PrintGens();
+          }
       }
   }
 
   /// Run the multicell until it is full.
-  RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
+  RunResults Run(bool print_trace=false, bool print_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
     last_count = 0;                   // Track cells from last time (for traces)
     while (num_cells < cells.size()) {
-      DoStep(print_trace, frames_per_anim, os);
+      DoStep(print_trace, print_gens, frames_per_anim, os);
     }
 
     // Setup the results and return them.
@@ -355,6 +382,9 @@ struct Multicell {
       if (cell.num_ones < restrain) unrestrained_count++;
       if (emp::Has(results.cell_counts, cell.num_ones)) results.cell_counts[cell.num_ones] += 1.0;
       else results.cell_counts[cell.num_ones] = 1.0;
+
+      if (emp::Has(results.cell_gens, cell.num_ones)) results.cell_gens[cell.cell_gen_num] += 1.0;
+      else results.cell_gens[cell.cell_gen_num] = 1.0;
     }
     results.extra_cost = unrestrained_count * unrestrained_cost;
     return results;

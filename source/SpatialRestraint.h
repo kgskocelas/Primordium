@@ -291,6 +291,7 @@
     size_t sample_size = 100;         ///< Num multicells to sample for each genotype.
     bool balance_predict = false;     ///< Try to predict the mutation-selection balance.
     bool print_reps = false;          ///< Should we print results for every replicate?
+    bool print_cell_gens = false;     ///< Should we print the cell generation number for every replicate? 
     bool print_trace = false;         ///< Should we show each step of a multicell?
     bool reset_cache = false;         ///< Share the cache by default.
     bool verbose = false;             ///< Should we print extra information during the run?
@@ -314,7 +315,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFGHIJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFHIJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -345,7 +346,7 @@
                         sample_size, "NumSamples") = { 200 };
       config.AddSetting("load_samples", "Load pre-computer multicell data from directory", 'L',
                         sample_input_directory, "Path") = {"" };
-                        
+                          
 
       config.AddAction("balance_predict", "Predict the mutation-selection balance [NOT YET IMPLEMENTED!]", 'B',
                        [this](){ balance_predict = true; } );
@@ -362,6 +363,8 @@
                         multicell_filename, "Filename") = "multicell.dat";
       config.AddAction("print_reps", "Print data for each replicate", 'P',
                        [this](){ print_reps = true; } );
+      config.AddAction("print_cell_gens", "Print cell generations for each replicate", 'G',
+                       [this](){ print_cell_gens = true; } );
       config.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
                        [this](){ print_trace = true; } );
       config.AddAction("verbose", "Print extra information during the run", 'v',
