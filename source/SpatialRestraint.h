@@ -227,7 +227,7 @@
       org_queue.Insert(offspring_id, offspring.repro_time);
     }
 
-    void Run(double max_gen, const std::string run_name="", bool verbose=false) {
+    void Run(double max_gen, const std::string run_name="", bool verbose=false, bool print_cell_gens=false) {
       // Setup the time queue.
       for (size_t i = 0; i < orgs.size(); i++) {
         double repro_time = CalcBirthTime(orgs[i].num_ones);
@@ -449,7 +449,7 @@
         std::string run_name =
           print_trace ? emp::to_string('t',config.GetComboID(),'r',run_id,".dat") : "";
         pop.Reset(pop_size, ancestor_1s, reset_cache);
-        pop.Run(gen_count, run_name, verbose);
+        pop.Run(gen_count, run_name, verbose, print_cell_gens);
 
         os << config.CurComboString(", ");  // Output current setting combination data.
         pop.PrintData(os);             // Output data for THIS population.
