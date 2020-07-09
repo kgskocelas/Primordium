@@ -312,7 +312,7 @@ struct Multicell {
   }
 
   // Oversee replication of the next cell in the queue 
-  void DoStep(bool print_trace=false, bool print_cell_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout){
+  void DoStep(bool print_trace=false,  int frames_per_anim = -1, std::ostream & os=std::cout){
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
@@ -358,20 +358,33 @@ struct Multicell {
                << "\n";
             Print();
           }
-          if (print_cell_gens) {
-            os << "\nTime: " << cell_queue.GetTime()
-               << "  Cell Gen: " << parent.cell_gen_num + 1 //FIXME KGS
-               << "\n";
-            PrintCellGens();
-          }
+          //if (print_cell_gens) {
+          //  os << "\nTime: " << cell_queue.GetTime()
+          //     << "  Cell Gen: " << parent.cell_gen_num + 1 //FIXME KGS
+          //     << "\n";
+          //  PrintCellGens();
+          //}
       }
   }
 
   /// Run the multicell until it is full.
-  RunResults Run(bool print_trace=false, bool print_cell_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
-    last_count = 0;                   // Track cells from last time (for traces)
+  RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout, bool print_cell_gens = false, std::ostream & cell_gens_os=std::cout) {
+    last_count = 0;     // Track cells from last time (for traces)
     while (num_cells < cells.size()) {
-      DoStep(print_trace, print_cell_gens, frames_per_anim, os);
+      DoStep(print_trace, frames_per_anim, os);
+      if(print_cell_gens){
+        double pct_full = num_cells / cells.size();
+        if(pct_full == 0.5){
+          emp::map<int, double> tmp_cell_gens; // How many cells from each generation are there?
+          for (const auto & cell : cells) {
+            if (emp::Has(tmp_cell_gens, cell.cell_gen_num)) tmp_cell_gens[cell.cell_gen_num] += 1.0;
+            else tmp_cell_gens[cell.cell_gen_num] = 1.0;
+          }
+          for (auto [key,value] : tmp_cell_gens) {
+            cell_gens_os << pct_full << "," << key << "," << value << std::endl;
+          }
+        }
+      }
     }
 
     // Setup the results and return them.

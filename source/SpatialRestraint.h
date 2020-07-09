@@ -298,6 +298,7 @@
 
     emp::StreamManager stream_manager;  ///< Manage files
     std::string evolution_filename;     ///< Output filename for evolution summary data.
+    std::string cell_gens_filename;     ///< Output filename for individual cells' generation data.
     std::string multicell_filename;     ///< Output filename for multicell summary data.
     std::string cell_gen_filename;      ///< Output filename for cell generation summary data.
     std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples
@@ -315,7 +316,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFGHIJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFHIJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -357,6 +358,8 @@
                         } );
       config.AddSetting("evolution_filename", "Filename for multicell data", 'E',
                         evolution_filename, "Filename") = "evolution.dat";
+      config.AddSetting("cell_gens_filename", "Filename for cell generation data", 'G',
+                        cell_gens_filename, "Filename") = "cell_gens.dat";
       config.AddAction("independent_caches", "Use a distinct cache for each run", 'i',
                        [this](){ reset_cache = true; } );
       config.AddSetting("multicell_filename", "Filename for multicell data", 'M',
@@ -381,7 +384,7 @@
     }
 
 
-    RunResults TestMulticell() {
+    RunResults TestMulticell(std::ostream & cell_gens_os = std::cout) {
       multicell.SetupConfig();
 
       // Inject a cell in the middle.
@@ -389,7 +392,7 @@
       multicell.InjectCell(start_pos);
 
       // Do the run!
-      return multicell.Run(print_trace);
+      return multicell.Run(print_trace, -1, std::cout, true, cell_gens_os);
     }
 
     TreatmentResults & RunTreatment(std::ostream & os=std::cout) {
@@ -407,7 +410,7 @@
       return treatment_results;
     }
 
-    RunResults SummarizeTreatment(std::ostream & os=std::cout) {
+    RunResults SummarizeTreatment(std::ostream & os=std::cout, std::ostream & cell_gens_os=std::cout){
       const size_t num_runs = config.GetValue<size_t>("data_count");
       const size_t combo_id = config.GetComboID();
 
@@ -419,7 +422,7 @@
       RunResults total_results(multicell.genome_size);
       for (size_t i = 0; i < num_runs; i++) {
         if (verbose) std::cout << " ... run " << i << std::endl;
-        treatment_results[i] = TestMulticell();
+        treatment_results[i] = TestMulticell(cell_gens_os);
         if (print_reps) os << ", " << treatment_results[i].GetReproTime();
         total_results += treatment_results[i];
 
@@ -460,14 +463,16 @@
     }
 
     /// Step through all configurations and collect multicell data for each.
-    void RunMulticells(std::ostream & os) {
-      // Print column headers.
+    void RunMulticells(std::ostream & os, std::ostream & cell_gens_os) {
+      // Print column headers for multicell file
       os << "#" << config.GetComboHeaders();
       if (print_reps) {
         const size_t num_runs = config.GetValue<size_t>("data_count");
         for (size_t i=0; i < num_runs; i++) os << ", run" << i;
       }
       os << ", ave_time, frac_restrain" << std::endl;
+      // Print column headers for cell generation file
+      cell_gens_os << "#" << "pct_full,cell_generation,num_cells" << std::endl;
 
       // Setup the correct collection for the treatments.
       base_results.resize(config.CountCombos());
@@ -483,7 +488,7 @@
 
         os << config.CurComboString(", ");  // Output current setting combination data.
 
-        RunResults treatment_results = SummarizeTreatment(os);
+        RunResults treatment_results = SummarizeTreatment(os, cell_gens_os);
 
         os << ", " << treatment_results.GetReproTime()
            << ", " << (treatment_results.CountRestrained(multicell.restrain) / (double) multicell.GetSize())
@@ -509,11 +514,14 @@
       size_t gen_count = config.GetValue<size_t>("gen_count");
       std::string evolution_filename = config.GetValue<std::string>("evolution_filename");
       std::string multicell_filename = config.GetValue<std::string>("multicell_filename");
+      std::string cell_gens_filename = config.GetValue<std::string>("cell_gens_filename");
 
       // If we have a generation count, collect evolution data.
       if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
       // Otherwise collect information on multicells.
-      else RunMulticells(stream_manager.get_ostream(multicell_filename));
+      else RunMulticells(
+          stream_manager.get_ostream(multicell_filename), 
+          stream_manager.get_ostream(cell_gens_filename));
     }
   };
 
