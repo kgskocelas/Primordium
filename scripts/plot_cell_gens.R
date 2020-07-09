@@ -13,3 +13,7 @@ ggplot(data_summary, aes(x = cell_generation, y = num_cells_mean)) +
   ggsave('./scripts/plots/cell_gens.png')
 
 
+ggplot(data, aes(x = cell_generation, y = num_cells, group = X.mc_id)) + 
+  geom_line(alpha = 0.25) + 
+  facet_grid(rows = vars(pct_full)) +
+  ggsave('./scripts/plots/cell_gens_all_lines.png')
