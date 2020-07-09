@@ -236,7 +236,7 @@
       }
 
       // If verbose or print_reps is turned on, we need to track the current generation.
-      if (verbose || run_name.size()) {
+      if (verbose || run_name.size() || print_cell_gens) {
         std::ostream & os(stream_manager.get_ostream(run_name));
 
         bool print_both = verbose && run_name.size();  // Should we send output to both places?
@@ -300,6 +300,7 @@
     emp::StreamManager stream_manager;  ///< Manage files
     std::string evolution_filename;     ///< Output filename for evolution summary data.
     std::string multicell_filename;     ///< Output filename for multicell summary data.
+    std::string cell_gen_filename;      ///< Output filename for cell generation summary data.
     std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples
                                               // Where X is a value for ancestor_1s
 
@@ -506,6 +507,7 @@
       size_t gen_count = config.GetValue<size_t>("gen_count");
       std::string evolution_filename = config.GetValue<std::string>("evolution_filename");
       std::string multicell_filename = config.GetValue<std::string>("multicell_filename");
+      std::string cell_gen_filename = config.GetValue<std::string>("cell_gen_filename");
 
       // If we have a generation count, collect evolution data.
       if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));

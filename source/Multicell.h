@@ -22,7 +22,7 @@ struct Cell {
   size_t id;
   double repro_time = 0.0;  ///< When will this cell replicate?
   size_t num_ones = 0;      ///< How many ones in genome?
-  size_t cell_gen_num = 0;       ///< What generation is the cell in its cell line?
+  size_t cell_gen_num = 0;  ///< What generation is the cell in its cell line?
 
   bool operator==(const Cell & _in) const { return id == _in.id; }
   bool operator!=(const Cell & _in) const { return id != _in.id; }
@@ -245,7 +245,7 @@ struct Multicell {
   }
 
   // Print current cell generation numbers in population.
-  void PrintGens() {
+  void PrintCellGens() {
     emp_assert(cells.size() == GetSize());
     size_t pos = 0;
     for (size_t y = 0; y < cells_side; y++) {
@@ -312,7 +312,7 @@ struct Multicell {
   }
 
   // Oversee replication of the next cell in the queue 
-  void DoStep(bool print_trace=false, bool print_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout){
+  void DoStep(bool print_trace=false, bool print_cell_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout){
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
@@ -358,20 +358,20 @@ struct Multicell {
                << "\n";
             Print();
           }
-          if (print_gens) {
+          if (print_cell_gens) {
             os << "\nTime: " << cell_queue.GetTime()
-               << "  Cells: " << last_count
+               << "  Cell Gen: " << parent.cell_gen_num + 1 //FIXME KGS
                << "\n";
-            PrintGens();
+            PrintCellGens();
           }
       }
   }
 
   /// Run the multicell until it is full.
-  RunResults Run(bool print_trace=false, bool print_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
+  RunResults Run(bool print_trace=false, bool print_cell_gens=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
     last_count = 0;                   // Track cells from last time (for traces)
     while (num_cells < cells.size()) {
-      DoStep(print_trace, print_gens, frames_per_anim, os);
+      DoStep(print_trace, print_cell_gens, frames_per_anim, os);
     }
 
     // Setup the results and return them.
