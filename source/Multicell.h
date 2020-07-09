@@ -383,7 +383,7 @@ struct Multicell {
       if (emp::Has(results.cell_counts, cell.num_ones)) results.cell_counts[cell.num_ones] += 1.0;
       else results.cell_counts[cell.num_ones] = 1.0;
 
-      if (emp::Has(results.cell_gens, cell.num_ones)) results.cell_gens[cell.cell_gen_num] += 1.0;
+      if (emp::Has(results.cell_gens, cell.cell_gen_num)) results.cell_gens[cell.cell_gen_num] += 1.0;
       else results.cell_gens[cell.cell_gen_num] = 1.0;
     }
     results.extra_cost = unrestrained_count * unrestrained_cost;
