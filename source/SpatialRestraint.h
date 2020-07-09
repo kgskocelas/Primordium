@@ -384,9 +384,9 @@
     }
 
 
-    RunResults TestMulticell(std::ostream & cell_gens_os = std::cout) {
+    RunResults TestMulticell(std::ostream & cell_gens_os = std::cout, size_t id = 0) {
       multicell.SetupConfig();
-
+      multicell.id = id;
       // Inject a cell in the middle.
       const size_t start_pos = multicell.MiddlePos();
       multicell.InjectCell(start_pos);
@@ -422,14 +422,9 @@
       RunResults total_results(multicell.genome_size);
       for (size_t i = 0; i < num_runs; i++) {
         if (verbose) std::cout << " ... run " << i << std::endl;
-        treatment_results[i] = TestMulticell(cell_gens_os);
+        treatment_results[i] = TestMulticell(cell_gens_os, i);
         if (print_reps) os << ", " << treatment_results[i].GetReproTime();
         total_results += treatment_results[i];
-
-        std::cout << "Cell gens for run " << i << std::endl;
-        for (auto [key,value] : treatment_results[i].cell_gens) {
-          std::cout << "\t" << key << " -> " << value << std::endl;
-        }
       }
 
       return total_results /= (double) num_runs;
@@ -472,7 +467,7 @@
       }
       os << ", ave_time, frac_restrain" << std::endl;
       // Print column headers for cell generation file
-      cell_gens_os << "#" << "pct_full,cell_generation,num_cells" << std::endl;
+      cell_gens_os << "#" << "mc_id,pct_full,cell_generation,num_cells" << std::endl;
 
       // Setup the correct collection for the treatments.
       base_results.resize(config.CountCombos());

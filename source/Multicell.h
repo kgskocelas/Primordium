@@ -121,9 +121,12 @@ struct Multicell {
   size_t last_count = 0;
   size_t last_placed_cell_id = 0;
   bool cell_placed_last_step = false;
-  Multicell(emp::Random & _random) : random(_random), cell_queue(100.0) {
-  }
+  double next_cell_gen_print_step = 0.25;
+  double next_cell_gen_print_threshold = next_cell_gen_print_step;
+  size_t id;
 
+  Multicell(emp::Random & _random, size_t _id = 0) : random(_random), cell_queue(100.0), id(_id) {;}
+  
   size_t GetSize() const { return cells_side * cells_side; }
 
   size_t ToPos(size_t x, size_t y) const { return x + y * cells_side; }
@@ -312,7 +315,8 @@ struct Multicell {
   }
 
   // Oversee replication of the next cell in the queue 
-  void DoStep(bool print_trace=false,  int frames_per_anim = -1, std::ostream & os=std::cout){
+  void DoStep(bool print_trace=false,  int frames_per_anim=-1, std::ostream & os=std::cout,
+        bool print_cell_gens=false, std::ostream& cell_gens_os=std::cout){
       emp_assert(cell_queue.GetSize() > 0);
 
       Cell & parent = cells[cell_queue.Next()];
@@ -358,33 +362,31 @@ struct Multicell {
                << "\n";
             Print();
           }
-          //if (print_cell_gens) {
-          //  os << "\nTime: " << cell_queue.GetTime()
-          //     << "  Cell Gen: " << parent.cell_gen_num + 1 //FIXME KGS
-          //     << "\n";
-          //  PrintCellGens();
-          //}
+        if(print_cell_gens){
+          double pct_full = num_cells / (double)cells.size();
+          if(pct_full >=  next_cell_gen_print_threshold){
+            next_cell_gen_print_threshold += next_cell_gen_print_step;
+            emp::map<int, double> tmp_cell_gens; // How many cells from each generation are there?
+            for (const auto & cell : cells) {
+              if(cell.repro_time == 0.0)
+                continue;
+              if (emp::Has(tmp_cell_gens, cell.cell_gen_num)) tmp_cell_gens[cell.cell_gen_num] +=1.0;
+              else tmp_cell_gens[cell.cell_gen_num] = 1.0;
+            }
+            for (auto [key,value] : tmp_cell_gens) {
+              cell_gens_os << id << "," << pct_full << "," << key << "," << value << std::endl;
+            }
+          }
+        }
       }
   }
 
   /// Run the multicell until it is full.
   RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout, bool print_cell_gens = false, std::ostream & cell_gens_os=std::cout) {
     last_count = 0;     // Track cells from last time (for traces)
+    next_cell_gen_print_threshold = next_cell_gen_print_step;
     while (num_cells < cells.size()) {
-      DoStep(print_trace, frames_per_anim, os);
-      if(print_cell_gens){
-        double pct_full = num_cells / cells.size();
-        if(pct_full == 0.5){
-          emp::map<int, double> tmp_cell_gens; // How many cells from each generation are there?
-          for (const auto & cell : cells) {
-            if (emp::Has(tmp_cell_gens, cell.cell_gen_num)) tmp_cell_gens[cell.cell_gen_num] += 1.0;
-            else tmp_cell_gens[cell.cell_gen_num] = 1.0;
-          }
-          for (auto [key,value] : tmp_cell_gens) {
-            cell_gens_os << pct_full << "," << key << "," << value << std::endl;
-          }
-        }
-      }
+      DoStep(print_trace, frames_per_anim, os, print_cell_gens, cell_gens_os);
     }
 
     // Setup the results and return them.
