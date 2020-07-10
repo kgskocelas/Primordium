@@ -92,8 +92,10 @@ for condition_dict in combo_list:
             command_str += ' -c ' + str(condition_dict['MCSIZE'])
             command_str += ' -g ' + str(condition_dict['GENS'])
             command_str += ' -m ' + str(condition_dict['MUT'])
-            command_str += ' -E ' + scratch_dir + filename_prefix + \
-                '/${SLURM_ARRAY_TASK_ID}_evolution.dat'
+            # command_str += ' -E ' + scratch_dir + filename_prefix + \
+            #     '/${SLURM_ARRAY_TASK_ID}_evolution.dat'
+            command_str += ' -G ' + scratch_dir + filename_prefix + \
+                '/${SLURM_ARRAY_TASK_ID}_cellGen.dat'
             command_str += ' -s ' + str(condition_dict['SAMPLES'])
             command_str += ' -d ' + str(condition_dict['REPS'])
             command_str += ' -u ' + str(condition_dict['COST'])
