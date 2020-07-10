@@ -320,7 +320,7 @@
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
-                             multicell.start_1s, "NumOnes...") = { 50 };
+                             multicell.start_1s, "NumOnes...") = { 100 };
       config.AddComboSetting("unrestrained_cost", "Per-cell cost for unrestrained", 'u',
                              multicell.unrestrained_cost, "Costs...") = { 0.0 };
       config.AddComboSetting("mut_prob",   "Probability of mutation in offspring", 'm',
@@ -330,9 +330,9 @@
       config.AddComboSetting("neighbors",  "Neighborhood size for replication", 'n',
                              multicell.neighbors, "Sizes...") = { 8 };
       config.AddComboSetting("restrain",   "Num ones in genome for restraint?", 'r',
-                             multicell.restrain, "NumOnes...") = { 50 };
+                             multicell.restrain, "NumOnes...") = { 100 };
       config.AddComboSetting("bit_size",   "Number of bits in genome?", 'b',
-                             multicell.genome_size, "NumBits...") = { 100 };
+                             multicell.genome_size, "NumBits...") = { 101 };
       config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
                              multicell.cells_side, "NumCells...") = { 32 };
 
