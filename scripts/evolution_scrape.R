@@ -6,6 +6,7 @@ library(hash)
 #### BEGIN CONFIGURATION ####
 
 # A .txt file, each line is a slurm output file we will scrape
+setwd("~/Research/code/SpatialRestraint/scripts")
 file_list_filename = 'files_to_scrape.txt'
 # Where to save the output .csv?
 output_filename = 'data_spatial_restraint_start_75.csv'

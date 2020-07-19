@@ -1,0 +1,2 @@
+#data_count,ancestor_1s,unrestrained_cost,mut_prob,time_range,neighbors,restrain,bit_size,cells_side, ave_time, frac_restrain
+100, 100, 0, 0.5, 50, 8, 100, 101, 8, 1346.82, 0.478438
