@@ -330,7 +330,7 @@
       config.AddComboSetting("neighbors",  "Neighborhood size for replication", 'n',
                              multicell.neighbors, "Sizes...") = { 8 };
       config.AddComboSetting("restrain",   "Num ones in genome for restraint?", 'r',
-                             multicell.restrain, "NumOnes...") = { 100 };
+                             multicell.restrain, "NumOnes...") = { 0 };
       config.AddComboSetting("bit_size",   "Number of bits in genome?", 'b',
                              multicell.genome_size, "NumBits...") = { 101 };
       config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
