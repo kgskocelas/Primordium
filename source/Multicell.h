@@ -17,7 +17,6 @@
 #include "emp/datastructs/TimeQueue.hpp"
 
 
-
 /// Information about a single cell.
 struct Cell {
   size_t id;

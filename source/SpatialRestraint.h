@@ -268,16 +268,24 @@
       }
     }
 
-    void PrintData(std::ostream & os=std::cout) {
+    void PrintData(size_t run_id, std::ostream & os=std::cout) {
       // Count up the number of organism with each bit count.
       emp::vector<size_t> bit_counts(repro_cache.size(), 0);
-      for (Organism & org : orgs) bit_counts[org.num_ones]++;
-
-      // And print the results.
-      for (size_t i = 0; i < bit_counts.size(); i++) {
-        os << ", " << bit_counts[i];
+      emp::map<int, size_t> bit_map;
+      for (Organism & org : orgs){
+        if(bit_map.find(org.num_ones) == bit_map.end())
+          bit_map[org.num_ones] = 0;
+        bit_map[org.num_ones]++;
       }
-      os << ", " << CalcAveOnes();
+
+      //// And print the results.
+      //for (size_t i = 0; i < bit_counts.size(); i++) {
+      //  os << ", " << bit_counts[i];
+      //}
+      //os << ", " << CalcAveOnes();
+      for(auto I = bit_map.begin(); I != bit_map.end(); ++I){
+        os << run_id << "," << I->first << "," << I->second << std::endl;
+      }
     }
   };
 
@@ -300,6 +308,7 @@
     emp::StreamManager stream_manager;  ///< Manage files
     std::string evolution_filename;     ///< Output filename for evolution summary data.
     std::string multicell_filename;     ///< Output filename for multicell summary data.
+    std::string config_filename;        ///< Output filename for run config
     std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples
                                               // Where X is a value for ancestor_1s
 
@@ -315,7 +324,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFGHJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqwxyz ADFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -362,6 +371,8 @@
                        [this](){ reset_cache = true; } );
       config.AddSetting("multicell_filename", "Filename for multicell data", 'M',
                         multicell_filename, "Filename") = "multicell.dat";
+      config.AddSetting("config_filename", "Filename for outputting config", 'C',
+                        config_filename, "Filename") = "config.dat";
       config.AddAction("print_reps", "Print data for each replicate", 'P',
                        [this](){ print_reps = true; } );
       config.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
@@ -448,10 +459,7 @@
           print_trace ? emp::to_string('t',config.GetComboID(),'r',run_id,".dat") : "";
         pop.Reset(pop_size, ancestor_1s, reset_cache);
         pop.Run(gen_count, run_name, verbose);
-
-        os << config.CurComboString(", ");  // Output current setting combination data.
-        pop.PrintData(os);             // Output data for THIS population.
-        os << std::endl;
+        pop.PrintData(run_id, os);             // Output data for THIS population.
       }
     }
 
@@ -489,11 +497,7 @@
 
     void RunEvolution(std::ostream & os) {
       // Print column headers.
-      os << "#" << config.GetComboHeaders();
-      const size_t max_bits = config.MaxValue<size_t>("bit_size");
-      for (size_t i=0; i <= max_bits; i++) os << ", " << i << "-ones";
-      os << ", ave_ones" << std::endl;
-
+      os << "#gen,num_ones,count" << std::endl;
       config.ResetCombos();
       do {
         EvolveTreatment(os);
@@ -505,6 +509,10 @@
       size_t gen_count = config.GetValue<size_t>("gen_count");
       std::string evolution_filename = config.GetValue<std::string>("evolution_filename");
       std::string multicell_filename = config.GetValue<std::string>("multicell_filename");
+      std::string config_filename = config.GetValue<std::string>("config_filename");
+      auto & config_os = stream_manager.get_ostream(config_filename);
+      config_os << "#" << config.GetComboHeaders() << std::endl;
+      config_os << config.CurComboString(", ") << std::endl;// Output current setting combination 
 
       // If we have a generation count, collect evolution data.
       if (gen_count) RunEvolution(stream_manager.get_ostream(evolution_filename));
