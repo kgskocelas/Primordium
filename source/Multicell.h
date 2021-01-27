@@ -17,7 +17,6 @@
 #include "emp/datastructs/TimeQueue.hpp"
 
 
-
 /// Information about a single cell.
 struct Cell {
   size_t id;
@@ -107,6 +106,7 @@ struct Multicell {
   size_t time_range = 50.0;  ///< Replication takes 100.0 + a random value up to time_range.
   size_t neighbors = 8;      ///< Num neighbors in grid for offspring (0=well mixed; 4,6,8 => 2D)
   size_t cells_side = 32;    ///< How many cells are on a side of the (square) multi-cell?
+  bool is_infinite = false;  ///< is the genome infinite or finite?
   size_t genome_size = 10;   ///< How many bits in genome?
   size_t restrain = 5;       ///< How many ones in bit sequence for restraint?
   size_t start_1s = 5;       ///< How many ones in the starting cell?
@@ -258,9 +258,13 @@ struct Multicell {
     if (offspring.repro_time == 0.0) num_cells++;  // If offspring was empty, this is a new cell.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(mut_prob)) {
-      // double prob1 = ((double) offspring.num_ones) / (double) genome_size; // for set genome length
-
-      double prob1 = 0.5; // 50/50 chance of adding/removing 1 in infinite genome
+      double prob1;
+      if (is_infinite) {
+          prob1 = 0.5; // 50/50 chance of adding/removing 1 in infinite genome
+      }
+      else {
+          prob1 = ((double) offspring.num_ones) / (double) genome_size; // for set genome length
+      }
       if (random.P(prob1)) offspring.num_ones--;
       else offspring.num_ones++;
     }
