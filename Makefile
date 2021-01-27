@@ -1,6 +1,7 @@
 # Project-specific settings
 PROJECT := SpatialRestraint
-EMP_DIR := ../Empirical/source
+EMP_DIR := /research/tools/empirical_clean/include
+
 
 # Flags to use regardless of compiler
 CFLAGS_all := -Wall -Wno-unused-function -std=c++17 -I$(EMP_DIR)/

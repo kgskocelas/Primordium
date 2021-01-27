@@ -20,12 +20,13 @@
 #include <fstream>
 #include <set>
 
-#include "config/SettingConfig.h"
-#include "tools/BitVector.h"
-#include "tools/Distribution.h"
-#include "tools/StreamManager.h"
-#include "tools/string_utils.h"
-#include "tools/vector_utils.h"
+#include "emp/config/SettingConfig.hpp"
+#include "emp/bits/BitVector.hpp"
+#include "emp/math/Distribution.hpp"
+#include "emp/io/StreamManager.hpp"
+#include "emp/tools/string_utils.hpp"
+#include "emp/datastructs/vector_utils.hpp"
+
 
 #include "Multicell.h"
 

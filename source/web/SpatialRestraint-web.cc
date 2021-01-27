@@ -18,10 +18,11 @@
 // Standard
 
 // Empirical
-#include "web/web.h"
-#include "web/Animate.h"
-#include "web/color_map.h"
-#include "web/Element.h"
+#include "emp/web/web.hpp"
+#include "emp/web/Animate.hpp"
+#include "emp/web/color_map.hpp"
+#include "emp/web/Element.hpp"
+
 // Local
 #include "../SpatialRestraint.h"
 
