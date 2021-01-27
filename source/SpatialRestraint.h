@@ -20,12 +20,13 @@
 #include <fstream>
 #include <set>
 
-#include "config/SettingConfig.h"
-#include "tools/BitVector.h"
-#include "tools/Distribution.h"
-#include "tools/StreamManager.h"
-#include "tools/string_utils.h"
-#include "tools/vector_utils.h"
+#include "emp/config/SettingConfig.hpp"
+#include "emp/bits/BitVector.hpp"
+#include "emp/math/Distribution.hpp"
+#include "emp/io/StreamManager.hpp"
+#include "emp/tools/string_utils.hpp"
+#include "emp/datastructs/vector_utils.hpp"
+
 
 #include "Multicell.h"
 
@@ -148,6 +149,12 @@
     }
 
     double CalcReproDuration(size_t num_ones) {
+
+      if (repro_cache.size() <= num_ones) {
+        // repro_cache.push_back(emp::vector<double>(num_ones));
+        repro_cache.resize(num_ones + 1);
+      }
+
       emp::vector<double> & cur_cache = repro_cache[num_ones];
       size_t sample_id = random.GetUInt(num_samples);
       if (sample_id < cur_cache.size()) return cur_cache[sample_id];
@@ -167,6 +174,7 @@
       cur_cache.push_back(run_time);
       return run_time;
     }
+
 
     double CalcBirthTime(size_t num_ones) {
       return CalcReproDuration(num_ones) + org_queue.GetTime();
@@ -208,7 +216,8 @@
 
       // Handle mutations in the offspring.
       if (random.P(multicell.mut_prob)) {
-        double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+        //double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+        constexpr double prob1 = 0.5;
         if (random.P(prob1)) offspring.num_ones--;
         else offspring.num_ones++;
       }

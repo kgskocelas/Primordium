@@ -10,10 +10,12 @@
 #ifndef MULTICELL_H
 #define MULTICELL_H
 
-#include "base/vector.h"
-#include "tools/Random.h"
-#include "tools/stats.h"
-#include "tools/TimeQueue.h"
+#include "emp/base/vector.hpp"
+#include "emp/base/map.hpp"
+#include "emp/math/Random.hpp"
+#include "emp/math/stats.hpp"
+#include "emp/datastructs/TimeQueue.hpp"
+
 
 
 /// Information about a single cell.
@@ -32,12 +34,12 @@ struct Cell {
 
 /// Results from a single run.
 struct RunResults {
-  double run_time;                  ///< What was the replication time of this group?
-  emp::vector<double> cell_counts;  ///< How many cells have each bit count?
-  double extra_cost;                ///< Extra cost due to unrestrained cells.
+  double run_time;                    ///< What was the replication time of this group?
+  emp::map<int, double> cell_counts;  ///< How many cells have each bit count?
+  double extra_cost;                  ///< Extra cost due to unrestrained cells.
 
-  RunResults() : run_time(0.0), cell_counts(0) { ; }
-  RunResults(const size_t num_bits) : run_time(0.0), cell_counts(num_bits+1, 0.0) { ; }
+  RunResults() : run_time(0.0) { ; }
+  RunResults(const size_t num_bits) : run_time(0.0) { ; }
   RunResults(const RunResults &) = default;
   RunResults(RunResults &&) = default;
 
@@ -45,9 +47,11 @@ struct RunResults {
   RunResults & operator=(RunResults &&) = default;
 
   RunResults & operator+=(const RunResults & in) {
-    emp_assert(cell_counts.size() == in.cell_counts.size());
     run_time += in.run_time;
-    for (size_t i=0; i < cell_counts.size(); i++) cell_counts[i] += in.cell_counts[i];
+    for (auto [key,value] : in.cell_counts) {
+      if (emp::Has(cell_counts,key)) cell_counts[key] += value;
+      else cell_counts[key] = value;
+    }
     extra_cost += extra_cost;
     return *this;
   }
@@ -55,25 +59,31 @@ struct RunResults {
   RunResults & operator/=(const double denom) {
     emp_assert(denom != 0.0);
     run_time /= denom;
-    for (double & x : cell_counts) x /= denom;
+    for (auto & [key,value] : cell_counts) {
+      value /= denom;
+    }
     extra_cost /= denom;
     return *this;
   }
 
   /// Count the total number of cells represented.
-  double CountCells() const { return emp::Sum(cell_counts); }
+  double CountCells() const {
+    double total = 0.0;
+    for (auto [key,value] : cell_counts) { total += value; }
+    return total;
+  }
 
   /// Count the number of cells that exhibit restrained behavior.
   double CountRestrained(size_t threshold) const {
     double total = 0.0;
-    for (size_t i = threshold; i < cell_counts.size(); i++) total += cell_counts[i];
+    for (auto [key,value] : cell_counts) { if (key >= (int) threshold) total += value; }
     return total;
   }
 
   /// Count the number of cells that DO NOT exhibit restrained behavior.
   double CountUnrestrained(size_t threshold) const {
     double total = 0.0;
-    for (size_t i = 0; i < threshold; i++) total += cell_counts[i];
+    for (auto [key,value] : cell_counts) { if (key >= (int) threshold) break; total += value; }
     return total;
   }
 
@@ -248,7 +258,9 @@ struct Multicell {
     if (offspring.repro_time == 0.0) num_cells++;  // If offspring was empty, this is a new cell.
     offspring.num_ones = parent.num_ones;
     if (do_mutations && random.P(mut_prob)) {
-      double prob1 = ((double) offspring.num_ones) / (double) genome_size;
+      // double prob1 = ((double) offspring.num_ones) / (double) genome_size; // for set genome length
+
+      double prob1 = 0.5; // 50/50 chance of adding/removing 1 in infinite genome
       if (random.P(prob1)) offspring.num_ones--;
       else offspring.num_ones++;
     }
@@ -337,12 +349,13 @@ struct Multicell {
     }
 
     // Setup the results and return them.
-    RunResults results(genome_size);
+    RunResults results;
     results.run_time = cell_queue.GetTime();
     size_t unrestrained_count = 0;
     for (const auto & cell : cells) {
       if (cell.num_ones < restrain) unrestrained_count++;
-      results.cell_counts[cell.num_ones] += 1.0;
+      if (emp::Has(results.cell_counts, cell.num_ones)) results.cell_counts[cell.num_ones] += 1.0;
+      else results.cell_counts[cell.num_ones] = 1.0;
     }
     results.extra_cost = unrestrained_count * unrestrained_cost;
     return results;
