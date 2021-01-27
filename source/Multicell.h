@@ -10,11 +10,12 @@
 #ifndef MULTICELL_H
 #define MULTICELL_H
 
-#include "base/vector.h"
-#include "base/map.h"
-#include "tools/Random.h"
-#include "tools/stats.h"
-#include "tools/TimeQueue.h"
+#include "emp/base/vector.hpp"
+#include "emp/base/map.hpp"
+#include "emp/math/Random.hpp"
+#include "emp/math/stats.hpp"
+#include "emp/datastructs/TimeQueue.hpp"
+
 
 
 /// Information about a single cell.

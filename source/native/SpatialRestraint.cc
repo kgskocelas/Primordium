@@ -13,7 +13,7 @@
  *  - Unrestrained cells replicate into a random position, regardless of if anything is there.
  */
 
-#include "config/command_line.h"
+#include "emp/config/command_line.hpp"
 
 #include "../SpatialRestraint.h"
 
