@@ -5,7 +5,7 @@ library(dplyr)
 
 
 setwd("~/Research/code/SpatialRestraint/scripts/")
-cur_size = 512
+cur_size = 8
 
 data = read.csv(paste0('raw_data/', cur_size, '/1_cellGen.dat'))
 data_grouped = dplyr::group_by(data, pct_full, cell_generation)
