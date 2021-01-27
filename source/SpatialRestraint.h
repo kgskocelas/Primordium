@@ -77,7 +77,7 @@
       std::ifstream fp_in;
       std::string line;
       size_t line_count;
-      // Attempt to load file for each value of ones [0, genom_size]
+      // Attempt to load file for each value of ones [0, genome_size]
       for(size_t num_ones = 0; num_ones < repro_cache.size(); ++num_ones){
         filename_stream.str("");
         filename_stream << samples_directory << num_ones << ".dat";
@@ -315,7 +315,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFGHIJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqwxyz ACDFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -337,6 +337,8 @@
 
       config.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
                        [this](){ multicell.one_check = true; } );
+      config.AddAction("is_infinite", "Make genome infinite", 'I',
+                        [this](){multicell.is_infinite = true; });
 
       config.AddSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
                         gen_count, "NumGens") = { 0 };
@@ -346,7 +348,6 @@
                         sample_size, "NumSamples") = { 200 };
       config.AddSetting("load_samples", "Load pre-computer multicell data from directory", 'L',
                         sample_input_directory, "Path") = {"" };
-                        
 
       config.AddAction("balance_predict", "Predict the mutation-selection balance [NOT YET IMPLEMENTED!]", 'B',
                        [this](){ balance_predict = true; } );
@@ -367,7 +368,7 @@
                        [this](){ print_trace = true; } );
       config.AddAction("verbose", "Print extra information during the run", 'v',
                        [this](){ verbose = true; } );
-      config.AddAction("enforce", "Enforeces population stays within bounds of data loaded with -L. Exits if boudns exceeded", 'e',
+      config.AddAction("enforce", "Enforces population stays within bounds of data loaded with -L. Exits if bounds exceeded", 'e',
                        [this](){ enforce_data_bounds= true; } );
 
       // Process the command-line options

@@ -1,6 +1,6 @@
 # Project-specific settings
 PROJECT := SpatialRestraint
-EMP_DIR := /research/tools/empirical_clean/include
+EMP_DIR := ../Empirical/include
 
 
 # Flags to use regardless of compiler
