@@ -80,7 +80,7 @@
       std::string line;
       size_t line_count;
       // Attempt to load file for each value of ones [0, genome_size]
-      for(int num_ones = min_ones; num_ones < max_ones; ++num_ones){
+      for(int num_ones = min_ones; num_ones <= max_ones; ++num_ones){
         filename_stream.str("");
         filename_stream << samples_directory << num_ones << ".dat";
         fp_in.open(filename_stream.str(), std::ios::in);
@@ -110,50 +110,52 @@
         for(size_t val_idx = 0; val_idx < line_count; ++val_idx){
             fp_in >> repro_cache[num_ones][val_idx];
         }
-        std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
-                  << repro_cache[num_ones].size() << std::endl;
-        fp_in.close();
+          std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
+                    << repro_cache[num_ones].size() << std::endl;
+          fp_in.close();
+        }
+        repro_cache_min = min_ones;
+        repro_cache_max = max_ones;
+      }  
+
+      void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
+        orgs.resize(0, ancestor_1s);
+        orgs.resize(pop_size, ancestor_1s);
+        org_queue.Reset();
+        ave_gen = 0;
+        if (reset_cache) {
+          repro_cache.clear();
+          repro_cache_min = 0;
+          repro_cache_max = 0;
+        }
       }
-    }  
 
-    void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
-      orgs.resize(0, ancestor_1s);
-      orgs.resize(pop_size, ancestor_1s);
-      org_queue.Reset();
-      ave_gen = 0;
-      if (reset_cache) {
-        repro_cache.clear();
-        repro_cache_min = 0;
-        repro_cache_max = 0;
+      double CalcAveOnes() {
+        double total_bits = 0.0;
+        for (Organism & org : orgs) total_bits += (double) org.num_ones;
+        return total_bits / (double) orgs.size();
       }
-    }
 
-    double CalcAveOnes() {
-      double total_bits = 0.0;
-      for (Organism & org : orgs) total_bits += (double) org.num_ones;
-      return total_bits / (double) orgs.size();
-    }
-
-    double CalcAveGen() {
-      double total_gen = 0.0;
-      for (Organism & org : orgs) total_gen += org.gen;
-      return total_gen / (double) orgs.size();
-    }
-
-    Organism CalcAveOrg() {
-      Organism total_org(0);
-      for (Organism & org : orgs) {
-        total_org.num_ones += (double) org.num_ones;
-        total_org.gen += org.gen;
-        total_org.repro_time += org.repro_time;
+      double CalcAveGen() {
+        double total_gen = 0.0;
+        for (Organism & org : orgs) total_gen += org.gen;
+        return total_gen / (double) orgs.size();
       }
-      return Organism(total_org.num_ones/orgs.size(),
-                      total_org.gen / (double) orgs.size(),
-                      total_org.repro_time / (double) orgs.size());
-    }
 
-    double CalcReproDuration(int num_ones) {
-      if(repro_cache_min >= num_ones){
+      Organism CalcAveOrg() {
+        Organism total_org(0);
+        for (Organism & org : orgs) {
+          total_org.num_ones += (double) org.num_ones;
+          total_org.gen += org.gen;
+          total_org.repro_time += org.repro_time;
+        }
+        return Organism(total_org.num_ones/orgs.size(),
+                        total_org.gen / (double) orgs.size(),
+                        total_org.repro_time / (double) orgs.size());
+      }
+
+      double CalcReproDuration(int num_ones) {
+        if(repro_cache_min >= num_ones){
         for(int i = repro_cache_min; i >= num_ones; --i)
           repro_cache[i] = emp::vector<double>();
         repro_cache_min = num_ones - 1;
@@ -174,6 +176,7 @@
           exit(-1);
       }
 
+      std::cout << "calculating: " << num_ones << std::endl;
       multicell.start_1s = num_ones;
       multicell.SetupConfig();
       multicell.InjectCell(multicell.MiddlePos());
@@ -505,7 +508,7 @@
 
     void RunEvolution(std::ostream & os) {
       // Print column headers.
-      os << "#gen,num_ones,count" << std::endl;
+      os << "#run_id,num_ones,count" << std::endl;
       config.ResetCombos();
       do {
         EvolveTreatment(os);
