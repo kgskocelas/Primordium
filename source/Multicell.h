@@ -21,7 +21,7 @@
 struct Cell {
   size_t id;
   double repro_time = 0.0;  ///< When will this cell replicate?
-  size_t num_ones = 0;      ///< How many ones in genome?
+  int num_ones = 0;      ///< How many ones in genome?
 
   bool operator==(const Cell & _in) const { return id == _in.id; }
   bool operator!=(const Cell & _in) const { return id != _in.id; }
@@ -73,14 +73,14 @@ struct RunResults {
   }
 
   /// Count the number of cells that exhibit restrained behavior.
-  double CountRestrained(size_t threshold) const {
+  double CountRestrained(int threshold) const {
     double total = 0.0;
     for (auto [key,value] : cell_counts) { if (key >= (int) threshold) total += value; }
     return total;
   }
 
   /// Count the number of cells that DO NOT exhibit restrained behavior.
-  double CountUnrestrained(size_t threshold) const {
+  double CountUnrestrained(int threshold) const {
     double total = 0.0;
     for (auto [key,value] : cell_counts) { if (key >= (int) threshold) break; total += value; }
     return total;
@@ -108,8 +108,8 @@ struct Multicell {
   size_t cells_side = 32;    ///< How many cells are on a side of the (square) multi-cell?
   bool is_infinite = false;  ///< is the genome infinite or finite?
   size_t genome_size = 10;   ///< How many bits in genome?
-  size_t restrain = 5;       ///< How many ones in bit sequence for restraint?
-  size_t start_1s = 5;       ///< How many ones in the starting cell?
+  int restrain = 5;          ///< How many ones in bit sequence for restraint?
+  int start_1s = 5;          ///< How many ones in the starting cell?
   double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
   double unrestrained_cost = 0.0; ///< Extra cost for each unrestrained cell when full.
   bool one_check = false;    ///< Should restrained check only one cell to find empty?
@@ -244,7 +244,7 @@ struct Multicell {
     cell_queue.Insert(cell.id, cell.repro_time);
   }
 
-  void InjectCell(size_t pos, size_t num_ones) {
+  void InjectCell(size_t pos, int num_ones) {
     Cell & inject_cell = cells[pos];                 // Find cell at inject position.
     if (inject_cell.repro_time == 0.0) num_cells++;  // If cell was empty, mark increase.
     inject_cell.num_ones = num_ones;                 // Initialize injection ones.

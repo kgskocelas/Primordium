@@ -26,17 +26,18 @@
 #include "emp/io/StreamManager.hpp"
 #include "emp/tools/string_utils.hpp"
 #include "emp/datastructs/vector_utils.hpp"
+#include "emp/base/unordered_map.hpp"
 
 
 #include "Multicell.h"
 
   /// Information about a full multi-cell organism
   struct Organism {
-    size_t num_ones = 0;
+    int num_ones = 0;
     double gen = 0.0;
     double repro_time = 0.0;
 
-    Organism(size_t in_ones, double in_gen=0.0, double in_repro_time=0.0)
+    Organism(int in_ones, double in_gen=0.0, double in_repro_time=0.0)
      : num_ones(in_ones), gen(in_gen), repro_time(in_repro_time) { }
     Organism(const Organism &) = default;
     Organism & operator=(const Organism &) = default;
@@ -52,33 +53,34 @@
     /// The outer vector is the number of ones.  The inner vector is a set of
     /// how long multicells took to replicate with that number of ones.
     /// Dimensions are GENOME_SIZE+1 -by- NUM_SAMPLES
-    emp::vector< emp::vector<double> > repro_cache;  
+    emp::unordered_map<int, emp::vector<double> > repro_cache;  
+    int repro_cache_min, repro_cache_max;
 
     // Shared resources with Experiment
     Multicell & multicell;
     emp::Random & random;
     emp::StreamManager & stream_manager;
 
-    Population(size_t pop_size, size_t ancestor_1s, size_t _samples,
+    Population(size_t pop_size, int ancestor_1s, size_t _samples,
                Multicell & _mc, emp::Random & _rand, emp::StreamManager & _smanager, 
               bool _enforce_data_bounds)
       : orgs(pop_size, ancestor_1s), num_samples(_samples)
       , enforce_data_bounds(_enforce_data_bounds)
-      , repro_cache(_mc.genome_size + 1)
+      , repro_cache(), repro_cache_min(0), repro_cache_max(0)
       , multicell(_mc), random(_rand), stream_manager(_smanager)
     {
     }
 
     // Fill the reproduction time distributions from samples stored on disk. 
     // Only loads in what we actually find
-    void LoadSamplesFromDisk(std::string samples_directory){
+    void LoadSamplesFromDisk(std::string samples_directory, int min_ones, int max_ones){
       std::cout << "Loading samples from disk!" << std::endl;
       std::stringstream filename_stream;
       std::ifstream fp_in;
       std::string line;
       size_t line_count;
       // Attempt to load file for each value of ones [0, genome_size]
-      for(size_t num_ones = 0; num_ones < repro_cache.size(); ++num_ones){
+      for(int num_ones = min_ones; num_ones < max_ones; ++num_ones){
         filename_stream.str("");
         filename_stream << samples_directory << num_ones << ".dat";
         fp_in.open(filename_stream.str(), std::ios::in);
@@ -98,6 +100,7 @@
           std::cerr << "Present in " << filename_stream.str() << ": " << line_count << std::endl;
           exit(1);
         } 
+        repro_cache[num_ones] = emp::vector<double>();
         // Resize cache to handle that many entries
         repro_cache[num_ones].resize(line_count);
         // Reset file pointer to top of file
@@ -113,14 +116,15 @@
       }
     }  
 
-    void Reset(size_t pop_size, size_t ancestor_1s, bool reset_cache=true) {
+    void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
       orgs.resize(0, ancestor_1s);
       orgs.resize(pop_size, ancestor_1s);
       org_queue.Reset();
       ave_gen = 0;
       if (reset_cache) {
-        repro_cache.resize(0);
-        repro_cache.resize(multicell.genome_size + 1);
+        repro_cache.clear();
+        repro_cache_min = 0;
+        repro_cache_max = 0;
       }
     }
 
@@ -148,11 +152,16 @@
                       total_org.repro_time / (double) orgs.size());
     }
 
-    double CalcReproDuration(size_t num_ones) {
-
-      if (repro_cache.size() <= num_ones) {
-        // repro_cache.push_back(emp::vector<double>(num_ones));
-        repro_cache.resize(num_ones + 1);
+    double CalcReproDuration(int num_ones) {
+      if(repro_cache_min >= num_ones){
+        for(int i = repro_cache_min; i >= num_ones; --i)
+          repro_cache[i] = emp::vector<double>();
+        repro_cache_min = num_ones - 1;
+      }
+      if(repro_cache_max <= num_ones){
+        for(int i = repro_cache_max; i <= num_ones; ++i)
+          repro_cache[i] = emp::vector<double>();
+        repro_cache_max = num_ones + 1;
       }
 
       emp::vector<double> & cur_cache = repro_cache[num_ones];
@@ -176,7 +185,7 @@
     }
 
 
-    double CalcBirthTime(size_t num_ones) {
+    double CalcBirthTime(int num_ones) {
       return CalcReproDuration(num_ones) + org_queue.GetTime();
     }
 
@@ -270,7 +279,6 @@
 
     void PrintData(size_t run_id, std::ostream & os=std::cout) {
       // Count up the number of organism with each bit count.
-      emp::vector<size_t> bit_counts(repro_cache.size(), 0);
       emp::map<int, size_t> bit_map;
       for (Organism & org : orgs){
         if(bit_map.find(org.num_ones) == bit_map.end())
@@ -278,11 +286,6 @@
         bit_map[org.num_ones]++;
       }
 
-      //// And print the results.
-      //for (size_t i = 0; i < bit_counts.size(); i++) {
-      //  os << ", " << bit_counts[i];
-      //}
-      //os << ", " << CalcAveOnes();
       for(auto I = bit_map.begin(); I != bit_map.end(); ++I){
         os << run_id << "," << I->first << "," << I->second << std::endl;
       }
@@ -309,8 +312,9 @@
     std::string evolution_filename;     ///< Output filename for evolution summary data.
     std::string multicell_filename;     ///< Output filename for multicell summary data.
     std::string config_filename;        ///< Output filename for run config
-    std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples
-                                              // Where X is a value for ancestor_1s
+    std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples where X is a value for ancestor_1s
+    int sample_input_min;               ///< If loading samples from file, this is the start index
+    int sample_input_max;               ///< If loading samples from file, this is the final index
 
     using TreatmentResults = emp::vector<RunResults>;
     using MulticellResults = emp::vector<TreatmentResults>;
@@ -324,7 +328,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwxyz ADFGHJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqwx ADFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -357,6 +361,10 @@
                         sample_size, "NumSamples") = { 200 };
       config.AddSetting("load_samples", "Load pre-computer multicell data from directory", 'L',
                         sample_input_directory, "Path") = {"" };
+      config.AddSetting("load_samples_min", "Minimum one count of samples when loading with -L", 'y',
+                        sample_input_min, "NumOnes") = {0 };
+      config.AddSetting("load_samples_max", "Minimum one count of samples when loading with -L", 'z',
+                        sample_input_max, "NumOnes") = {100 };
 
       config.AddAction("balance_predict", "Predict the mutation-selection balance [NOT YET IMPLEMENTED!]", 'B',
                        [this](){ balance_predict = true; } );
@@ -444,14 +452,14 @@
       const size_t num_runs = config.GetValue<size_t>("data_count");
       const size_t num_samples = config.GetValue<size_t>("sample_size");
       const size_t pop_size = config.GetValue<size_t>("pop_size");
-      const size_t ancestor_1s = config.GetValue<size_t>("ancestor_1s");
+      const int ancestor_1s = config.GetValue<int>("ancestor_1s");
       const size_t gen_count = config.GetValue<size_t>("gen_count");
 
       Population pop(pop_size, ancestor_1s, num_samples, multicell, random, stream_manager, 
           enforce_data_bounds);
       // If directory was specified, load in pre-computed sample data
       if(sample_input_directory.length() > 1)
-          pop.LoadSamplesFromDisk(sample_input_directory);
+          pop.LoadSamplesFromDisk(sample_input_directory, sample_input_min, sample_input_max);
       for (size_t run_id = 0; run_id < num_runs; run_id++) {
         std::cout << "START Treatment #" << config.GetComboID()
                   << " : Run " << run_id << std::endl;
