@@ -41,4 +41,5 @@ web/SpatialRestraint.wasm
 bak/
 *~
 *.swp
+.idea/
 
