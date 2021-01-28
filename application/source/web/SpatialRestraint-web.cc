@@ -61,9 +61,9 @@ protected:
     }
     else{ // Restrained
         color_fill = emp::ColorRGB(
-          0,
           255 - (num_ones - 50) * 5,
-          100 - (num_ones - 50) * 2);
+          255 - (num_ones - 50) * 5,
+          255 - (num_ones - 50) * 5);
     }
     canvas.Rect(
       (cell_id % mc_size) * tile_width, 
@@ -178,7 +178,7 @@ protected:
     form << ones_input_group; 
     doc.Input("ones_input").Value(starting_ones);
     // Mutation rate
-    auto mut_prob_input_group = AddInputGroup("mut_prob", "Cells per side", "number", 
+    auto mut_prob_input_group = AddInputGroup("mut_prob", "Mutation probability", "number", 
       [](const std::string & s){;});
     form << mut_prob_input_group; 
     doc.Input("mut_prob_input").Value(mut_prob);

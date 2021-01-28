@@ -1,0 +1,6 @@
+[submodule "application/source/third_party/Empirical"]
+	path = application/source/third_party/Empirical
+	url = https://github.com/devosoft/Empirical
+[submodule "experiments/scripts/third_party/pyvarco"]
+	path = experiments/scripts/third_party/pyvarco
+	url = https://github.com/FergusonAJ/pyvarco

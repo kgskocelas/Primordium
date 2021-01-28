@@ -31,8 +31,15 @@
 *.out
 *.app
 
+# Compiled files
+application/bin
+web/SpatialRestraint.js
+web/SpatialRestraint.wasm
+
+# Editor/IDE/etc
 .vscode/
 bak/
-SpatialRestraint
 *~
 *.swp
+.idea/
+
