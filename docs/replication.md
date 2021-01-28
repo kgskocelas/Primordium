@@ -11,16 +11,18 @@ First, make sure you have [git installed](https://github.com/git-guides/install-
 Once git is installed on your machine, navigate to your preferred location and clone the repo. 
 Via ssh: 
 ```
-git clone git@github.com:kgskocelas/SpatialRestraint.git
+git clone git@github.com:kgskocelas/SpatialRestraint.git <DIR_NAME> --recurse-submodules
 ```
 Via https:
 ```
-git clone https://github.com/kgskocelas/SpatialRestraint.git
+git clone https://github.com/kgskocelas/SpatialRestraint.git <DIR_NAME> --recurse-submodules
 ```
+Where you replace <DIR_NAME> with whatever you want the directory to be named, or delete it to name the directory after the repo.
 
 ## Prerequisites
 This project requires serveral dependencies to compiler and run. 
 The following subsections will walk you through the installation process for each of them. 
+NOTE: If you used the `--recure-submodules` flag when you cloned the repo, you can skip to the R Modules section!
 
 ### Empirical
 The C++ core of this project comes from the [Empirical library for scientific software](https://github.com/devosoft/Empirical). 
