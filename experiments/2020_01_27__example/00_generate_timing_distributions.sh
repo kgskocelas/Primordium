@@ -34,7 +34,7 @@ if [ "${SR_INFINITE,,}" == "false" -o "${SR_INFINITE,,}" == "f" -o "${SR_INFINIT
 fi
 
 # Generate the jobs!
-python3 ${SR_ROOT_DIR}/experiments/scripts/timing_job_prep.py --executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint --output_dir ${SR_TIMING_OUTPUT_DIR} --job_dir ${SR_TIMING_JOB_DIR} --ones ${SR_TIMING_ONES} --cost ${SR_COST} --mc_size ${SR_MC_SIZE} --mut_rate ${SR_TIMING_MUT_RATE} --samples ${SR_TIMING_SAMPLES} --num_jobs ${SR_TIMING_JOBS} --num_tasks ${SR_TIMING_TASKS} --seed_offset ${SR_TIMING_SEED_OFFSET} --time ${SR_TIMING_TIME} --memory ${SR_TIMING_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL}
+python3 ${SR_ROOT_DIR}/experiments/scripts/timing_job_prep.py --executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint --output_dir ${SR_TIMING_OUTPUT_DIR} --job_dir ${SR_TIMING_JOB_DIR} --ones ${SR_TIMING_ONES} --cost ${SR_COST} --mc_size ${SR_MC_SIZE} --mut_rate ${SR_TIMING_MUT_RATE} --samples ${SR_SAMPLES} --num_jobs ${SR_TIMING_JOBS} --num_tasks ${SR_TIMING_TASKS} --seed_offset ${SR_TIMING_SEED_OFFSET} --time ${SR_TIMING_TIME} --memory ${SR_TIMING_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL}
 
 # Create instance of roll_q for timing jobs
 cp ${SR_ROOT_DIR}/experiments/scripts/third_party/roll_q ${SR_TIMING_DIR}/roll_q -r
@@ -62,7 +62,7 @@ fi
 #    --cost ${SR_COST}
 #    --mc_size ${SR_MC_SIZE}
 #    --mut_rate ${SR_TIMING_MUT_RATE}
-#    --samples ${SR_TIMING_SAMPLES}
+#    --samples ${SR_SAMPLES}
 #    --num_jobs ${SR_TIMING_JOBS}
 #    --num_tasks ${SR_TIMING_TASKS}
 #    --seed_offset ${SR_TIMING_SEED_OFFSET}

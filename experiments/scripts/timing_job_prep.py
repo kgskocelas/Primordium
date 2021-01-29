@@ -126,7 +126,7 @@ for condition_dict in combo_list:
             fp_job.write('#SBATCH --account=devolab' + '\n')
             fp_job.write('#SBATCH --cpus-per-task=1' + '\n')
             fp_job.write('#SBATCH --mem-per-cpu=' + args.memory + '\n')
-            fp_job.write('#SBATCH --job-name Spatial_Restraint' + '\n')
+            fp_job.write('#SBATCH --job-name sr_time_' + job_id_str + '\n')
             fp_job.write('#SBATCH --array=1-' + str(tasks_per_job) + '\n')
             fp_job.write('#SBATCH --output='  + \
                 output_dir + filename_prefix + '_%a__slurm.out' + \
@@ -145,6 +145,8 @@ for condition_dict in combo_list:
             command_str += ' -m ' + str(condition_dict['MUT'])
             command_str += ' -M ' + output_dir + filename_prefix + \
                 '/${SLURM_ARRAY_TASK_ID}_multicell.dat'
+            command_str += ' -C ' + output_dir + filename_prefix + \
+                '/${SLURM_ARRAY_TASK_ID}_config.dat'
             command_str += ' -d ' + str(condition_dict['SAMPLES'])
             command_str += ' -u ' + str(condition_dict['COST'])
             command_str += ' ' + extra_flags + ' '

@@ -30,7 +30,6 @@ SR_ONE_CHECK=True
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
 
-
 #### EVOLUTION VARIABLES
 # Starting ones, where does the ancestor start? [Comma separated list of integers]
 SR_EVO_ONES=50
@@ -46,6 +45,16 @@ SR_EVO_MEMORY=1G
 SR_EVO_SEED_OFFSET=0
 # Number of replicates for each treatment
 SR_EVO_REPS=100
+# Number of jobs per treatment 
+SR_EVO_JOBS=1
+# Number of multicells in the populations 
+SR_EVO_POP_SIZE=200
+# Directory where the timing jobs will go [Path] (Unlikely to change)
+SR_EVO_DIR=${SR_EXP_DIR}/evolution
+# Directory where the timing jobs will go [Path] (Unlikely to change)
+SR_EVO_JOB_DIR=${SR_EVO_DIR}/jobs
+# Directory where the raw timing data will go [Path] (Unlikely to change)
+SR_EVO_OUTPUT_DIR=${SR_SCRATCH_ROOT}/${SR_EXP_NAME}/evolution
 
 
 #### TIMING VARIABLES
