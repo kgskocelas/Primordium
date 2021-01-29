@@ -11,7 +11,7 @@ SR_EXP_NAME=$(pwd | grep -oP "/\K[^/]+$")
 SR_EXP_DIR=$(pwd)
 # Root directory -> The root level of the repo, should be directory just above 'experiments'
 SR_ROOT_DIR=$(pwd | grep -oP ".+/(?=experiments/)")
-source ${SR_ROOT_DIR}/experiments/scripts/config_global.sh
+source ${SR_ROOT_DIR}/experiments/config_global.sh
 
 ######################################################
 ################## CONFIG OPTIONS ####################
