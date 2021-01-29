@@ -63,8 +63,6 @@ SR_TIMING_SEED_OFFSET=0
 SR_TIMING_JOBS=1
 # Number of tasks for each job [Integer]
 SR_TIMING_TASKS=1
-# Number of samples for each one value [Integer]
-SR_TIMING_SAMPLES=1000
 # Directory where the timing jobs will go [Path] (Unlikely to change)
 SR_TIMING_DIR=${SR_EXP_DIR}/timing_distributions
 # Directory where the timing jobs will go [Path] (Unlikely to change)
