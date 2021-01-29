@@ -4,3 +4,6 @@
 [submodule "experiments/scripts/third_party/pyvarco"]
 	path = experiments/scripts/third_party/pyvarco
 	url = https://github.com/FergusonAJ/pyvarco
+[submodule "experiments/scripts/third_party/roll_q"]
+	path = experiments/scripts/third_party/roll_q
+	url = git@github.com:FergusonAJ/roll_q
