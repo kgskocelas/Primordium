@@ -9,7 +9,7 @@ library(hash)
 
 args = commandArgs(trailingOnly=T)
 if(length(args) != 3){
-    print('Error! Must pass exactly 4 command line arguments:')
+    print('Error! Must pass exactly 3 command line arguments:')
     print('File list, output path, and the number of replicates per file')
     q()
 }
