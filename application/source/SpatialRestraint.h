@@ -75,6 +75,7 @@
     // Only loads in what we actually find
     void LoadSamplesFromDisk(std::string samples_directory, int min_ones, int max_ones){
       std::cout << "Loading samples from disk!" << std::endl;
+      std::cout << "Loading ones from " << min_ones <<  " to " << max_ones << std::endl;
       std::stringstream filename_stream;
       std::ifstream fp_in;
       std::string line;
@@ -110,190 +111,190 @@
         for(size_t val_idx = 0; val_idx < line_count; ++val_idx){
             fp_in >> repro_cache[num_ones][val_idx];
         }
-          std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
-                    << repro_cache[num_ones].size() << std::endl;
-          fp_in.close();
-        }
-        repro_cache_min = min_ones;
-        repro_cache_max = max_ones;
-      }  
+              std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
+                        << repro_cache[num_ones].size() << std::endl;
+              fp_in.close();
+            }
+            repro_cache_min = min_ones;
+            repro_cache_max = max_ones;
+          }  
 
-      void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
-        orgs.resize(0, ancestor_1s);
-        orgs.resize(pop_size, ancestor_1s);
-        org_queue.Reset();
-        ave_gen = 0;
-        if (reset_cache) {
-          repro_cache.clear();
-          repro_cache_min = 0;
-          repro_cache_max = 0;
-        }
-      }
-
-      double CalcAveOnes() {
-        double total_bits = 0.0;
-        for (Organism & org : orgs) total_bits += (double) org.num_ones;
-        return total_bits / (double) orgs.size();
-      }
-
-      double CalcAveGen() {
-        double total_gen = 0.0;
-        for (Organism & org : orgs) total_gen += org.gen;
-        return total_gen / (double) orgs.size();
-      }
-
-      Organism CalcAveOrg() {
-        Organism total_org(0);
-        for (Organism & org : orgs) {
-          total_org.num_ones += (double) org.num_ones;
-          total_org.gen += org.gen;
-          total_org.repro_time += org.repro_time;
-        }
-        return Organism(total_org.num_ones/orgs.size(),
-                        total_org.gen / (double) orgs.size(),
-                        total_org.repro_time / (double) orgs.size());
-      }
-
-      double CalcReproDuration(int num_ones) {
-        if(repro_cache_min >= num_ones){
-        for(int i = repro_cache_min; i >= num_ones; --i)
-          repro_cache[i] = emp::vector<double>();
-        repro_cache_min = num_ones - 1;
-      }
-      if(repro_cache_max <= num_ones){
-        for(int i = repro_cache_max; i <= num_ones; ++i)
-          repro_cache[i] = emp::vector<double>();
-        repro_cache_max = num_ones + 1;
-      }
-
-      emp::vector<double> & cur_cache = repro_cache[num_ones];
-      size_t sample_id = random.GetUInt(num_samples);
-      if (sample_id < cur_cache.size()) return cur_cache[sample_id];
-      if(enforce_data_bounds){
-          std::cout << "Error! requested sample that isn't pre-generated!" << std::endl;
-          std::cout << "Number of ones: "<< num_ones << std::endl;
-          std::cout << "Exiting..." << std::endl;
-          exit(-1);
-      }
-
-      std::cout << "calculating: " << num_ones << std::endl;
-      multicell.start_1s = num_ones;
-      multicell.SetupConfig();
-      multicell.InjectCell(multicell.MiddlePos());
-      double run_time = multicell.Run().GetReproTime();
-      // std::cout << "run_time = " << run_time << std::endl;
-
-      cur_cache.push_back(run_time);
-      return run_time;
-    }
-
-
-    double CalcBirthTime(int num_ones) {
-      return CalcReproDuration(num_ones) + org_queue.GetTime();
-    }
-
-    double CalcAveReproDuration() {
-      double total_rt = 0.0;
-      for (Organism & org : orgs) total_rt += CalcReproDuration(org.num_ones);
-      return total_rt / (double) orgs.size();
-    }
-
-    void NextBirth() {
-      size_t parent_id = org_queue.Next();
-      Organism & parent = orgs[parent_id];
-
-      // std::cout << "DEBUG: NextBirth with parent_id=" << parent_id << std::endl;
-
-      // If this organism has updated, skip it.
-      if (parent.repro_time != org_queue.GetTime()) {
-        // std::cout << "DEBUG: ...skipped; parent.repro_time=" << parent.repro_time
-        //           << ", but real time=" << org_queue.GetTime() << std::endl;
-        return;
-      }
-
-      // Figure out where the offspring would go.
-      size_t offspring_id = random.GetUInt(orgs.size());
-      Organism & offspring = orgs[offspring_id];
-
-      // std::cout << "DEBUG: ...offspring_id=" << offspring_id << std::endl;
-
-      ave_gen -= offspring.gen / (double) orgs.size();      // Remove old org from gen average.
-      if (parent_id != offspring_id) {                      // If the parent is not being replaced...
-        offspring = parent;                                 //   copy parent to offspring.
-        parent.repro_time = CalcBirthTime(parent.num_ones); //   figure out parent's NEXT repro time.
-        org_queue.Insert(parent_id, parent.repro_time);     //   schedule parent for next repro
-      }
-      offspring.gen += 1.0;                                 // Update offspring's generation.
-      ave_gen += offspring.gen / (double) orgs.size();      // Add new org to gen average.
-
-      // Handle mutations in the offspring.
-      if (random.P(multicell.mut_prob)) {
-        //double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
-        constexpr double prob1 = 0.5;
-        if (random.P(prob1)) offspring.num_ones--;
-        else offspring.num_ones++;
-      }
-
-
-      // Schedule offspring to give birth.
-      offspring.repro_time = CalcBirthTime(offspring.num_ones);
-      org_queue.Insert(offspring_id, offspring.repro_time);
-    }
-
-    void Run(double max_gen, const std::string run_name="", bool verbose=false) {
-      // Setup the time queue.
-      for (size_t i = 0; i < orgs.size(); i++) {
-        double repro_time = CalcBirthTime(orgs[i].num_ones);
-        org_queue.Insert(i, repro_time);
-        orgs[i].repro_time = repro_time;
-      }
-
-      // If verbose or print_reps is turned on, we need to track the current generation.
-      if (verbose || run_name.size()) {
-        std::ostream & os(stream_manager.get_ostream(run_name));
-
-        bool print_both = verbose && run_name.size();  // Should we send output to both places?
-
-        os << "#generation, ave_ones, ave_repro_time\n";
-        if (print_both) std::cout << "#generation, ave_ones, ave_repro_time\n";
-
-        double next_gen = -1.0;
-        std::string out_line = "";
-        while (ave_gen < max_gen) {
-          if (ave_gen > next_gen) {
-            next_gen += 1.0;
-            out_line = emp::to_string((size_t) next_gen,
-                                      ", ", CalcAveOnes(),
-                                      ", ", CalcAveReproDuration()
-                                     );
-            os << out_line << std::endl;
-            if (print_both) std::cout << out_line << std::endl;
+          void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
+            orgs.resize(0, ancestor_1s);
+            orgs.resize(pop_size, ancestor_1s);
+            org_queue.Reset();
+            ave_gen = 0;
+            if (reset_cache) {
+              repro_cache.clear();
+              repro_cache_min = 0;
+              repro_cache_max = 0;
+            }
           }
-          NextBirth();
+
+          double CalcAveOnes() {
+            double total_bits = 0.0;
+            for (Organism & org : orgs) total_bits += (double) org.num_ones;
+            return total_bits / (double) orgs.size();
+          }
+
+          double CalcAveGen() {
+            double total_gen = 0.0;
+            for (Organism & org : orgs) total_gen += org.gen;
+            return total_gen / (double) orgs.size();
+          }
+
+          Organism CalcAveOrg() {
+            Organism total_org(0);
+            for (Organism & org : orgs) {
+              total_org.num_ones += (double) org.num_ones;
+              total_org.gen += org.gen;
+              total_org.repro_time += org.repro_time;
+            }
+            return Organism(total_org.num_ones/orgs.size(),
+                            total_org.gen / (double) orgs.size(),
+                            total_org.repro_time / (double) orgs.size());
+          }
+
+          double CalcReproDuration(int num_ones) {
+            if(repro_cache_min >= num_ones){
+            for(int i = repro_cache_min; i >= num_ones; --i)
+              repro_cache[i] = emp::vector<double>();
+            repro_cache_min = num_ones - 1;
+          }
+          if(repro_cache_max <= num_ones){
+            for(int i = repro_cache_max; i <= num_ones; ++i)
+              repro_cache[i] = emp::vector<double>();
+            repro_cache_max = num_ones + 1;
+          }
+
+          emp::vector<double> & cur_cache = repro_cache[num_ones];
+          size_t sample_id = random.GetUInt(num_samples);
+          if (sample_id < cur_cache.size()) return cur_cache[sample_id];
+          if(enforce_data_bounds){
+              std::cout << "Error! requested sample that isn't pre-generated!" << std::endl;
+              std::cout << "Number of ones: "<< num_ones << std::endl;
+              std::cout << "Exiting..." << std::endl;
+              exit(-1);
+          }
+
+          std::cout << "calculating: " << num_ones << std::endl;
+          multicell.start_1s = num_ones;
+          multicell.SetupConfig();
+          multicell.InjectCell(multicell.MiddlePos());
+          double run_time = multicell.Run().GetReproTime();
+          // std::cout << "run_time = " << run_time << std::endl;
+
+          cur_cache.push_back(run_time);
+          return run_time;
         }
-      }
 
-      else {
-        while (ave_gen < max_gen) {
-          NextBirth();
+
+        double CalcBirthTime(int num_ones) {
+          return CalcReproDuration(num_ones) + org_queue.GetTime();
         }
-      }
-    }
 
-    void PrintData(size_t run_id, std::ostream & os=std::cout) {
-      // Count up the number of organism with each bit count.
-      emp::map<int, size_t> bit_map;
-      for (Organism & org : orgs){
-        if(bit_map.find(org.num_ones) == bit_map.end())
-          bit_map[org.num_ones] = 0;
-        bit_map[org.num_ones]++;
-      }
+        double CalcAveReproDuration() {
+          double total_rt = 0.0;
+          for (Organism & org : orgs) total_rt += CalcReproDuration(org.num_ones);
+          return total_rt / (double) orgs.size();
+        }
 
-      for(auto I = bit_map.begin(); I != bit_map.end(); ++I){
-        os << run_id << "," << I->first << "," << I->second << std::endl;
-      }
-    }
-  };
+        void NextBirth() {
+          size_t parent_id = org_queue.Next();
+          Organism & parent = orgs[parent_id];
+
+          // std::cout << "DEBUG: NextBirth with parent_id=" << parent_id << std::endl;
+
+          // If this organism has updated, skip it.
+          if (parent.repro_time != org_queue.GetTime()) {
+            // std::cout << "DEBUG: ...skipped; parent.repro_time=" << parent.repro_time
+            //           << ", but real time=" << org_queue.GetTime() << std::endl;
+            return;
+          }
+
+          // Figure out where the offspring would go.
+          size_t offspring_id = random.GetUInt(orgs.size());
+          Organism & offspring = orgs[offspring_id];
+
+          // std::cout << "DEBUG: ...offspring_id=" << offspring_id << std::endl;
+
+          ave_gen -= offspring.gen / (double) orgs.size();      // Remove old org from gen average.
+          if (parent_id != offspring_id) {                      // If the parent is not being replaced...
+            offspring = parent;                                 //   copy parent to offspring.
+            parent.repro_time = CalcBirthTime(parent.num_ones); //   figure out parent's NEXT repro time.
+            org_queue.Insert(parent_id, parent.repro_time);     //   schedule parent for next repro
+          }
+          offspring.gen += 1.0;                                 // Update offspring's generation.
+          ave_gen += offspring.gen / (double) orgs.size();      // Add new org to gen average.
+
+          // Handle mutations in the offspring.
+          if (random.P(multicell.mut_prob)) {
+            //double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
+            constexpr double prob1 = 0.5;
+            if (random.P(prob1)) offspring.num_ones--;
+            else offspring.num_ones++;
+          }
+
+
+          // Schedule offspring to give birth.
+          offspring.repro_time = CalcBirthTime(offspring.num_ones);
+          org_queue.Insert(offspring_id, offspring.repro_time);
+        }
+
+        void Run(double max_gen, const std::string run_name="", bool verbose=false) {
+          // Setup the time queue.
+          for (size_t i = 0; i < orgs.size(); i++) {
+            double repro_time = CalcBirthTime(orgs[i].num_ones);
+            org_queue.Insert(i, repro_time);
+            orgs[i].repro_time = repro_time;
+          }
+
+          // If verbose or print_reps is turned on, we need to track the current generation.
+          if (verbose || run_name.size()) {
+            std::ostream & os(stream_manager.get_ostream(run_name));
+
+            bool print_both = verbose && run_name.size();  // Should we send output to both places?
+
+            os << "#generation, ave_ones, ave_repro_time\n";
+            if (print_both) std::cout << "#generation, ave_ones, ave_repro_time\n";
+
+            double next_gen = -1.0;
+            std::string out_line = "";
+            while (ave_gen < max_gen) {
+              if (ave_gen > next_gen) {
+                next_gen += 1.0;
+                out_line = emp::to_string((size_t) next_gen,
+                                          ", ", CalcAveOnes(),
+                                          ", ", CalcAveReproDuration()
+                                         );
+                os << out_line << std::endl;
+                if (print_both) std::cout << out_line << std::endl;
+              }
+              NextBirth();
+            }
+          }
+
+          else {
+            while (ave_gen < max_gen) {
+              NextBirth();
+            }
+          }
+        }
+
+        void PrintData(size_t run_id, std::ostream & os=std::cout) {
+          // Count up the number of organism with each bit count.
+          emp::map<int, size_t> bit_map;
+          for (Organism & org : orgs){
+            if(bit_map.find(org.num_ones) == bit_map.end())
+              bit_map[org.num_ones] = 0;
+            bit_map[org.num_ones]++;
+          }
+
+          for(auto I = bit_map.begin(); I != bit_map.end(); ++I){
+            os << run_id << "," << I->first << "," << I->second << std::endl;
+          }
+        }
+      };
 
   struct Experiment {
     emp::Random random;
@@ -365,9 +366,9 @@
       config.AddSetting("load_samples", "Load pre-computer multicell data from directory", 'L',
                         sample_input_directory, "Path") = {"" };
       config.AddSetting("load_samples_min", "Minimum one count of samples when loading with -L", 'y',
-                        sample_input_min, "NumOnes") = {0 };
-      config.AddSetting("load_samples_max", "Minimum one count of samples when loading with -L", 'z',
-                        sample_input_max, "NumOnes") = {100 };
+                        sample_input_min, "LoadOnesMin") = {0};
+      config.AddSetting("load_samples_max", "Maximum one count of samples when loading with -L", 'z',
+                        sample_input_max, "LoadOnesMax") = {100};
 
       config.AddAction("balance_predict", "Predict the mutation-selection balance [NOT YET IMPLEMENTED!]", 'B',
                        [this](){ balance_predict = true; } );
@@ -462,7 +463,11 @@
           enforce_data_bounds);
       // If directory was specified, load in pre-computed sample data
       if(sample_input_directory.length() > 1)
-          pop.LoadSamplesFromDisk(sample_input_directory, sample_input_min, sample_input_max);
+      {
+          int min_ones = config.GetValue<int>("load_samples_min");
+          int max_ones = config.GetValue<int>("load_samples_max");
+          pop.LoadSamplesFromDisk(sample_input_directory, min_ones, max_ones);
+      }
       for (size_t run_id = 0; run_id < num_runs; run_id++) {
         std::cout << "START Treatment #" << config.GetComboID()
                   << " : Run " << run_id << std::endl;
