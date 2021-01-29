@@ -54,7 +54,7 @@ fi
 
 
 # Shift-J in Vim to gather selected lines into one line
-#python3 ${ROOT_DIR}/experiments/scripts/timing_job_prep.py
+#python3 ${SR_ROOT_DIR}/experiments/scripts/timing_job_prep.py
 #    --executable_path ${ROOT_DIR}/application/bin/SpatialRestraint 
 #    --output_dir ${SR_TIMING_OUTPUT_DIR}
 #    --job_dir ${SR_TIMING_JOB_DIR}
