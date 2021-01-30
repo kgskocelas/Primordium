@@ -136,12 +136,44 @@
             for (Organism & org : orgs) total_bits += (double) org.num_ones;
             return total_bits / (double) orgs.size();
           }
+          
+          double CalcVarOnes(){
+            double mean = CalcAveOnes();
+            double sum = 0;
+            for(Organism & org : orgs) sum += (org.num_ones - mean)* (org.num_ones - mean);
+            return sum / (orgs.size() - 1);
+          }
+          
+          int CalcMaxOnes(){
+            int cur_max = 0;
+            int max_set = false;
+            for(Organism & org : orgs){
+              if(org.num_ones > cur_max || !max_set){
+                cur_max = org.num_ones;
+                max_set = true;
+              }
+            }
+            return cur_max;
+          }
+          
+          int CalcMinOnes(){
+            int cur_min = 0;
+            int min_set = false;
+            for(Organism & org : orgs){
+              if(org.num_ones < cur_min || !min_set){
+                cur_min = org.num_ones;
+                min_set = true;
+              }
+            }
+            return cur_min;
+          }
 
           double CalcAveGen() {
             double total_gen = 0.0;
             for (Organism & org : orgs) total_gen += org.gen;
             return total_gen / (double) orgs.size();
           }
+
 
           Organism CalcAveOrg() {
             Organism total_org(0);
@@ -255,8 +287,8 @@
 
             bool print_both = verbose && run_name.size();  // Should we send output to both places?
 
-            os << "#generation, ave_ones, ave_repro_time\n";
-            if (print_both) std::cout << "#generation, ave_ones, ave_repro_time\n";
+            os << "#generation, ave_ones, ave_repro_time, min_ones, max_ones, var_ones\n";
+            if (print_both) std::cout << "#generation, ave_ones, ave_repro_time, min_ones, max_ones, var_ones\n";
 
             double next_gen = -1.0;
             std::string out_line = "";
@@ -265,7 +297,10 @@
                 next_gen += 1.0;
                 out_line = emp::to_string((size_t) next_gen,
                                           ", ", CalcAveOnes(),
-                                          ", ", CalcAveReproDuration()
+                                          ", ", CalcAveReproDuration(),
+                                          ", ", CalcMinOnes(),
+                                          ", ", CalcMaxOnes(),
+                                          ", ", CalcVarOnes()
                                          );
                 os << out_line << std::endl;
                 if (print_both) std::cout << out_line << std::endl;
