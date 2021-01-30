@@ -354,6 +354,7 @@
     std::string sample_input_directory; ///< Path that contains X.dat files to load in as samples where X is a value for ancestor_1s
     int sample_input_min;               ///< If loading samples from file, this is the start index
     int sample_input_max;               ///< If loading samples from file, this is the final index
+    int random_seed;                    ///< Random seed to use (-1 to seed randomly)
 
     using TreatmentResults = emp::vector<RunResults>;
     using MulticellResults = emp::vector<TreatmentResults>;
@@ -367,7 +368,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqwx ADFGHJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjklqx ADFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -420,6 +421,8 @@
                         multicell_filename, "Filename") = "multicell.dat";
       config.AddSetting("config_filename", "Filename for outputting config", 'C',
                         config_filename, "Filename") = "config.dat";
+      config.AddSetting("random_seed", "Random seed (-1 to seed randomly)", 'w',
+                        random_seed, "Integer") = -1;
       config.AddAction("print_reps", "Print data for each replicate", 'P',
                        [this](){ print_reps = true; } );
       config.AddAction("trace", "Show each step of replicates (multicell or population)", 'T',
@@ -558,6 +561,7 @@
     // Run all of the configurations in an entire set.
     void Run() {
       size_t gen_count = config.GetValue<size_t>("gen_count");
+      random.ResetSeed(config.GetValue<int>("random_seed"));
       std::string evolution_filename = config.GetValue<std::string>("evolution_filename");
       std::string multicell_filename = config.GetValue<std::string>("multicell_filename");
       std::string config_filename = config.GetValue<std::string>("config_filename");
