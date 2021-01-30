@@ -47,6 +47,8 @@ SR_EVO_SEED_OFFSET=0
 SR_EVO_REPS=100
 # Number of jobs per treatment 
 SR_EVO_JOBS=1
+# If true, program will error out if data that isn't pre-generated is requested
+SR_EVO_ENFORCE_CACHE=True
 # What range of generations to scrape, and at what resolution?
 SR_EVO_SCRAPE_GEN_MIN=0
 SR_EVO_SCRAPE_GEN_MAX=${SR_EVO_GENS}

@@ -37,12 +37,15 @@ parser.add_argument('--time',            type=str, help='Time per jobs. Format: 
 parser.add_argument('--memory',          type=str, help='Memory (typically gigs) per job. ' + \
         'Format: xG for x gigs', default = '1G')
 # mgilson at https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
-parser.add_argument('--one_check', dest='one_check', action='store_true', help='Pass -o')
+parser.add_argument('--one_check',   dest='one_check', action='store_true', help='Pass -o')
 parser.add_argument('--multi_check', dest='one_check', action='store_false', help='Do not pass -o')
 parser.set_defaults(one_check=True)
-parser.add_argument('--infinite', dest='infinite', action='store_true', help='Pass -I')
-parser.add_argument('--finite',   dest='infinite', action='store_false', help='Do not pass -I')
+parser.add_argument('--infinite',    dest='infinite', action='store_true', help='Pass -I')
+parser.add_argument('--finite',      dest='infinite', action='store_false', help='Do not pass -I')
 parser.set_defaults(infinite=False)
+parser.add_argument('--enforce',     dest='enforce', action='store_true', help='Pass -e')
+parser.add_argument('--no-enforce',  dest='enforce', action='store_false', help='Do not pass -e')
+parser.set_defaults(enforce=False)
 
 
 args = parser.parse_args()
@@ -104,6 +107,8 @@ if args.one_check:
     extra_flags += ' -o'
 if args.infinite:
     extra_flags += ' -I'
+if args.enforce:
+    extra_flags += ' -e'
 
 # This is a simple offset for the job id. If first batch is 0-1000, set this as 1000 to get 1000-2000
 job_id_start = args.seed_offset

@@ -47,6 +47,8 @@ SR_EVO_SEED_OFFSET=0
 SR_EVO_REPS=100
 # Number of jobs per treatment 
 SR_EVO_JOBS=1
+# If true, program will error out if data that isn't pre-generated is requested
+SR_EVO_ENFORCE_CACHE=True
 # Number of multicells in the populations 
 SR_EVO_POP_SIZE=200
 # Directory where the timing jobs will go [Path] (Unlikely to change)
