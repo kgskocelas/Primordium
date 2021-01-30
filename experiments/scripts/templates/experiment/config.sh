@@ -26,7 +26,7 @@ SR_MC_SIZE=8,16,32,64,128,256,512
 SR_SAMPLES=1000
 # Do restrained multicells check only one cell? 
     # (Alternative:they keep looking for empty neighbor)
-SR_ONE_CHECK=True
+SR_ONE_CHECK=False
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
 
@@ -36,7 +36,7 @@ SR_EVO_ONES=50
 # Mutation rate of multicells. [Comma separated list of floats]
 SR_EVO_MUT_RATE=0.2
 # Number of generations to run evolution [Integer] 
-SR_EVO_GENS=1000
+SR_EVO_GENS=10000
 # Time allotment for each slurm job [Format: HH:MM:SS]
 SR_EVO_TIME=3:58:00
 # Memory allotment for each slurm job [Format: xG for x gigs]
