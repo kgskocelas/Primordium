@@ -2,8 +2,22 @@ rm(list = ls())
 library(ggplot2)
 
 #### Begin Configuration
+args = commandArgs(trailingOnly=T)
+if(length(args) != 3){
+    print('Error! Must pass exactly 6 command line arguments:')
+    print('1. Input filename')
+    print('2. Output directory')
+    print('3. Max generation')
+    q()
+}
+# File to plot
+input_filename = args[1]
+# Where to save plots 
+output_dir = args[2]
+# Max generation
+max_gen = as.numeric(args[3])
 # Appended to the end of filenames for both loading and saving to make organization easier
-suffix = 'example'
+#suffix = 'example'
 # Dimensions of output in inches
 width  = 8
 height = 6
@@ -18,16 +32,13 @@ cost_vec = c(0, 100)
 
 #### Load in the cleaned data
 print('Loading data, this may take a moment.')
-data = read.csv(paste0('./intermediate_data/data_', suffix, '.csv'))
+data = read.csv(input_filename)#paste0('./intermediate_data/data_', suffix, '.csv'))
 print('Done loading data!')
-
-# Create directory for all the plots
-dir.create(paste0('./plots/', suffix))
 
 #### Begin plots
 for(cur_cost in cost_vec){
   # Prepare data for boxplots
-  data_plot = data[data$generation == 5000 & data$COST == cur_cost,]
+  data_plot = data[data$generation == max_gen & data$COST == cur_cost,]
   if(nrow(data_plot) < 1){
     print(paste0('No rows for cost = ', cur_cost, '. Skipping!'))
     next
@@ -35,8 +46,8 @@ for(cur_cost in cost_vec){
   data_plot$MCSIZE = as.factor(as.numeric(data_plot$MCSIZE))
   
   # Create directory for this cost level
-  dir.create(paste0('./plots/', suffix, '/cost_', cur_cost))
-  dir_cost = paste0('./plots/', suffix, '/cost_', cur_cost, '/')
+  dir.create(paste0(output_dir, '/cost_', cur_cost))
+  dir_cost = paste0(output_dir, '/cost_', cur_cost, '/')
   
     
   # Boxplot of average ones by multicell size
@@ -45,11 +56,11 @@ for(cur_cost in cost_vec){
     xlab('Cells per multicells side') + 
     ylab('Average number of ones in genome')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_ones__', suffix ,'.pdf'), 
+    ggp + ggsave(paste0(dir_cost, 'boxplot_ones.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_ones__', suffix ,'.png'), 
+    ggp + ggsave(paste0(dir_cost, 'boxplot_ones.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -61,11 +72,11 @@ for(cur_cost in cost_vec){
     xlab('Cells per multicells side') + 
     ylab('Multicell reproduction time')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time__', suffix ,'.pdf'), 
+    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time__', suffix ,'.png'), 
+    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -84,11 +95,11 @@ for(cur_cost in cost_vec){
       ylab('Average number of ones in genome') +
       labs(fill = 'Starting ones')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts__', suffix ,'.pdf'), 
+      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts.pdf'), 
              units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts__', suffix ,'.png'), 
+      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts.png'), 
              units = 'in', width = width, height = height)
     }
     rm(ggp)
@@ -106,11 +117,11 @@ for(cur_cost in cost_vec){
       ylab('Multicell reproduction time') +
       labs(fill = 'Starting ones')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts__', suffix ,'.pdf'), 
+      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts.pdf'), 
              units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts__', suffix ,'.png'), 
+      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts.png'), 
              units = 'in', width = width, height = height)
     }
     rm(ggp)
@@ -128,11 +139,11 @@ for(cur_cost in cost_vec){
     ylab('Average number of ones in genome') +
     labs(fill = 'Starting ones')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts__', suffix ,'.pdf'), 
+    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts__', suffix ,'.png'), 
+    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -150,11 +161,11 @@ for(cur_cost in cost_vec){
     ylab('Multicell reproduction time') +
     labs(fill = 'Starting ones')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts__', suffix ,'.pdf'), 
+    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts__', suffix ,'.png'), 
+    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
