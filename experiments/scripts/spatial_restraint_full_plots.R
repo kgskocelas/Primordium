@@ -27,13 +27,14 @@ output_png = FALSE
 # Do we want to create boxplots for each ancestor starting point?
 multiple_starts = FALSE
 # What costs (in terms of updates per unrestrained cell at replication) should we plot?
-cost_vec = c(0, 100)
+cost_vec = c(0)
 #### End Configuration
 
 #### Load in the cleaned data
 print('Loading data, this may take a moment.')
 data = read.csv(input_filename)#paste0('./intermediate_data/data_', suffix, '.csv'))
 print('Done loading data!')
+print(paste0('Saving plots to ', output_dir))
 
 #### Begin plots
 for(cur_cost in cost_vec){
@@ -45,9 +46,9 @@ for(cur_cost in cost_vec){
   }
   data_plot$MCSIZE = as.factor(as.numeric(data_plot$MCSIZE))
   
-  # Create directory for this cost level
-  dir.create(paste0(output_dir, '/cost_', cur_cost))
-  dir_cost = paste0(output_dir, '/cost_', cur_cost, '/')
+  # Create directory for this cost level (historical contingency)
+  dir.create(output_dir)
+  dir_cost = output_dir 
   
     
   # Boxplot of average ones by multicell size
@@ -56,11 +57,11 @@ for(cur_cost in cost_vec){
     xlab('Cells per multicells side') + 
     ylab('Average number of ones in genome')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_ones.pdf'), 
+    ggp + ggsave(paste0(dir_cost, '/boxplot_ones.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_ones.png'), 
+    ggp + ggsave(paste0(dir_cost, '/boxplot_ones.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -72,11 +73,11 @@ for(cur_cost in cost_vec){
     xlab('Cells per multicells side') + 
     ylab('Multicell reproduction time')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time.pdf'), 
+    ggp + ggsave(paste0(dir_cost, '/boxplot_repro_time.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time.png'), 
+    ggp + ggsave(paste0(dir_cost, '/boxplot_repro_time.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -95,11 +96,11 @@ for(cur_cost in cost_vec){
       ylab('Average number of ones in genome') +
       labs(fill = 'Starting ones')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts.pdf'), 
+      ggp + ggsave(paste0(dir_cost, '/boxplot_ones_starts.pdf'), 
              units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_ones_starts.png'), 
+      ggp + ggsave(paste0(dir_cost, '/boxplot_ones_starts.png'), 
              units = 'in', width = width, height = height)
     }
     rm(ggp)
@@ -117,11 +118,11 @@ for(cur_cost in cost_vec){
       ylab('Multicell reproduction time') +
       labs(fill = 'Starting ones')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts.pdf'), 
+      ggp + ggsave(paste0(dir_cost, '/boxplot_repro_time_starts.pdf'), 
              units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'boxplot_repro_time_starts.png'), 
+      ggp + ggsave(paste0(dir_cost, '/boxplot_repro_time_starts.png'), 
              units = 'in', width = width, height = height)
     }
     rm(ggp)
@@ -139,11 +140,11 @@ for(cur_cost in cost_vec){
     ylab('Average number of ones in genome') +
     labs(fill = 'Starting ones')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts.pdf'), 
+    ggp + ggsave(paste0(dir_cost, '/violin_ones_starts.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'violin_ones_starts.png'), 
+    ggp + ggsave(paste0(dir_cost, '/violin_ones_starts.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)
@@ -161,11 +162,11 @@ for(cur_cost in cost_vec){
     ylab('Multicell reproduction time') +
     labs(fill = 'Starting ones')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts.pdf'), 
+    ggp + ggsave(paste0(dir_cost, '/violin_repro_time_starts.pdf'), 
            units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'violin_repro_time_starts.png'), 
+    ggp + ggsave(paste0(dir_cost, '/violin_repro_time_starts.png'), 
            units = 'in', width = width, height = height)
   }
   rm(ggp)

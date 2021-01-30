@@ -48,9 +48,9 @@ for(cur_cost in cost_vec){
     print(paste0('No rows for cost = ', cur_cost, '. Skipping!'))
     next
   }
-  # Create directory for this cost level
-  dir.create(paste0(output_dir,'/cost_', cur_cost))
-  dir_cost = paste0(output_dir, '/cost_', cur_cost, '/')
+  # Create directory for this cost level (historical contingency)
+  dir.create(output_dir)
+  dir_cost = output_dir
   
   
   # Plot the grand mean for each multicell size (and optionally ancestor point)
@@ -68,11 +68,11 @@ for(cur_cost in cost_vec){
     labs(color = 'Cells per side') + 
     ggtitle('No extra cost for unrestrained cells')
   if(output_pdf){
-    ggp + ggsave(paste0(dir_cost, 'grand_mean.pdf'), 
+    ggp + ggsave(paste0(dir_cost, '/grand_mean.pdf'), 
       units = 'in', width = width, height = height)
   }
   if(output_png){
-    ggp + ggsave(paste0(dir_cost, 'grand_mean.png'), 
+    ggp + ggsave(paste0(dir_cost, '/grand_mean.png'), 
       units = 'in', width = width, height = height)
   }
 
@@ -95,11 +95,11 @@ for(cur_cost in cost_vec){
       labs(color = 'Cells per side') + 
       ggtitle('No extra cost for unrestrained cells')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'grand_mean_ribbon.pdf'), 
+      ggp + ggsave(paste0(dir_cost, '/grand_mean_ribbon.pdf'), 
         units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'grand_mean_ribbon.png'), 
+      ggp + ggsave(paste0(dir_cost, '/grand_mean_ribbon.png'), 
         units = 'in', width = width, height = height)
     }
   }
@@ -122,11 +122,11 @@ for(cur_cost in cost_vec){
       labs(color = 'Cells per side') + 
       ggtitle('No extra cost for unrestrained cells')
     if(output_pdf){
-      ggp + ggsave(paste0(dir_cost, 'grand_mean_selected.pdf'), 
+      ggp + ggsave(paste0(dir_cost, '/grand_mean_selected.pdf'), 
         units = 'in', width = width, height = height)
     }
     if(output_png){
-      ggp + ggsave(paste0(dir_cost, 'grand_mean_selected.png'), 
+      ggp + ggsave(paste0(dir_cost, '/grand_mean_selected.png'), 
         units = 'in', width = width, height = height)
     }
 
@@ -149,11 +149,11 @@ for(cur_cost in cost_vec){
         labs(color = 'Cells per side') + 
         ggtitle('No extra cost for unrestrained cells')
       if(output_pdf){
-        ggp + ggsave(paste0(dir_cost, 'grand_mean_selected_ribbon.pdf'), 
+        ggp + ggsave(paste0(dir_cost, '/grand_mean_selected_ribbon.pdf'), 
           units = 'in', width = width, height = height)
       }
       if(output_png){
-        ggp + ggsave(paste0(dir_cost, 'grand_mean_selected_ribbon.png'), 
+        ggp + ggsave(paste0(dir_cost, '/grand_mean_selected_ribbon.png'), 
           units = 'in', width = width, height = height)
       }
     }
