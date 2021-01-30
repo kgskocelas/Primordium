@@ -103,7 +103,7 @@ for(filename_idx in 1:length(filename_vec)){
             cat(rep_id, ' ')
             # Load *only* the data for this replicate, but do it all at once
             data_rep = read.csv(tmp_filename, skip = line_num, nrow = gen_count, header = T)
-            colnames(data_rep) = c('generation', 'ave_ones', 'ave_repro_time')
+            colnames(data_rep) = c('generation', 'ave_ones', 'ave_repro_time', 'min_ones', 'max_ones', 'var_ones')
             data_rep$generation = as.numeric(data_rep$generation)
             data_rep = data_rep[data_rep$generation %% gen_step == 0,]
             data_rep$rep_id = rep_id
