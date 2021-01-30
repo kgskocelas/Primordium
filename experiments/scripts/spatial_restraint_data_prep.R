@@ -2,17 +2,24 @@ rm(list = ls())
 library(dplyr)
 
 #### BEGIN CONFIGURATION ####
+
+args = commandArgs(trailingOnly=T)
+if(length(args) != 2){
+    print('Error! Must pass exactly 6 command line arguments:')
+    print('1. Filename of input (scraped .csv data file)')
+    print('2. Output directory')
+    q()
+}
 # Path to the csv data file
-filename_data = './raw_data/data_spatial_restraint_finished.csv'
-# Appended to the end of all files to make finding output easier
-suffix = 'example'
+filename_data = args[1]#'./raw_data/data_spatial_restraint_finished.csv'
+# Where to save cleaned data
+output_dir = args[2]
 #### END CONFIGURATION ####
 
 #### Load the data
 print('Loading data, this may take a moment.')
 data = read.csv(filename_data)
 print('Done loading data!')
-data$ONES = 50
 data$NUM = NA
 
 # Note: Sometimes you may need to load in multiple data files and merge them. 
@@ -43,7 +50,7 @@ if(!('NUM' %in% colnames(data))){
 }
 
 # Save off the cleaned data
-filename_clean = paste0('./intermediate_data/data_', suffix, '.csv')
+filename_clean = paste0(output_dir, '/intermediate_data.csv')
 write.csv(data, filename_clean)
 print(paste0('Cleaned data saved to ', filename_clean, '!'))
 
@@ -58,7 +65,7 @@ z = qnorm(0.95)
 data_summary$offset_95 = z * (data_summary$sd_ave_ones / sqrt(data_summary$n)) 
 
 # Save off summary data
-filename_summary = paste0('./intermediate_data/data_', suffix, '_summary.csv')
+filename_summary = paste0(output_dir, '/intermediate_data_summary.csv')
 write.csv(data_summary, filename_summary)
 print(paste0('Cleaned data saved to ', filename_summary, '!'))
 
