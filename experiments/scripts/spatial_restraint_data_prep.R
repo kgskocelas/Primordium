@@ -34,7 +34,7 @@ data$NUM = NA
 # Remove lines that all NA
 data = data[!is.na(data$MCSIZE),]
 # Truncate data to first 5k generations
-data = data[as.numeric(data$generation) <= 5000,]
+#data = data[as.numeric(data$generation) <= 5000,]
 if(!('ONES' %in% colnames(data))){
   print('Error!')
   print('Data should have column named ONES that containts the number of ones in the ancestor')
