@@ -26,6 +26,8 @@ parser.add_argument('--mut_rate',        type=str, help='Mutation rate for cells
         'separated.', default = '0.2')
 parser.add_argument('--samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
+parser.add_argument('--threshold',        type=str,help='Number of ones requierd for restraint.' + \
+        ' Comma separated ints.', default = '50')
 parser.add_argument('--reps',            type=int, help='Number of evolutionary replicates per ' \
         + ' treatments', default = 100)
 parser.add_argument('--num_jobs',        type=int, help='Number of times to run each job', \
@@ -90,6 +92,7 @@ combos.register_var('POP')
 combos.register_var('SAMPLES')
 combos.register_var('REPS')
 combos.register_var('ONES')
+combos.register_var('THRESH')
 
 
 combos.add_val('MCSIZE',    str_to_int_list(args.mc_size))
@@ -100,6 +103,7 @@ combos.add_val('POP',       str_to_int_list(args.pop_size))
 combos.add_val('SAMPLES',   [args.samples])
 combos.add_val('REPS',      [args.reps])
 combos.add_val('ONES',      str_to_int_list(args.ones))
+combos.add_val('THRESH',    str_to_int_list(args.threshold))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v' 
@@ -162,6 +166,7 @@ for condition_dict in combo_list:
             command_str += ' -c ' + str(condition_dict['MCSIZE'])
             command_str += ' -g ' + str(condition_dict['GENS'])
             command_str += ' -m ' + str(condition_dict['MUT'])
+            command_str += ' -r ' + str(condition_dict['THRESH'])
             command_str += ' -E ' + output_dir + filename_prefix + \
                 '/${SLURM_ARRAY_TASK_ID}_evolution.dat'
             command_str += ' -C ' + output_dir + filename_prefix + \

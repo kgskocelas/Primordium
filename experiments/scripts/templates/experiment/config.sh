@@ -29,6 +29,8 @@ SR_SAMPLES=1000
 SR_ONE_CHECK=False
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
+# Threshold number of ones for cell to be restrained [Comma separated list of integers]
+SR_THRESHOLD=55
 
 #### EVOLUTION VARIABLES
 # Starting ones, where does the ancestor start? [Comma separated list of integers]
@@ -43,18 +45,18 @@ SR_EVO_TIME=3:58:00
 SR_EVO_MEMORY=1G
 # Value of the first seed (rest of the jobs follow seqeuntially [Integer]
 SR_EVO_SEED_OFFSET=0
-# Number of replicates for each treatment
+# Number of replicates for each treatment [Integer]
 SR_EVO_REPS=100
-# Number of jobs per treatment 
+# Number of jobs per treatment [Integer]
 SR_EVO_JOBS=1
-# If true, program will error out if data that isn't pre-generated is requested
-SR_EVO_ENFORCE_CACHE=True
-# What range of generations to scrape, and at what resolution?
+# What range of generations to scrape, and at what resolution? [All integers]
 SR_EVO_SCRAPE_GEN_MIN=0
 SR_EVO_SCRAPE_GEN_MAX=${SR_EVO_GENS}
 SR_EVO_SCRAPE_GEN_STEP=100
-# Number of multicells in the populations 
+# Number of multicells in the populations  [Integer]
 SR_EVO_POP_SIZE=200
+# If true, program will error out if data that isn't pre-generated is requested [Bool]
+SR_EVO_ENFORCE_CACHE=True
 # Directory where the timing jobs will go [Path] (Unlikely to change)
 SR_EVO_DIR=${SR_EXP_DIR}/evolution
 # Directory where the timing jobs will go [Path] (Unlikely to change)

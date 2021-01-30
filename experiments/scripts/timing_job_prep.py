@@ -21,6 +21,8 @@ parser.add_argument('--mut_rate',        type=str, help='Mutation rate for cells
         'separated.', default = '0.2')
 parser.add_argument('--samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
+parser.add_argument('--threshold',        type=str,help='Number of ones requierd for restraint.' + \
+        ' Comma separated ints.', default = '50')
 parser.add_argument('--num_jobs',        type=int, help='Number of times to run each job', \
         default = 1)
 parser.add_argument('--seed_offset',     type=int, help='First job starts with this seed and ' + \
@@ -67,6 +69,7 @@ combos.register_var('MCSIZE')
 combos.register_var('GENS')
 combos.register_var('MUT')
 combos.register_var('SAMPLES')
+combos.register_var('THRESH')
 
 combos.add_val('ONES', str_to_int_list(args.ones))
 combos.add_val('COST', str_to_int_list(args.cost))
@@ -74,6 +77,7 @@ combos.add_val('MCSIZE', str_to_int_list(args.mc_size))
 combos.add_val('GENS', 0)
 combos.add_val('MUT', str_to_float_list(args.mut_rate))
 combos.add_val('SAMPLES', args.samples)
+combos.add_val('THRESH', str_to_int_list(args.threshold))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v -P'
@@ -148,6 +152,7 @@ for condition_dict in combo_list:
                 '/${SLURM_ARRAY_TASK_ID}_config.dat'
             command_str += ' -d ' + str(condition_dict['SAMPLES'])
             command_str += ' -u ' + str(condition_dict['COST'])
+            command_str += ' -r ' + str(condition_dict['THRESH'])
             command_str += ' ' + extra_flags + ' '
             
             fp_job.write('echo "' + command_str + '"\n')
