@@ -1,9 +1,9 @@
 [submodule "application/source/third_party/Empirical"]
 	path = application/source/third_party/Empirical
-	url = https://github.com/devosoft/Empirical
+	url = https://github.com/devosoft/Empirical.git
 [submodule "experiments/scripts/third_party/pyvarco"]
 	path = experiments/scripts/third_party/pyvarco
-	url = https://github.com/FergusonAJ/pyvarco
+	url = https://github.com/FergusonAJ/pyvarco.git
 [submodule "experiments/scripts/third_party/roll_q"]
 	path = experiments/scripts/third_party/roll_q
-	url = git@github.com:FergusonAJ/roll_q
+	url = https://github.com/FergusonAJ/roll_q.git
