@@ -123,7 +123,6 @@ for condition_dict in combo_list:
             fp_job.write('#SBATCH --time=' + args.time + '\n')
             fp_job.write('#SBATCH --nodes=1' + '\n')
             fp_job.write('#SBATCH --ntasks=1' + '\n')
-            fp_job.write('#SBATCH --account=devolab' + '\n')
             fp_job.write('#SBATCH --cpus-per-task=1' + '\n')
             fp_job.write('#SBATCH --mem-per-cpu=' + args.memory + '\n')
             fp_job.write('#SBATCH --job-name sr_time_' + job_id_str + '\n')
