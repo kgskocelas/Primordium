@@ -165,4 +165,4 @@ for condition_dict in combo_list:
         fp_job.write('\n')
         fp_job.write('scontrol show job $SLURM_JOB_ID' + '\n')
 
-print('Generated ' +  str(num_jobs) + '!')
+print('Generated ' +  str(num_jobs) + ', each with ' + str(tasks_per_job) + ' tasks!')

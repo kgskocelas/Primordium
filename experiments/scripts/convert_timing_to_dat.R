@@ -46,12 +46,12 @@ for(threshold in sort(unique(data$restrain))){
         }
         for(cells_side in sort(unique(data[mut_mask,]$cells_side))){
             cat('MC size: ', cells_side, 'x', cells_side, '\n')
-            side_mask = data$cells_side == cells_side
+            side_mask = data$cells_side == cells_side & mut_mask
             side_dir = file.path(mut_dir, paste0('mcsize__', cells_side))
             if(!dir.exists(file.path(side_dir))){
                 dir.create(side_dir)
             }
-            data_size = data[data$cells_side == cells_side,]
+            data_size = data[side_mask,]
             # Within that size of multicell, iterate through all counts of ones 
             cat('Num ones: ')
             for(num_ones in unique(data_size$ancestor_1s)){

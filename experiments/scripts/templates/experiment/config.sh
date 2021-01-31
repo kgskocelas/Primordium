@@ -30,7 +30,7 @@ SR_ONE_CHECK=False
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
 # Threshold number of ones for cell to be restrained [Comma separated list of integers]
-SR_THRESHOLD=55
+SR_THRESHOLD=50
 
 #### EVOLUTION VARIABLES
 # Starting ones, where does the ancestor start? [Comma separated list of integers]
