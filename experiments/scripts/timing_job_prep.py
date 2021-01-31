@@ -23,8 +23,6 @@ parser.add_argument('--samples',         type=int, help='Number of multicells to
         default = 1000)
 parser.add_argument('--threshold',        type=str,help='Number of ones requierd for restraint.' + \
         ' Comma separated ints.', default = '50')
-parser.add_argument('--num_jobs',        type=int, help='Number of times to run each job', \
-        default = 1)
 parser.add_argument('--seed_offset',     type=int, help='First job starts with this seed and ' + \
         'then counts up from there', default = 0)
 parser.add_argument('--num_tasks',       type=int, help='Number of tasks per job (for slurm). ' + \
@@ -68,7 +66,6 @@ combos.register_var('COST')
 combos.register_var('MCSIZE')
 combos.register_var('GENS')
 combos.register_var('MUT')
-combos.register_var('SAMPLES')
 combos.register_var('THRESH')
 
 combos.add_val('ONES', str_to_int_list(args.ones))
@@ -76,7 +73,6 @@ combos.add_val('COST', str_to_int_list(args.cost))
 combos.add_val('MCSIZE', str_to_int_list(args.mc_size))
 combos.add_val('GENS', 0)
 combos.add_val('MUT', str_to_float_list(args.mut_rate))
-combos.add_val('SAMPLES', args.samples)
 combos.add_val('THRESH', str_to_int_list(args.threshold))
 
 # Any extra flags to send to SpatialRestraint
@@ -87,13 +83,21 @@ if args.infinite:
     extra_flags += ' -I'
 
 # How many copies of each job should we run?
-job_copy_start = 0
-job_copy_stop = args.num_jobs
+#job_copy_start = 0
+#job_copy_stop = args.num_jobs
 # This is a simple offset for the job id. If first batch is 0-1000, set this as 1000 to get 1000-2000
 job_id_start = args.seed_offset
 # We can crank this up to have multiple tasks per job (one job file for several runs)
 # Decreases submission time to the queue, but must submit all tasks at once
 tasks_per_job = args.num_tasks 
+samples_per_task = round(args.samples / tasks_per_job)
+if args.samples % tasks_per_job != 0:
+    print('Error! Expecting number of samples to evenly be distributed among tasks')
+    print(args.samples, 'samples across', tasks_per_job, 'tasks does not result in an integer')
+    print(' number of samples per task')
+    print('Given samples per task:', samples_per_task)
+    exit(1)
+print(args.samples, 'samples /', tasks_per_job, 'tasks =', samples_per_task, 'samples per task')
 
 #### END CONFIGURATION ####
 
@@ -101,8 +105,7 @@ combo_list = combos.get_combos()
 
 # Calculate the number of jobs we expect. 
     # We also print the actual number of jobs at the end. They should alwaya match. 
-total_jobs = \
-    (job_copy_stop - job_copy_start) * len(combo_list)
+total_jobs = len(combo_list)
 print('Expecting ' + str(total_jobs) + ' jobs...')
 final_job_id = job_id_start + total_jobs
 num_digits = len(str(final_job_id))
@@ -112,52 +115,54 @@ num_jobs = 0
 cur_job_id = job_id_start
 # Iterate through each combination of configuration variables
 for condition_dict in combo_list:        
-    for job_copy_id in range(job_copy_start, job_copy_stop):
-        num_jobs += 1
-        cur_job_id += 1
-        # Embed configuration options into filename
-        job_id_str = str(cur_job_id)
-        job_id_str = '0' * (num_digits - len(job_id_str)) + job_id_str
-        filename_prefix = job_id_str + '_spatial_restraint__' + combos.get_str(condition_dict)
-        # Write slurm job file using current configuration options
-        with open(job_dir + filename_prefix + '.sb', 'w') as fp_job:
-            fp_job.write('#!/bin/bash --login' + '\n')
-            fp_job.write('' + '\n')
-            # Change the time per job here!
-            fp_job.write('#SBATCH --time=' + args.time + '\n')
-            fp_job.write('#SBATCH --nodes=1' + '\n')
-            fp_job.write('#SBATCH --ntasks=1' + '\n')
-            fp_job.write('#SBATCH --cpus-per-task=1' + '\n')
-            fp_job.write('#SBATCH --mem-per-cpu=' + args.memory + '\n')
-            fp_job.write('#SBATCH --job-name sr_time_' + job_id_str + '\n')
-            fp_job.write('#SBATCH --array=1-' + str(tasks_per_job) + '\n')
-            fp_job.write('#SBATCH --output='  + \
-                output_dir + filename_prefix + '_%a__slurm.out' + \
-                '\n')
-            fp_job.write('' + '\n')
-            fp_job.write('module purge' + '\n')
-            fp_job.write('module load GCC/9.3.0' + '\n')
-            fp_job.write('' + '\n')
-            fp_job.write('mkdir -p ' + output_dir + filename_prefix + '\n') 
-            fp_job.write('' + '\n')
+    #for job_copy_id in range(job_copy_start, job_copy_stop):
+    num_jobs += 1
+    cur_job_id += 1
+    # Embed configuration options into filename
+    job_id_str = str(cur_job_id)
+    job_id_str = '0' * (num_digits - len(job_id_str)) + job_id_str
+    filename_prefix = job_id_str + '_spatial_restraint__' + combos.get_str(condition_dict)
+    # Write slurm job file using current configuration options
+    with open(job_dir + filename_prefix + '.sb', 'w') as fp_job:
+        fp_job.write('#!/bin/bash --login' + '\n')
+        fp_job.write('' + '\n')
+        # Change the time per job here!
+        fp_job.write('#SBATCH --time=' + args.time + '\n')
+        fp_job.write('#SBATCH --nodes=1' + '\n')
+        fp_job.write('#SBATCH --ntasks=1' + '\n')
+        fp_job.write('#SBATCH --cpus-per-task=1' + '\n')
+        fp_job.write('#SBATCH --mem-per-cpu=' + args.memory + '\n')
+        fp_job.write('#SBATCH --job-name sr_time_' + job_id_str + '\n')
+        fp_job.write('#SBATCH --array=1-' + str(tasks_per_job) + '\n')
+        fp_job.write('#SBATCH --output='  + \
+            output_dir + filename_prefix + '_%a__slurm.out' + \
+            '\n')
+        fp_job.write('' + '\n')
+        fp_job.write('module purge' + '\n')
+        fp_job.write('module load GCC/9.3.0' + '\n')
+        fp_job.write('' + '\n')
+        fp_job.write('mkdir -p ' + output_dir + filename_prefix + '\n') 
+        fp_job.write('' + '\n')
+        fp_job.write('RANDOM_SEED=' + str(cur_job_id * tasks_per_job)+'${SLURM_ARRAY_TASK_ID}\n')
 
-            command_str = executable_path
-            command_str += ' -a ' + str(condition_dict['ONES'])
-            command_str += ' -c ' + str(condition_dict['MCSIZE'])
-            command_str += ' -g ' + str(condition_dict['GENS'])
-            command_str += ' -m ' + str(condition_dict['MUT'])
-            command_str += ' -M ' + output_dir + filename_prefix + \
-                '/${SLURM_ARRAY_TASK_ID}_multicell.dat'
-            command_str += ' -C ' + output_dir + filename_prefix + \
-                '/${SLURM_ARRAY_TASK_ID}_config.dat'
-            command_str += ' -d ' + str(condition_dict['SAMPLES'])
-            command_str += ' -u ' + str(condition_dict['COST'])
-            command_str += ' -r ' + str(condition_dict['THRESH'])
-            command_str += ' ' + extra_flags + ' '
-            
-            fp_job.write('echo "' + command_str + '"\n')
-            fp_job.write('time ' + command_str + '\n')
-            fp_job.write('\n')
-            fp_job.write('scontrol show job $SLURM_JOB_ID' + '\n')
+        command_str = executable_path
+        command_str += ' -a ' + str(condition_dict['ONES'])
+        command_str += ' -c ' + str(condition_dict['MCSIZE'])
+        command_str += ' -g ' + str(condition_dict['GENS'])
+        command_str += ' -m ' + str(condition_dict['MUT'])
+        command_str += ' -M ' + output_dir + filename_prefix + \
+            '/${SLURM_ARRAY_TASK_ID}_multicell.dat'
+        command_str += ' -C ' + output_dir + filename_prefix + \
+            '/${SLURM_ARRAY_TASK_ID}_config.dat'
+        command_str += ' -d ' + str(samples_per_task)
+        command_str += ' -u ' + str(condition_dict['COST'])
+        command_str += ' -r ' + str(condition_dict['THRESH'])
+        command_str += ' -w ${RANDOM_SEED}' 
+        command_str += ' ' + extra_flags + ' '
+        
+        fp_job.write('echo "' + command_str + '"\n')
+        fp_job.write('time ' + command_str + '\n')
+        fp_job.write('\n')
+        fp_job.write('scontrol show job $SLURM_JOB_ID' + '\n')
 
 print('Generated ' +  str(num_jobs) + '!')

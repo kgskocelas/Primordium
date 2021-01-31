@@ -39,7 +39,7 @@ if [ "${SR_EVO_ENFORCE_CACHE,,}" == "false" -o "${SR_ENFORE_CACHE,,}" == "f" -o 
 fi
 
 # Generate the jobs!
-python3 ${SR_ROOT_DIR}/experiments/scripts/evolution_job_prep.py --executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint --output_dir ${SR_EVO_OUTPUT_DIR} --job_dir ${SR_EVO_JOB_DIR} --distribution_dir ${SR_TIMING_DIR}/data --ones ${SR_EVO_ONES} --gens ${SR_EVO_GENS} --cost ${SR_COST} --mc_size ${SR_MC_SIZE} --pop_size ${SR_EVO_POP_SIZE} --mut_rate ${SR_EVO_MUT_RATE} --threshold ${SR_THRESHOLD} --samples ${SR_SAMPLES} --reps ${SR_EVO_REPS} --num_jobs ${SR_EVO_JOBS} --seed_offset ${SR_EVO_SEED_OFFSET} --time ${SR_EVO_TIME} --memory ${SR_EVO_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL} ${SR_ENFORCE_CACHE_LOCAL}
+python3 ${SR_ROOT_DIR}/experiments/scripts/evolution_job_prep.py --executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint --output_dir ${SR_EVO_OUTPUT_DIR} --job_dir ${SR_EVO_JOB_DIR} --distribution_dir ${SR_TIMING_DIR}/data --ones ${SR_EVO_ONES} --gens ${SR_EVO_GENS} --cost ${SR_COST} --mc_size ${SR_MC_SIZE} --pop_size ${SR_EVO_POP_SIZE} --mut_rate ${SR_EVO_MUT_RATE} --cell_mut_rate ${SR_TIMING_MUT_RATE} --threshold ${SR_THRESHOLD} --samples ${SR_SAMPLES} --reps ${SR_EVO_REPS} --seed_offset ${SR_EVO_SEED_OFFSET} --time ${SR_EVO_TIME} --memory ${SR_EVO_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL} ${SR_ENFORCE_CACHE_LOCAL}
 
 # Create instance of roll_q for timing jobs
 cp ${SR_ROOT_DIR}/experiments/scripts/third_party/roll_q ${SR_EVO_DIR}/roll_q -r
@@ -70,10 +70,10 @@ fi
 #    --mc_size ${SR_MC_SIZE}
 #    --pop_size ${SR_EVO_POP_SIZE}
 #    --mut_rate ${SR_EVO_MUT_RATE}
+#    --cell_mut_rate ${SR_TIMING_MUT_RATE}
 #    --threshold ${SR_THRESHOLD}
 #    --samples ${SR_SAMPLES}
 #    --reps ${SR_EVO_REPS}
-#    --num_jobs ${SR_EVO_JOBS}
 #    --seed_offset ${SR_EVO_SEED_OFFSET}
 #    --time ${SR_EVO_TIME}
 #    --memory ${SR_EVO_MEMORY}

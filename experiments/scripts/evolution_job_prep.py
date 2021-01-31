@@ -22,7 +22,9 @@ parser.add_argument('--mc_size',         type=str, help='Multicell sizes to run.
         'a square (e.g., 8 = 8x8 multicells. Comma separated.', default = '8,16,32,64,128,256,512')
 parser.add_argument('--pop_size',        type=str, help='Number of multicells in population.  ' + \
         'Comma separated.', default = '200')
-parser.add_argument('--mut_rate',        type=str, help='Mutation rate for cells. Comma ' + \
+parser.add_argument('--mut_rate',        type=str, help='Mutation rate for multicells. Comma ' + \
+        'separated.', default = '0.2')
+parser.add_argument('--cell_mut_rate',   type=str, help='Mutation rate for cells. Comma ' + \
         'separated.', default = '0.2')
 parser.add_argument('--samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
@@ -30,8 +32,6 @@ parser.add_argument('--threshold',        type=str,help='Number of ones requierd
         ' Comma separated ints.', default = '50')
 parser.add_argument('--reps',            type=int, help='Number of evolutionary replicates per ' \
         + ' treatments', default = 100)
-parser.add_argument('--num_jobs',        type=int, help='Number of times to run each job', \
-        default = 1)
 parser.add_argument('--seed_offset',     type=int, help='First job starts with this seed and ' + \
         'then counts up from there', default = 0)
 parser.add_argument('--time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
@@ -93,6 +93,7 @@ combos.register_var('SAMPLES')
 combos.register_var('REPS')
 combos.register_var('ONES')
 combos.register_var('THRESH')
+combos.register_var('CELL_MUT')
 
 
 combos.add_val('MCSIZE',    str_to_int_list(args.mc_size))
@@ -104,6 +105,7 @@ combos.add_val('SAMPLES',   [args.samples])
 combos.add_val('REPS',      [args.reps])
 combos.add_val('ONES',      str_to_int_list(args.ones))
 combos.add_val('THRESH',    str_to_int_list(args.threshold))
+combos.add_val('CELL_MUT',  str_to_float_list(args.cell_mut_rate))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v' 
@@ -160,6 +162,7 @@ for condition_dict in combo_list:
             fp_job.write('' + '\n')
             fp_job.write('mkdir -p ' + output_dir + filename_prefix + '\n') 
             fp_job.write('' + '\n')
+            fp_job.write('RANDOM_SEED=' + str(cur_job_id)+ '\n')
 
             command_str = executable_path
             command_str += ' -a ' + str(condition_dict['ONES'])
@@ -175,8 +178,13 @@ for condition_dict in combo_list:
             command_str += ' -d ' + str(condition_dict['REPS'])
             command_str += ' -u ' + str(condition_dict['COST'])
             command_str += ' -p ' + str(condition_dict['POP'])
+            command_str += ' -w ${RANDOM_SEED}' 
             if(use_distribution_data):
-                command_str += ' -L ' + distribution_data_dir + str(condition_dict['MCSIZE']) + '/'
+                command_str += ' -L ' + \
+                    distribution_data_dir + \
+                    'thresh__' + str(condition_dict['THRESH']) + '/' + \
+                    'cell_mut__' + str(condition_dict['CELL_MUT']) + '/' + \
+                    'mcsize__' + str(condition_dict['MCSIZE']) + '/'
             
             command_str += ' ' + extra_flags + ' '
             

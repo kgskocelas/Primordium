@@ -37,6 +37,7 @@ gen_count = (gen_max - gen_min) + 1
 gen_count_actual = (gen_max - gen_min) / gen_step + 1
 # How many replicates exist *in each file*?
 rep_count = as.numeric(args[6])#100 
+cat('rep_count: ', rep_count, '\n')
 
 #### END CONFIGURATION ####
 

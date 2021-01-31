@@ -21,14 +21,16 @@ source ${SR_ROOT_DIR}/experiments/config_global.sh
 # Cost of unrestrained cells [Comma separated list of integers]
 SR_COST=0
 # Size of multicells (length of one side of a square) [Comma separated list of integers]
-SR_MC_SIZE=8,16,32,64,128,256,512
+SR_MC_SIZE=8,16,32
 # Number of samples per restraint level (count of ones) [Integer]
 SR_SAMPLES=1000
 # Do restrained multicells check only one cell? 
     # (Alternative:they keep looking for empty neighbor)
-SR_ONE_CHECK=True
+SR_ONE_CHECK=False
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
+# Threshold number of ones for cell to be restrained [Comma separated list of integers]
+SR_THRESHOLD=55
 
 #### EVOLUTION VARIABLES
 # Starting ones, where does the ancestor start? [Comma separated list of integers]
@@ -36,21 +38,23 @@ SR_EVO_ONES=50
 # Mutation rate of multicells. [Comma separated list of floats]
 SR_EVO_MUT_RATE=0.2
 # Number of generations to run evolution [Integer] 
-SR_EVO_GENS=1000
+SR_EVO_GENS=10000
 # Time allotment for each slurm job [Format: HH:MM:SS]
 SR_EVO_TIME=3:58:00
 # Memory allotment for each slurm job [Format: xG for x gigs]
 SR_EVO_MEMORY=1G
 # Value of the first seed (rest of the jobs follow seqeuntially [Integer]
 SR_EVO_SEED_OFFSET=0
-# Number of replicates for each treatment
+# Number of replicates for each treatment [Integer]
 SR_EVO_REPS=100
-# Number of jobs per treatment 
-SR_EVO_JOBS=1
-# If true, program will error out if data that isn't pre-generated is requested
-SR_EVO_ENFORCE_CACHE=True
-# Number of multicells in the populations 
+# What range of generations to scrape, and at what resolution? [All integers]
+SR_EVO_SCRAPE_GEN_MIN=0
+SR_EVO_SCRAPE_GEN_MAX=${SR_EVO_GENS}
+SR_EVO_SCRAPE_GEN_STEP=100
+# Number of multicells in the populations  [Integer]
 SR_EVO_POP_SIZE=200
+# If true, program will error out if data that isn't pre-generated is requested [Bool]
+SR_EVO_ENFORCE_CACHE=False
 # Directory where the timing jobs will go [Path] (Unlikely to change)
 SR_EVO_DIR=${SR_EXP_DIR}/evolution
 # Directory where the timing jobs will go [Path] (Unlikely to change)
@@ -65,13 +69,11 @@ SR_TIMING_ONES="0->100"
 # Mutation rate of cells. [Comma separated list of floats]
 SR_TIMING_MUT_RATE=0.2
 # Time allotment for each slurm job [Format: HH:MM:SS]
-SR_TIMING_TIME=2:00:00
+SR_TIMING_TIME=1:00:00
 # Memory allotment for each slurm job [Format: xG for x gigs]
 SR_TIMING_MEMORY=1G
 # Value of the first seed (rest of the jobs follow seqeuntially [Integer]
 SR_TIMING_SEED_OFFSET=0
-# Number of jobs for each treatment [Integer]
-SR_TIMING_JOBS=1
 # Number of tasks for each job [Integer]
 SR_TIMING_TASKS=1
 # Directory where the timing jobs will go [Path] (Unlikely to change)
@@ -80,3 +82,5 @@ SR_TIMING_DIR=${SR_EXP_DIR}/timing_distributions
 SR_TIMING_JOB_DIR=${SR_TIMING_DIR}/jobs
 # Directory where the raw timing data will go [Path] (Unlikely to change)
 SR_TIMING_OUTPUT_DIR=${SR_SCRATCH_ROOT}/${SR_EXP_NAME}/timing_distributions
+# Number of samples per task
+((SR_TIMING_SAMPLES_PER_TASK=$SR_SAMPLES/$SR_TIMING_TASKS))

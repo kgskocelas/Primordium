@@ -30,21 +30,39 @@ data = read.csv(input_filename)
 data = data[!is.na(data$cells_side),]
 
 # Iterate through each size of multicell (denoted by the number of cells on one side)
-for(cells_side in sort(unique(data$cells_side))){
-    cat('Formatting data for' , cells_side, 'cells per side.\n')
-    if(!dir.exists(file.path(output_dir, cells_side))){
-        dir.create(file.path(output_dir, cells_side))
+for(threshold in sort(unique(data$restrain))){
+    cat('Threshold: ', threshold, '\n')
+    thresh_mask = data$restrain == threshold
+    thresh_dir = file.path(output_dir, paste0('thresh__', threshold))
+    if(!dir.exists(file.path(thresh_dir))){
+        dir.create(thresh_dir)
     }
-    data_size = data[data$cells_side == cells_side,]
-    # Within that size of multicell, iterate through all counts of ones 
-    cat('Num ones: ')
-    for(num_ones in unique(data_size$ancestor_1s)){
-        cat(num_ones, ' ')
-        # Save that data!
-        data_ones = data_size[data_size$ancestor_1s == num_ones,]
-        filename = paste0(output_dir, '/', cells_side, '/', num_ones, '.dat')
-        write(data_ones$rep_time, filename, ncolumns = 1)
+    for(cell_mut_rate in sort(unique(data[thresh_mask,]$mut_prob))){
+        cat('Cell mut rate: ', cell_mut_rate, '\n')
+        mut_mask = data$mut_prob == cell_mut_rate & thresh_mask
+        mut_dir = file.path(thresh_dir, paste0('cell_mut__', cell_mut_rate))
+        if(!dir.exists(file.path(mut_dir))){
+            dir.create(mut_dir)
+        }
+        for(cells_side in sort(unique(data[mut_mask,]$cells_side))){
+            cat('MC size: ', cells_side, 'x', cells_side, '\n')
+            side_mask = data$cells_side == cells_side
+            side_dir = file.path(mut_dir, paste0('mcsize__', cells_side))
+            if(!dir.exists(file.path(side_dir))){
+                dir.create(side_dir)
+            }
+            data_size = data[data$cells_side == cells_side,]
+            # Within that size of multicell, iterate through all counts of ones 
+            cat('Num ones: ')
+            for(num_ones in unique(data_size$ancestor_1s)){
+                cat(num_ones, ' ')
+                # Save that data!
+                data_ones = data_size[data_size$ancestor_1s == num_ones,]
+                filename = paste0(side_dir ,'/', num_ones, '.dat')
+                write(data_ones$rep_time, filename, ncolumns = 1)
+            }
+        }
     }
-    cat('\n')
 }
+cat('\n')
 
