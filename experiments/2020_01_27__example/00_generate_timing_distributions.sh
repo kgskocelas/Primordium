@@ -22,19 +22,19 @@ mkdir -p ${SR_TIMING_JOB_DIR}
 rm ${SR_TIMING_JOB_DIR}/* -r > /dev/null 2> /dev/null
 
 # Prep variables for local format (in this case, flags)
-SR_ONE_CHECK_LOCAL=--one_check
+SR_ONE_CHECK_LOCAL=@@one_check
 if [ "${SR_ONE_CHECK,,}" == "false" -o "${SR_ONE_CHECK,,}" == "f" -o "${SR_ONE_CHECK,,}" == "0" ]; 
     then
-    SR_ONE_CHECK_LOCAL=--multi_check
+    SR_ONE_CHECK_LOCAL=@@multi_check
 fi
-SR_INFINITE_LOCAL=--infinite
+SR_INFINITE_LOCAL=@@infinite
 if [ "${SR_INFINITE,,}" == "false" -o "${SR_INFINITE,,}" == "f" -o "${SR_INFINITE,,}" == "0" ]; 
     then
-    SR_INFINITE_LOCAL=--finite
+    SR_INFINITE_LOCAL=@@finite
 fi
 
 # Generate the jobs!
-python3 ${SR_ROOT_DIR}/experiments/scripts/timing_job_prep.py --executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint --output_dir ${SR_TIMING_OUTPUT_DIR} --job_dir ${SR_TIMING_JOB_DIR} --ones ${SR_TIMING_ONES} --cost ${SR_COST} --mc_size ${SR_MC_SIZE} --mut_rate ${SR_TIMING_MUT_RATE} --threshold ${SR_THRESHOLD} --samples ${SR_SAMPLES} --num_tasks ${SR_TIMING_TASKS} --seed_offset ${SR_TIMING_SEED_OFFSET} --time ${SR_TIMING_TIME} --memory ${SR_TIMING_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL}
+python3 ${SR_ROOT_DIR}/experiments/scripts/timing_job_prep.py @@executable_path ${SR_ROOT_DIR}/application/bin/SpatialRestraint @@output_dir ${SR_TIMING_OUTPUT_DIR} @@job_dir ${SR_TIMING_JOB_DIR} @@ones ${SR_TIMING_ONES} @@cost ${SR_COST} @@mc_size ${SR_MC_SIZE} @@mut_rate ${SR_TIMING_MUT_RATE} @@threshold ${SR_THRESHOLD} @@samples ${SR_SAMPLES} @@num_tasks ${SR_TIMING_TASKS} @@seed_offset ${SR_TIMING_SEED_OFFSET} @@time ${SR_TIMING_TIME} @@memory ${SR_TIMING_MEMORY} ${SR_ONE_CHECK_LOCAL} ${SR_INFINITE_LOCAL}
 
 # Create instance of roll_q for timing jobs
 cp ${SR_ROOT_DIR}/experiments/scripts/third_party/roll_q ${SR_TIMING_DIR}/roll_q -r

@@ -3,40 +3,40 @@ import argparse, os, errno
 from util_funcs import * 
 
 #### BEGIN CONFIGURATION ####
-parser = argparse.ArgumentParser(description='Job generation for timing distributions')
-parser.add_argument('--executable_path', type=str, help='Path to SpatialRestraint executable')
-parser.add_argument('--output_dir',      type=str, help='Root directory where timing data will ' + \
+parser = argparse.ArgumentParser(description='Job generation for timing distributions', prefix_chars='@')
+parser.add_argument('@@executable_path', type=str, help='Path to SpatialRestraint executable')
+parser.add_argument('@@output_dir',      type=str, help='Root directory where timing data will ' + \
         'be saved')
-parser.add_argument('--job_dir',         type=str, help='Directory where job timing data will ' + \
+parser.add_argument('@@job_dir',         type=str, help='Directory where job timing data will ' + \
         'be saved')
-parser.add_argument('--ones',            type=str, help='Starting ones for which to calculate ' + \
+parser.add_argument('@@ones',            type=str, help='Starting ones for which to calculate ' + \
         'distributions. Values separated by commas. X->Y,Z means every value between X and Y ' + \
         ' and Z', default = '0->100')
-parser.add_argument('--cost',            type=str, help='Cost for each unrestrained cell. ' + \
+parser.add_argument('@@cost',            type=str, help='Cost for each unrestrained cell. ' + \
         'Comma separated.', default = '0')
-parser.add_argument('--mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
+parser.add_argument('@@mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
         'side of ' + \
         'a square (e.g., 8 = 8x8 multicells. Comma separated.', default = '8,16,32,64,128,256,512')
-parser.add_argument('--mut_rate',        type=str, help='Mutation rate for cells. Comma ' + \
+parser.add_argument('@@mut_rate',        type=str, help='Mutation rate for cells. Comma ' + \
         'separated.', default = '0.2')
-parser.add_argument('--samples',         type=int, help='Number of multicells to run.', \
+parser.add_argument('@@samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
-parser.add_argument('--threshold',        type=str,help='Number of ones requierd for restraint.' + \
+parser.add_argument('@@threshold',        type=str,help='Number of ones requierd for restraint.' + \
         ' Comma separated ints.', default = '50')
-parser.add_argument('--seed_offset',     type=int, help='First job starts with this seed and ' + \
+parser.add_argument('@@seed_offset',     type=int, help='First job starts with this seed and ' + \
         'then counts up from there', default = 0)
-parser.add_argument('--num_tasks',       type=int, help='Number of tasks per job (for slurm). ' + \
+parser.add_argument('@@num_tasks',       type=int, help='Number of tasks per job (for slurm). ' + \
         'Higher numbers -> fewer job files but jobs must launch as larger chunks', default = 1)
-parser.add_argument('--time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
+parser.add_argument('@@time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
         default = '2:00:00')
-parser.add_argument('--memory',          type=str, help='Memory (typically gigs) per job. ' + \
+parser.add_argument('@@memory',          type=str, help='Memory (typically gigs) per job. ' + \
         'Format: xG for x gigs', default = '1G')
 # mgilson at https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
-parser.add_argument('--one_check', dest='one_check', action='store_true', help='Pass -o')
-parser.add_argument('--multi_check', dest='one_check', action='store_false', help='Do not pass -o')
+parser.add_argument('@@one_check', dest='one_check', action='store_true', help='Pass -o')
+parser.add_argument('@@multi_check', dest='one_check', action='store_false', help='Do not pass -o')
 parser.set_defaults(one_check=True)
-parser.add_argument('--infinite', dest='infinite', action='store_true', help='Pass -I')
-parser.add_argument('--finite',   dest='infinite', action='store_false', help='Do not pass -I')
+parser.add_argument('@@infinite', dest='infinite', action='store_true', help='Pass -I')
+parser.add_argument('@@finite',   dest='infinite', action='store_false', help='Do not pass -I')
 parser.set_defaults(infinite=False)
 
 
