@@ -3,50 +3,50 @@ import argparse, os, errno
 from util_funcs import * 
 
 #### BEGIN CONFIGURATION ####
-parser = argparse.ArgumentParser(description='Job generation for timing distributions')
-parser.add_argument('--executable_path', type=str, help='Path to SpatialRestraint executable')
-parser.add_argument('--output_dir',      type=str, help='Root directory where timing data will ' + \
+parser = argparse.ArgumentParser(description='Job generation for timing distributions', prefix_chars='@')
+parser.add_argument('@@executable_path', type=str, help='Path to SpatialRestraint executable')
+parser.add_argument('@@output_dir',      type=str, help='Root directory where timing data will ' + \
         'be saved')
-parser.add_argument('--job_dir',         type=str, help='Directory where job timing data will ' + \
+parser.add_argument('@@job_dir',         type=str, help='Directory where job timing data will ' + \
         'be saved')
-parser.add_argument('--distribution_dir',type=str, help='Directory containing timing data ',  \
+parser.add_argument('@@distribution_dir',type=str, help='Directory containing timing data ',  \
         default='')
-parser.add_argument('--ones',            type=str, help='Number of ones in ancestral genome. ' + \
+parser.add_argument('@@ones',            type=str, help='Number of ones in ancestral genome. ' + \
         'Values separated by commas. X->Y,Z means every value between X and Y ', default = '50')
-parser.add_argument('--gens',            type=int, help='Number of generations to evolve',  \
+parser.add_argument('@@gens',            type=int, help='Number of generations to evolve',  \
         default = '5000')
-parser.add_argument('--cost',            type=str, help='Cost for each unrestrained cell. ' + \
+parser.add_argument('@@cost',            type=str, help='Cost for each unrestrained cell. ' + \
         'Comma separated.', default = '0')
-parser.add_argument('--mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
+parser.add_argument('@@mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
         'side of ' + \
         'a square (e.g., 8 = 8x8 multicells. Comma separated.', default = '8,16,32,64,128,256,512')
-parser.add_argument('--pop_size',        type=str, help='Number of multicells in population.  ' + \
+parser.add_argument('@@pop_size',        type=str, help='Number of multicells in population.  ' + \
         'Comma separated.', default = '200')
-parser.add_argument('--mut_rate',        type=str, help='Mutation rate for multicells. Comma ' + \
+parser.add_argument('@@mut_rate',        type=str, help='Mutation rate for multicells. Comma ' + \
         'separated.', default = '0.2')
-parser.add_argument('--cell_mut_rate',   type=str, help='Mutation rate for cells. Comma ' + \
+parser.add_argument('@@cell_mut_rate',   type=str, help='Mutation rate for cells. Comma ' + \
         'separated.', default = '0.2')
-parser.add_argument('--samples',         type=int, help='Number of multicells to run.', \
+parser.add_argument('@@samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
-parser.add_argument('--threshold',        type=str,help='Number of ones requierd for restraint.' + \
+parser.add_argument('@@threshold',        type=str,help='Number of ones requierd for restraint.' + \
         ' Comma separated ints.', default = '50')
-parser.add_argument('--reps',            type=int, help='Number of evolutionary replicates per ' \
+parser.add_argument('@@reps',            type=int, help='Number of evolutionary replicates per ' \
         + ' treatments', default = 100)
-parser.add_argument('--seed_offset',     type=int, help='First job starts with this seed and ' + \
+parser.add_argument('@@seed_offset',     type=int, help='First job starts with this seed and ' + \
         'then counts up from there', default = 0)
-parser.add_argument('--time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
+parser.add_argument('@@time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
         default = '2:00:00')
-parser.add_argument('--memory',          type=str, help='Memory (typically gigs) per job. ' + \
+parser.add_argument('@@memory',          type=str, help='Memory (typically gigs) per job. ' + \
         'Format: xG for x gigs', default = '1G')
 # mgilson at https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
-parser.add_argument('--one_check',   dest='one_check', action='store_true', help='Pass -o')
-parser.add_argument('--multi_check', dest='one_check', action='store_false', help='Do not pass -o')
+parser.add_argument('@@one_check',   dest='one_check', action='store_true', help='Pass -o')
+parser.add_argument('@@multi_check', dest='one_check', action='store_false', help='Do not pass -o')
 parser.set_defaults(one_check=True)
-parser.add_argument('--infinite',    dest='infinite', action='store_true', help='Pass -I')
-parser.add_argument('--finite',      dest='infinite', action='store_false', help='Do not pass -I')
+parser.add_argument('@@infinite',    dest='infinite', action='store_true', help='Pass -I')
+parser.add_argument('@@finite',      dest='infinite', action='store_false', help='Do not pass -I')
 parser.set_defaults(infinite=False)
-parser.add_argument('--enforce',     dest='enforce', action='store_true', help='Pass -e')
-parser.add_argument('--no-enforce',  dest='enforce', action='store_false', help='Do not pass -e')
+parser.add_argument('@@enforce',     dest='enforce', action='store_true', help='Pass -e')
+parser.add_argument('@@no-enforce',  dest='enforce', action='store_false', help='Do not pass -e')
 parser.set_defaults(enforce=False)
 
 
