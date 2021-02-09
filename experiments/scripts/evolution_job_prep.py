@@ -93,7 +93,7 @@ combos.register_var('SAMPLES')
 combos.register_var('REPS')
 combos.register_var('ONES')
 combos.register_var('THRESH')
-combos.register_var('CELL_MUT')
+combos.register_var('CELLMUT')
 
 
 combos.add_val('MCSIZE',    str_to_int_list(args.mc_size))
@@ -105,7 +105,7 @@ combos.add_val('SAMPLES',   [args.samples])
 combos.add_val('REPS',      [args.reps])
 combos.add_val('ONES',      str_to_int_list(args.ones))
 combos.add_val('THRESH',    str_to_int_list(args.threshold))
-combos.add_val('CELL_MUT',  str_to_float_list(args.cell_mut_rate))
+combos.add_val('CELLMUT',  str_to_float_list(args.cell_mut_rate))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v' 
@@ -183,7 +183,7 @@ for condition_dict in combo_list:
                 command_str += ' -L ' + \
                     distribution_data_dir + \
                     'thresh__' + str(condition_dict['THRESH']) + '/' + \
-                    'cell_mut__' + str(condition_dict['CELL_MUT']) + '/' + \
+                    'cell_mut__' + str(condition_dict['CELLMUT']) + '/' + \
                     'mcsize__' + str(condition_dict['MCSIZE']) + '/'
             
             command_str += ' ' + extra_flags + ' '
