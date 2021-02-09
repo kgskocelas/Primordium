@@ -111,13 +111,13 @@
         for(size_t val_idx = 0; val_idx < line_count; ++val_idx){
             fp_in >> repro_cache[num_ones][val_idx];
         }
-              std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
-                        << repro_cache[num_ones].size() << std::endl;
-              fp_in.close();
-            }
-            repro_cache_min = min_ones;
-            repro_cache_max = max_ones;
-          }  
+        std::cout << "Number ones: " << num_ones << "; Loaded samples: " 
+                  << repro_cache[num_ones].size() << std::endl;
+        fp_in.close();
+      }
+      repro_cache_min = min_ones - 1;
+      repro_cache_max = max_ones + 1;
+    }  
 
           void Reset(size_t pop_size, int ancestor_1s, bool reset_cache=true) {
             orgs.resize(0, ancestor_1s);
@@ -189,15 +189,15 @@
 
           double CalcReproDuration(int num_ones) {
             if(repro_cache_min >= num_ones){
-            for(int i = repro_cache_min; i >= num_ones; --i)
-              repro_cache[i] = emp::vector<double>();
-            repro_cache_min = num_ones - 1;
-          }
-          if(repro_cache_max <= num_ones){
-            for(int i = repro_cache_max; i <= num_ones; ++i)
-              repro_cache[i] = emp::vector<double>();
-            repro_cache_max = num_ones + 1;
-          }
+              for(int i = repro_cache_min; i >= num_ones; --i)
+                    repro_cache[i] = emp::vector<double>();
+                repro_cache_min = num_ones - 1;
+              }
+              if(repro_cache_max <= num_ones){
+                for(int i = repro_cache_max; i <= num_ones; ++i)
+                    repro_cache[i] = emp::vector<double>();
+                repro_cache_max = num_ones + 1;
+              }
 
           emp::vector<double> & cur_cache = repro_cache[num_ones];
           size_t sample_id = random.GetUInt(num_samples);
@@ -261,8 +261,13 @@
 
           // Handle mutations in the offspring.
           if (random.P(multicell.mut_prob)) {
-            //double prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size;
-            constexpr double prob1 = 0.5;
+            double prob1 = 0;
+            if (multicell.is_infinite) { // 50/50 chance of adding/removing 1 in infinite genome
+                prob1 = 0.5; 
+            }
+            else { // for set genome length
+                prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size; 
+            }
             if (random.P(prob1)) offspring.num_ones--;
             else offspring.num_ones++;
           }
