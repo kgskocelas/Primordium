@@ -40,7 +40,11 @@ for(threshold in sort(unique(data$restrain))){
     for(cell_mut_rate in sort(unique(data[thresh_mask,]$mut_prob))){
         cat('Cell mut rate: ', cell_mut_rate, '\n')
         mut_mask = data$mut_prob == cell_mut_rate & thresh_mask
-        mut_dir = file.path(thresh_dir, paste0('cell_mut__', cell_mut_rate))
+        if(cell_mut_rate == 1){
+            mut_dir = file.path(thresh_dir, 'cell_mut__1.0')
+        }else{
+            mut_dir = file.path(thresh_dir, paste0('cell_mut__', cell_mut_rate))
+        }
         if(!dir.exists(file.path(mut_dir))){
             dir.create(mut_dir)
         }
