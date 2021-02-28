@@ -112,6 +112,7 @@ struct Multicell {
   int start_1s = 5;          ///< How many ones in the starting cell?
   double mut_prob = 0.0;     ///< Probability of an offspring being mutated.
   double unrestrained_cost = 0.0; ///< Extra cost for each unrestrained cell when full.
+  double inf_mut_decrease_prob = 0.6; ///< Probability a mutation causes a decrease in ones in inf.
   bool one_check = false;    ///< Should restrained check only one cell to find empty?
   size_t last_count = 0;
   size_t last_placed_cell_id = 0;
@@ -260,7 +261,8 @@ struct Multicell {
     if (do_mutations && random.P(mut_prob)) {
       double prob1;
       if (is_infinite) {
-          prob1 = 0.5; // 50/50 chance of adding/removing 1 in infinite genome
+          //prob1 = 0.5; // 50/50 chance of adding/removing 1 in infinite genome
+          prob1 = inf_mut_decrease_prob; // 50/50 chance of adding/removing 1 in infinite genome
       }
       else {
           prob1 = ((double) offspring.num_ones) / (double) genome_size; // for set genome length

@@ -17,8 +17,12 @@ parser.add_argument('@@cost',            type=str, help='Cost for each unrestrai
 parser.add_argument('@@mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
         'side of ' + \
         'a square (e.g., 8 = 8x8 multicells. Comma separated.', default = '8,16,32,64,128,256,512')
+parser.add_argument('@@genome_length',   type=str, help='Length of the genome in bits ',
+        default = '100')
 parser.add_argument('@@mut_rate',        type=str, help='Mutation rate for cells. Comma ' + \
         'separated.', default = '0.2')
+parser.add_argument('@@inf_mut_decrease_prob', type=str, help='Probability mutation decreases ' + \
+        'restraint in infinite genomes', default = '0.5')
 parser.add_argument('@@samples',         type=int, help='Number of multicells to run.', \
         default = 1000)
 parser.add_argument('@@threshold',        type=str,help='Number of ones requierd for restraint.' + \
@@ -67,6 +71,7 @@ combos.register_var('MCSIZE')
 combos.register_var('GENS')
 combos.register_var('MUT')
 combos.register_var('THRESH')
+combos.register_var('LENGTH')
 
 combos.add_val('ONES', str_to_int_list(args.ones))
 combos.add_val('COST', str_to_int_list(args.cost))
@@ -74,6 +79,7 @@ combos.add_val('MCSIZE', str_to_int_list(args.mc_size))
 combos.add_val('GENS', 0)
 combos.add_val('MUT', str_to_float_list(args.mut_rate))
 combos.add_val('THRESH', str_to_int_list(args.threshold))
+combos.add_val('LENGTH', str_to_int_list(args.genome_length))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v -P'
@@ -147,6 +153,7 @@ for condition_dict in combo_list:
 
         command_str = executable_path
         command_str += ' -a ' + str(condition_dict['ONES'])
+        command_str += ' -b ' + str(condition_dict['LENGTH'])
         command_str += ' -c ' + str(condition_dict['MCSIZE'])
         command_str += ' -g ' + str(condition_dict['GENS'])
         command_str += ' -m ' + str(condition_dict['MUT'])
@@ -157,6 +164,7 @@ for condition_dict in combo_list:
         command_str += ' -d ' + str(samples_per_task)
         command_str += ' -u ' + str(condition_dict['COST'])
         command_str += ' -r ' + str(condition_dict['THRESH'])
+        command_str += ' -k ' + args.inf_mut_decrease_prob
         command_str += ' -w ${RANDOM_SEED}' 
         command_str += ' ' + extra_flags + ' '
         

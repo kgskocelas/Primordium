@@ -6,7 +6,7 @@ def str_to_int_list(s):
     L = []
     vals = s.split(',')
     for val in vals:
-        if '-' in val: # Range in form A->B
+        if '->' in val: # Range in form A->B
             val_split = val.split('->')
             if len(val_split) != 2:
                 print('Error! Invalid integer range:', val)

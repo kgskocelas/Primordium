@@ -38,6 +38,7 @@ gen_count_actual = (gen_max - gen_min) / gen_step + 1
 # How many replicates exist *in each file*?
 rep_count = as.numeric(args[6])#100 
 cat('rep_count: ', rep_count, '\n')
+cat('Gen count actual: ', gen_count_actual, '\n')
 
 #### END CONFIGURATION ####
 
@@ -79,7 +80,7 @@ for(filename_idx in 1:length(filename_vec)){
         filename_bits = strsplit(filename_part, '_')
         #if(filename_bits[[1]][1] != 'spatial'){
         if(filename_bits[[1]][1] %in% 
-                c('MCSIZE', 'COST', 'GENS', 'MUT', 'POP', 'SAMPLES', 'REPS', 'ONES', 'CELLMUT')){
+                c('MCSIZE', 'COST', 'GENS', 'MUT', 'POP', 'SAMPLES', 'REPS', 'ONES', 'CELLMUT', 'THRESH', 'LENGTH')){
             filename_vars = c(filename_vars, filename_bits[[1]][1])
             filename_var_hash[[filename_bits[[1]][1]]] = filename_bits[[1]][2]
         }
@@ -94,16 +95,17 @@ for(filename_idx in 1:length(filename_vec)){
         cat('File not found! Skipping!\n')
         next    
     }
-    system(paste0('cat ', filename, '| grep -P "^(START Treatment|#gen|\\d+,)" > tmp_file.out'))
-    tmp_filename = 'tmp_file.out'
+    tmp_id =  round(runif(1, 1, 120000))
+    tmp_filename = paste0('tmp_file_', tmp_id,  '.out')
+    tmp_filename_2 = paste0('tmp_file_', tmp_id,  '_2.out')
+    system(paste0('cat ', filename, '| grep -P "^(START Treatment|#gen|\\d+,)" > ', tmp_filename))
     file_info = file.info(tmp_filename)
     if(file_info$size == 0){
         cat('File empty after grep. Skipping.\n')
         next
     }
     # Catch nasty bug where the START line is the only one that passes the previous grep
-    system(paste0('cat ', filename, '| grep -P "^(#gen|\\d+,)" > tmp_file_2.out'))
-    tmp_filename_2 = 'tmp_file_2.out'
+    system(paste0('cat ', filename, '| grep -P "^(#gen|\\d+,)" > ', tmp_filename_2))
     file_info_2 = file.info(tmp_filename_2)
     if(file_info_2$size == 0){
         cat('File empty after grep. Skipping.\n')
@@ -160,8 +162,9 @@ for(filename_idx in 1:length(filename_vec)){
         }
     }
     cat('\n')
+    system(paste0('rm ', tmp_filename))
+    system(paste0('rm ', tmp_filename_2))
 }
 # Output the data! :^)
 write.csv(data, output_filename)
-system('rm tmp_file.out')
 cat(paste0('Done! File saved to: ', output_filename, '!', '\n'))

@@ -29,6 +29,8 @@ SR_SAMPLES=1000
 SR_ONE_CHECK=False
 # Do organisms have an infinite genome? [bool]
 SR_INFINITE=True
+# When using an infinite genome, what is the probability a mutation will decrease the number of ones?
+SR_INF_MUT_DECREASE_PROB=0.5
 # Threshold number of ones for cell to be restrained [Comma separated list of integers]
 SR_THRESHOLD=50
 

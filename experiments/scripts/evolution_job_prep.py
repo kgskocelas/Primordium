@@ -20,10 +20,14 @@ parser.add_argument('@@cost',            type=str, help='Cost for each unrestrai
 parser.add_argument('@@mc_size',         type=str, help='Multicell sizes to run. Size is one ' + \
         'side of ' + \
         'a square (e.g., 8 = 8x8 multicells. Comma separated.', default = '8,16,32,64,128,256,512')
+parser.add_argument('@@genome_length',   type=str, help='Number of bits in each genome ',
+        default = '100')
 parser.add_argument('@@pop_size',        type=str, help='Number of multicells in population.  ' + \
         'Comma separated.', default = '200')
 parser.add_argument('@@mut_rate',        type=str, help='Mutation rate for multicells. Comma ' + \
         'separated.', default = '0.2')
+parser.add_argument('@@inf_mut_decrease_prob', type=str, help='Probability mutation decreases ' + \
+        'restraint in infinite genomes', default = '0.5')
 parser.add_argument('@@cell_mut_rate',   type=str, help='Mutation rate for cells. Comma ' + \
         'separated.', default = '0.2')
 parser.add_argument('@@samples',         type=int, help='Number of multicells to run.', \
@@ -36,6 +40,8 @@ parser.add_argument('@@seed_offset',     type=int, help='First job starts with t
         'then counts up from there', default = 0)
 parser.add_argument('@@time',            type=str, help='Time per jobs. Format: HH:MM:SS', \
         default = '2:00:00')
+parser.add_argument('@@samples_to_load', type=str, help='Samples to load if using -L', \
+        default = '0->100')
 parser.add_argument('@@memory',          type=str, help='Memory (typically gigs) per job. ' + \
         'Format: xG for x gigs', default = '1G')
 # mgilson at https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
@@ -94,6 +100,7 @@ combos.register_var('REPS')
 combos.register_var('ONES')
 combos.register_var('THRESH')
 combos.register_var('CELLMUT')
+combos.register_var('LENGTH')
 
 
 combos.add_val('MCSIZE',    str_to_int_list(args.mc_size))
@@ -105,7 +112,8 @@ combos.add_val('SAMPLES',   [args.samples])
 combos.add_val('REPS',      [args.reps])
 combos.add_val('ONES',      str_to_int_list(args.ones))
 combos.add_val('THRESH',    str_to_int_list(args.threshold))
-combos.add_val('CELLMUT',  str_to_float_list(args.cell_mut_rate))
+combos.add_val('CELLMUT',   str_to_float_list(args.cell_mut_rate))
+combos.add_val('LENGTH',    str_to_int_list(args.genome_length))
 
 # Any extra flags to send to SpatialRestraint
 extra_flags = '-v' 
@@ -130,6 +138,9 @@ print('Expecting ' + str(total_jobs) + ' jobs...')
 final_job_id = job_id_start + total_jobs
 num_digits = len(str(final_job_id))
 
+samples_to_load = str_to_int_list(args.samples_to_load)
+min_samples_to_load = min(samples_to_load)
+max_samples_to_load = max(samples_to_load)
 
 num_jobs = 0
 cur_job_id = job_id_start
@@ -166,6 +177,7 @@ for condition_dict in combo_list:
 
             command_str = executable_path
             command_str += ' -a ' + str(condition_dict['ONES'])
+            command_str += ' -b ' + str(condition_dict['LENGTH'])
             command_str += ' -c ' + str(condition_dict['MCSIZE'])
             command_str += ' -g ' + str(condition_dict['GENS'])
             command_str += ' -m ' + str(condition_dict['MUT'])
@@ -178,6 +190,9 @@ for condition_dict in combo_list:
             command_str += ' -d ' + str(condition_dict['REPS'])
             command_str += ' -u ' + str(condition_dict['COST'])
             command_str += ' -p ' + str(condition_dict['POP'])
+            command_str += ' -y ' + str(min_samples_to_load)
+            command_str += ' -z ' + str(max_samples_to_load)
+            command_str += ' -k ' + args.inf_mut_decrease_prob
             command_str += ' -w ${RANDOM_SEED}' 
             if(use_distribution_data):
                 command_str += ' -L ' + \

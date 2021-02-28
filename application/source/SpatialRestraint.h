@@ -373,7 +373,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjklqx ADFGHJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: fjlqx ADFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -392,12 +392,13 @@
                              multicell.genome_size, "NumBits...") = { 100 };
       config.AddComboSetting("cells_side", "Cells on side of (square) multicell", 'c',
                              multicell.cells_side, "NumCells...") = { 32 };
-
+      config.AddComboSetting("inf_mut_decrease_prob", "Probability mutation decreases restraint in" 
+                             "infinite genome", 'k',
+                             multicell.inf_mut_decrease_prob, "Probability...") = { 0.5 };
       config.AddAction("one_check", "Make restrained check only one cell to find empty.", 'o',
                        [this](){ multicell.one_check = true; } );
       config.AddAction("is_infinite", "Make genome infinite", 'I',
                         [this](){multicell.is_infinite = true; });
-
       config.AddSetting("gen_count",   "Num generations to evolve (0=analyze only)", 'g',
                         gen_count, "NumGens") = { 0 };
       config.AddSetting("pop_size",    "Number of organisms in the population.", 'p',
