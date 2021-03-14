@@ -262,8 +262,8 @@
           // Handle mutations in the offspring.
           if (random.P(multicell.mut_prob)) {
             double prob1 = 0;
-            if (multicell.is_infinite) { // 50/50 chance of adding/removing 1 in infinite genome
-                prob1 = 0.5; 
+            if (multicell.is_infinite) { // static chance of adding/removing 1 in infinite genome
+                prob1 = multicell.inf_mut_decrease_prob; 
             }
             else { // for set genome length
                 prob1 = ((double) offspring.num_ones) / (double) multicell.genome_size; 
