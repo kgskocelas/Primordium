@@ -1,4 +1,4 @@
-bok_filename: "primordium_supplemental_material"
+book_filename: "primordium_supplemental_material"
 language:
   ui:
     chapter_name: "Chapter "
@@ -6,6 +6,7 @@ delete_merged_file: true
 rmd_files: [
   "index.Rmd",
   "soma_sweep/main.Rmd",
-  "germ_sweep/main.Rmd"
+  "germ_sweep/main.Rmd",
+  "genome_length_sweep/main.Rmd"
 ]
 
