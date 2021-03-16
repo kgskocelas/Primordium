@@ -1,10 +1,11 @@
-book_filename: "primordium_supplemental_material"
+bok_filename: "primordium_supplemental_material"
 language:
   ui:
     chapter_name: "Chapter "
 delete_merged_file: true
 rmd_files: [
-  "intro.Rmd",
-  "soma_sweep/main.Rmd"
+  "index.Rmd",
+  "soma_sweep/main.Rmd",
+  "germ_sweep/main.Rmd"
 ]
 
