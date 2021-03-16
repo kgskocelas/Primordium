@@ -1,0 +1,13 @@
+---
+title: "Finite genome -- size 1024x1024 organisms"
+author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
+date: "`r Sys.Date()`"
+output: bookdown::gitbook
+documentclass: book
+github-repo: kgskocelas/Primordium
+description: "Supplemental material for our ALife 2021 conference submission"
+---
+
+# Size 1024x1024 organisms
+
+TBD
