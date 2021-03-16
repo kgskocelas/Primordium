@@ -1,9 +1,10 @@
-book_filename: "demo"
+book_filename: "primordium_supplemental_material"
 language:
   ui:
     chapter_name: "Chapter "
 delete_merged_file: true
 rmd_files: [
-  "index.Rmd",
+  "intro.Rmd",
+  "soma_sweep/main.Rmd"
 ]
 
