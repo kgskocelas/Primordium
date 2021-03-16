@@ -1,0 +1,13 @@
+---
+title: "Number of timing samples test"
+author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
+date: "`r Sys.Date()`"
+output: bookdown::gitbook
+documentclass: book
+github-repo: kgskocelas/Primordium
+description: "Supplemental material for our ALife 2021 conference submission"
+---
+
+# Test of timing sample counts
+
+TBD
