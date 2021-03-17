@@ -102,11 +102,11 @@ ggplot(df2[df2$generation == 10000,], aes(x = as.factor(POP), y = restraint_valu
 ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
   geom_boxplot(aes(fill = as.factor(POP))) +
-  xlab('Population size') +
+  xlab('Organism size') +
   ylab('Evolved restraint buffer') +
-  labs(fill = 'Organism size') +
+  labs(fill = 'Population size') +
   theme_light() +
-  theme(legend.position = 'none') +
+  theme(legend.position = 'bottom') +
   theme(panel.grid.major.x = element_blank()) +
   theme(panel.grid.minor.x = element_blank()) +
   theme(axis.title = element_text(size = text_major_size)) +
@@ -116,6 +116,5 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size - 2, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  #ggtitle('Finite Genome Avg Restraint by MC Size') +
   ggsave('./evolution/plots/pop_size_boxplot_basic.png', units = 'in', width = 6, height = 6) +
   ggsave('./evolution/plots/pop_size_boxplot_basic.pdf', units = 'in', width = 6, height = 6)
