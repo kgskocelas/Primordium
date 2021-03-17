@@ -21,7 +21,7 @@ df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
 
 # Group the data by size and summarize
-data_grouped = dplyr::group_by(df2, MCSIZE, MUT)
+data_grouped = dplyr::group_by(df2, MCSIZE, CELLMUT)
 data_summary = dplyr::summarize(data_grouped, mean_ones = mean(ave_ones), n = dplyr::n())
 
 # Print any data that is missing!
@@ -37,12 +37,12 @@ df2$restraint_value = df2$ave_ones - 60
 df2$size_str = paste0(df2$MCSIZE, 'x', df2$MCSIZE)
 df2$size_factor = factor(df2$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
 df2$size_factor_reversed = factor(df2$size_str, levels = rev(c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024')))
-df2$germ_mut_str = paste('GERM MUT', df2$MUT)
-df2$mut_factor = factor(df2$MUT, levels = c(0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00))
+df2$soma_mut_str = paste('soma CELLMUT', df2$CELLMUT)
+df2$mut_factor = factor(df2$CELLMUT, levels = c(0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00))
 data_summary$size_str = paste0(data_summary$MCSIZE, 'x', data_summary$MCSIZE)
 data_summary$size_factor = factor(data_summary$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
-data_summary$germ_mut_str = paste('GERM MUT', data_summary$MUT)
-data_summary$mut_factor = factor(data_summary$MUT, levels = c(0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00))
+data_summary$soma_mut_str = paste('soma CELLMUT', data_summary$CELLMUT)
+data_summary$mut_factor = factor(data_summary$CELLMUT, levels = c(0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00))
 # Create a map of colors we'll use to plot the different organism sizes
 color_vec = as.character(khroma::color('bright')(7))
 color_map = c(
@@ -57,7 +57,7 @@ color_map = c(
 # Set the sizes for text in plots
 text_major_size = 18
 text_minor_size = 16 
-boxplot_color = '#9ecae1'
+boxplot_color = '#fcbba1'
 
 
 # Plot the number of replicates for each organism size
@@ -83,7 +83,7 @@ ggplot(data_summary, aes(x = size_factor, y = n)) +
 # Plot the evolved restraint buffer as boxplots
   # x-axis = organism size
   # y-axis = average evolved restraint buffer for each replicate
-  # facet rows = germ mutation rate
+  # facet rows = soma mutation rate
 ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
   geom_boxplot(aes(fill = size_factor)) +
@@ -103,8 +103,8 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
   facet_grid(rows = vars(mut_factor)) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.pdf', units = 'in', width = 6, height = 10)
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_size.png', units = 'in', width = 6, height = 10) +
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_size.pdf', units = 'in', width = 6, height = 10)
 # Same plot, but with free y-axes between plots
 ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -125,17 +125,17 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
   facet_grid(rows = vars(mut_factor), scales = 'free_y') +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.pdf', units = 'in', width = 6, height = 10)
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_size_free_y.png', units = 'in', width = 6, height = 10) +
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_size_free_y.pdf', units = 'in', width = 6, height = 10)
 
 # Plot the evolved restraint buffer as boxplots
-  # x-axis = germ mutation rate
+  # x-axis = soma mutation rate
   # y-axis = average evolved restraint buffer for each replicate
   # facet rows = organism size
 ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
   geom_boxplot(aes(fill = size_factor)) +
-  xlab('Germ mutation rate') +
+  xlab('Soma mutation rate') +
   ylab('Evolved restraint buffer') +
   scale_fill_manual(values = color_map) +
   labs(fill = 'Organism size') +
@@ -150,13 +150,13 @@ ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) 
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
   facet_grid(rows = vars(size_factor)) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.pdf', units = 'in', width = 6, height = 10)
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_mut.png', units = 'in', width = 6, height = 10) +
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_mut.pdf', units = 'in', width = 6, height = 10)
 # Same plot, but with a free y-axis for each row
 ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
   geom_boxplot(aes(fill = size_factor)) +
-  xlab('Germ mutation rate') +
+  xlab('Soma mutation rate') +
   ylab('Evolved restraint buffer') +
   scale_fill_manual(values = color_map) +
   labs(fill = 'Organism size') +
@@ -171,19 +171,19 @@ ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) 
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
   facet_grid(rows = vars(size_factor), scales = 'free_y') +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.pdf', units = 'in', width = 6, height = 10)
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_mut_free_y.png', units = 'in', width = 6, height = 10) +
+  ggsave('./evolution/plots/soma_sweep_boxplot_facet_mut_free_y.pdf', units = 'in', width = 6, height = 10)
 
 
 
 # Plot the evolved restraint buffer as boxplots once for EACH organism size
-  # x-axis = germ mutation rate
+  # x-axis = soma mutation rate
   # y-axis = average evolved restraint buffer for each replicate
 for(org_size in unique(df2$MCSIZE)){
   ggplot(df2[df2$generation == 10000 & df2$MCSIZE == org_size,], aes(x = mut_factor, y = restraint_value)) +
     geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
     geom_boxplot(aes(fill = size_factor)) +
-    xlab('Germ mutation rate') +
+    xlab('Soma mutation rate') +
     ylab('Evolved restraint buffer') +
     scale_fill_manual(values = color_map) +
     labs(fill = 'Organism size') +
@@ -198,15 +198,15 @@ for(org_size in unique(df2$MCSIZE)){
     theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
     theme(strip.background = element_rect(fill = '#dddddd')) +
     facet_grid(rows = vars(size_factor)) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.png'), units = 'in', width = 6, height = 6) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.pdf'), units = 'in', width = 6, height = 6)
+    ggsave(paste0('./evolution/plots/soma_sweep_boxplot_single_size_', org_size, '.png'), units = 'in', width = 6, height = 6) +
+    ggsave(paste0('./evolution/plots/soma_sweep_boxplot_single_size_', org_size, '.pdf'), units = 'in', width = 6, height = 6)
 }
 
 # Plot the evolved restraint buffer as boxplots once for EACH organism size
   # x-axis = organism size
   # y-axis = average evolved restraint buffer for each replicate
-for(mut_rate in unique(df2$MUT)){
-  ggplot(df2[df2$generation == 10000 & df2$MUT == mut_rate,], aes(x = size_factor, y = restraint_value)) +
+for(mut_rate in unique(df2$CELLMUT)){
+  ggplot(df2[df2$generation == 10000 & df2$CELLMUT == mut_rate,], aes(x = size_factor, y = restraint_value)) +
     geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
     geom_boxplot(aes(fill = size_factor)) +
     xlab('Organism size') +
@@ -225,6 +225,6 @@ for(mut_rate in unique(df2$MUT)){
     theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
     theme(strip.background = element_rect(fill = '#dddddd')) +
     facet_grid(rows = vars(mut_factor)) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.png'), units = 'in', width = 6, height = 6) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.pdf'), units = 'in', width = 6, height = 6)
+    ggsave(paste0('./evolution/plots/soma_sweep_boxplot_single_rate_', mut_rate, '.png'), units = 'in', width = 6, height = 6) +
+    ggsave(paste0('./evolution/plots/soma_sweep_boxplot_single_rate_', mut_rate, '.pdf'), units = 'in', width = 6, height = 6)
 }
