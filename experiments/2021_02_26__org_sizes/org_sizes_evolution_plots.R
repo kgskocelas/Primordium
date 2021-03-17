@@ -111,7 +111,6 @@ ggplot(df2[df2$generation == 10000,], aes(x = restraint_value, y = size_factor_r
   theme(panel.grid.minor.x = element_blank()) +
   theme(axis.title = element_text(size = text_major_size)) +
   theme(axis.text = element_text(size = text_minor_size)) +
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
