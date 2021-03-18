@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "The Evolution of Cellular Restraint in Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
@@ -10,4 +10,8 @@ description: "Supplemental material for our ALife 2021 conference submission"
 
 # Introduction
 
-TBD
+This document serves as the supplemental material for our ALife 2021 conference submission "The Evolution of Cellular Restraint in Multicellular Organisms".
+
+The document is split into sections.
+Each section can be accessed via the navigation bar on the left side of the screen. 
+Sections mostly correspond to experiments (some that were discussed at length in the paper, others that were not).
