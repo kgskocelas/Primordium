@@ -5,10 +5,10 @@ language:
 delete_merged_file: true
 rmd_files: [
   "index.Rmd",
+  "baseline/main.Rmd",
   "soma_sweep/main.Rmd",
   "germ_sweep/main.Rmd",
   "genome_length_sweep/main.Rmd",
-  "size_1024/main.Rmd",
   "sample_test/main.Rmd",
   "web_app/main.Rmd"
 ]
