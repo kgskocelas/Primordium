@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Section 4 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms</title>
+  <title>Section 5 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms</title>
   <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Section 4 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:title" content="Section 5 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Section 4 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta name="twitter:title" content="Section 5 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
   <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
   
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="germ-mutation-rate-sweep.html"/>
-<link rel="next" href="size-1024x1024-organisms.html"/>
+<link rel="next" href="test-of-timing-sample-counts.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -132,82 +132,90 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>2</b> Somatic Mutation Rate Sweep</a><ul>
-<li class="chapter" data-level="2.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-cleaning"><i class="fa fa-check"></i><b>2.1</b> Data cleaning</a></li>
-<li class="chapter" data-level="2.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-integrity-check"><i class="fa fa-check"></i><b>2.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="2.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#aggregate-plots"><i class="fa fa-check"></i><b>2.3</b> Aggregate plots</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-somatic-mutation-rate"><i class="fa fa-check"></i><b>2.3.1</b> Facet by somatic mutation rate</a></li>
-<li class="chapter" data-level="2.3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-organism-size"><i class="fa fa-check"></i><b>2.3.2</b> Facet by organism size</a></li>
+<li class="chapter" data-level="2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html"><i class="fa fa-check"></i><b>2</b> Baseline: Varying organism size</a><ul>
+<li class="chapter" data-level="2.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-cleaning"><i class="fa fa-check"></i><b>2.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="2.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-integrity-check"><i class="fa fa-check"></i><b>2.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="2.3" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#aggregate-plots"><i class="fa fa-check"></i><b>2.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#boxplots"><i class="fa fa-check"></i><b>2.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="2.3.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#raincloud-plots"><i class="fa fa-check"></i><b>2.3.2</b> Raincloud plots</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-organism-size-plots"><i class="fa fa-check"></i><b>2.4</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="2.4.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-16x16"><i class="fa fa-check"></i><b>2.4.1</b> Organism size 16x16</a></li>
-<li class="chapter" data-level="2.4.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-32x32"><i class="fa fa-check"></i><b>2.4.2</b> Organism size 32x32</a></li>
-<li class="chapter" data-level="2.4.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-64x64"><i class="fa fa-check"></i><b>2.4.3</b> Organism size 64x64</a></li>
-<li class="chapter" data-level="2.4.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-128x128"><i class="fa fa-check"></i><b>2.4.4</b> Organism size 128x128</a></li>
-<li class="chapter" data-level="2.4.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-256x256"><i class="fa fa-check"></i><b>2.4.5</b> Organism size 256x256</a></li>
-<li class="chapter" data-level="2.4.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-512x512"><i class="fa fa-check"></i><b>2.4.6</b> Organism size 512x512</a></li>
+<li class="chapter" data-level="2.4" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#statistics"><i class="fa fa-check"></i><b>2.4</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-somatic-mutation-rate-plots"><i class="fa fa-check"></i><b>2.5</b> Single somatic mutation rate plots</a><ul>
-<li class="chapter" data-level="2.5.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.01"><i class="fa fa-check"></i><b>2.5.1</b> Somatic mut. rate 0.01</a></li>
-<li class="chapter" data-level="2.5.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.02"><i class="fa fa-check"></i><b>2.5.2</b> Somatic mut. rate 0.02</a></li>
-<li class="chapter" data-level="2.5.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.05"><i class="fa fa-check"></i><b>2.5.3</b> Somatic mut. rate 0.05</a></li>
-<li class="chapter" data-level="2.5.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.1"><i class="fa fa-check"></i><b>2.5.4</b> Somatic mut. rate 0.1</a></li>
-<li class="chapter" data-level="2.5.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.2"><i class="fa fa-check"></i><b>2.5.5</b> Somatic mut. rate 0.2</a></li>
-<li class="chapter" data-level="2.5.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.5"><i class="fa fa-check"></i><b>2.5.6</b> Somatic mut. rate 0.5</a></li>
-<li class="chapter" data-level="2.5.7" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-1.0"><i class="fa fa-check"></i><b>2.5.7</b> Somatic mut. rate 1.0</a></li>
+<li class="chapter" data-level="3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>3</b> Somatic Mutation Rate Sweep</a><ul>
+<li class="chapter" data-level="3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-cleaning-1"><i class="fa fa-check"></i><b>3.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-integrity-check-1"><i class="fa fa-check"></i><b>3.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="3.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#aggregate-plots-1"><i class="fa fa-check"></i><b>3.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-somatic-mutation-rate"><i class="fa fa-check"></i><b>3.3.1</b> Facet by somatic mutation rate</a></li>
+<li class="chapter" data-level="3.3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-organism-size"><i class="fa fa-check"></i><b>3.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="2.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#statistics"><i class="fa fa-check"></i><b>2.6</b> Statistics</a></li>
+<li class="chapter" data-level="3.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-organism-size-plots"><i class="fa fa-check"></i><b>3.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-16x16"><i class="fa fa-check"></i><b>3.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="3.4.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-32x32"><i class="fa fa-check"></i><b>3.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="3.4.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-64x64"><i class="fa fa-check"></i><b>3.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="3.4.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-128x128"><i class="fa fa-check"></i><b>3.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="3.4.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-256x256"><i class="fa fa-check"></i><b>3.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="3.4.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-512x512"><i class="fa fa-check"></i><b>3.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>3</b> Germ Mutation Rate Sweep</a><ul>
-<li class="chapter" data-level="3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-integrity-check-1"><i class="fa fa-check"></i><b>3.1</b> Data integrity check</a></li>
-<li class="chapter" data-level="3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#aggregate-plots-1"><i class="fa fa-check"></i><b>3.2</b> Aggregate plots</a><ul>
-<li class="chapter" data-level="3.2.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-germ-mutation-rate"><i class="fa fa-check"></i><b>3.2.1</b> Facet by germ mutation rate</a></li>
-<li class="chapter" data-level="3.2.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-organism-size-1"><i class="fa fa-check"></i><b>3.2.2</b> Facet by organism size</a></li>
+<li class="chapter" data-level="3.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-somatic-mutation-rate-plots"><i class="fa fa-check"></i><b>3.5</b> Single somatic mutation rate plots</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.01"><i class="fa fa-check"></i><b>3.5.1</b> Somatic mut. rate 0.01</a></li>
+<li class="chapter" data-level="3.5.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.02"><i class="fa fa-check"></i><b>3.5.2</b> Somatic mut. rate 0.02</a></li>
+<li class="chapter" data-level="3.5.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.05"><i class="fa fa-check"></i><b>3.5.3</b> Somatic mut. rate 0.05</a></li>
+<li class="chapter" data-level="3.5.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.1"><i class="fa fa-check"></i><b>3.5.4</b> Somatic mut. rate 0.1</a></li>
+<li class="chapter" data-level="3.5.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.2"><i class="fa fa-check"></i><b>3.5.5</b> Somatic mut. rate 0.2</a></li>
+<li class="chapter" data-level="3.5.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.5"><i class="fa fa-check"></i><b>3.5.6</b> Somatic mut. rate 0.5</a></li>
+<li class="chapter" data-level="3.5.7" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-1.0"><i class="fa fa-check"></i><b>3.5.7</b> Somatic mut. rate 1.0</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-1"><i class="fa fa-check"></i><b>3.3</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-16x16-1"><i class="fa fa-check"></i><b>3.3.1</b> Organism size 16x16</a></li>
-<li class="chapter" data-level="3.3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-32x32-1"><i class="fa fa-check"></i><b>3.3.2</b> Organism size 32x32</a></li>
-<li class="chapter" data-level="3.3.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-64x64-1"><i class="fa fa-check"></i><b>3.3.3</b> Organism size 64x64</a></li>
-<li class="chapter" data-level="3.3.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-128x128-1"><i class="fa fa-check"></i><b>3.3.4</b> Organism size 128x128</a></li>
-<li class="chapter" data-level="3.3.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-256x256-1"><i class="fa fa-check"></i><b>3.3.5</b> Organism size 256x256</a></li>
-<li class="chapter" data-level="3.3.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-512x512-1"><i class="fa fa-check"></i><b>3.3.6</b> Organism size 512x512</a></li>
+<li class="chapter" data-level="3.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#statistics-1"><i class="fa fa-check"></i><b>3.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-2"><i class="fa fa-check"></i><b>3.4</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="3.4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.01"><i class="fa fa-check"></i><b>3.4.1</b> Germ mut. rate 0.01</a></li>
-<li class="chapter" data-level="3.4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.02"><i class="fa fa-check"></i><b>3.4.2</b> Germ mut. rate 0.02</a></li>
-<li class="chapter" data-level="3.4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.05"><i class="fa fa-check"></i><b>3.4.3</b> Germ mut. rate 0.05</a></li>
-<li class="chapter" data-level="3.4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.1"><i class="fa fa-check"></i><b>3.4.4</b> Germ mut. rate 0.1</a></li>
-<li class="chapter" data-level="3.4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.2"><i class="fa fa-check"></i><b>3.4.5</b> Germ mut. rate 0.2</a></li>
-<li class="chapter" data-level="3.4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.5"><i class="fa fa-check"></i><b>3.4.6</b> Germ mut. rate 0.5</a></li>
-<li class="chapter" data-level="3.4.7" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-1.0"><i class="fa fa-check"></i><b>3.4.7</b> Germ mut. rate 1.0</a></li>
+<li class="chapter" data-level="4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>4</b> Germ Mutation Rate Sweep</a><ul>
+<li class="chapter" data-level="4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-integrity-check-2"><i class="fa fa-check"></i><b>4.1</b> Data integrity check</a></li>
+<li class="chapter" data-level="4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#aggregate-plots-2"><i class="fa fa-check"></i><b>4.2</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-germ-mutation-rate"><i class="fa fa-check"></i><b>4.2.1</b> Facet by germ mutation rate</a></li>
+<li class="chapter" data-level="4.2.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-organism-size-1"><i class="fa fa-check"></i><b>4.2.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#statistics-1"><i class="fa fa-check"></i><b>3.5</b> Statistics</a></li>
+<li class="chapter" data-level="4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-1"><i class="fa fa-check"></i><b>4.3</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-16x16-1"><i class="fa fa-check"></i><b>4.3.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="4.3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-32x32-1"><i class="fa fa-check"></i><b>4.3.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="4.3.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-64x64-1"><i class="fa fa-check"></i><b>4.3.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="4.3.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-128x128-1"><i class="fa fa-check"></i><b>4.3.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="4.3.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-256x256-1"><i class="fa fa-check"></i><b>4.3.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="4.3.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-512x512-1"><i class="fa fa-check"></i><b>4.3.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html"><i class="fa fa-check"></i><b>4</b> Genome Length Sweep</a><ul>
-<li class="chapter" data-level="4.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-cleaning-1"><i class="fa fa-check"></i><b>4.1</b> Data cleaning</a></li>
-<li class="chapter" data-level="4.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-integrity-check-2"><i class="fa fa-check"></i><b>4.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="4.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#aggregate-plots-2"><i class="fa fa-check"></i><b>4.3</b> Aggregate plots</a><ul>
-<li class="chapter" data-level="4.3.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-genome-length"><i class="fa fa-check"></i><b>4.3.1</b> Facet by genome length</a></li>
-<li class="chapter" data-level="4.3.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-organism-size-2"><i class="fa fa-check"></i><b>4.3.2</b> Facet by organism size</a></li>
+<li class="chapter" data-level="4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-2"><i class="fa fa-check"></i><b>4.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.01"><i class="fa fa-check"></i><b>4.4.1</b> Germ mut. rate 0.01</a></li>
+<li class="chapter" data-level="4.4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.02"><i class="fa fa-check"></i><b>4.4.2</b> Germ mut. rate 0.02</a></li>
+<li class="chapter" data-level="4.4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.05"><i class="fa fa-check"></i><b>4.4.3</b> Germ mut. rate 0.05</a></li>
+<li class="chapter" data-level="4.4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.1"><i class="fa fa-check"></i><b>4.4.4</b> Germ mut. rate 0.1</a></li>
+<li class="chapter" data-level="4.4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.2"><i class="fa fa-check"></i><b>4.4.5</b> Germ mut. rate 0.2</a></li>
+<li class="chapter" data-level="4.4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.5"><i class="fa fa-check"></i><b>4.4.6</b> Germ mut. rate 0.5</a></li>
+<li class="chapter" data-level="4.4.7" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-1.0"><i class="fa fa-check"></i><b>4.4.7</b> Germ mut. rate 1.0</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-organism-size-plots-3"><i class="fa fa-check"></i><b>4.4</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-16x16-2"><i class="fa fa-check"></i><b>4.4.1</b> Organism size 16x16</a></li>
-<li class="chapter" data-level="4.4.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-32x32-2"><i class="fa fa-check"></i><b>4.4.2</b> Organism size 32x32</a></li>
-<li class="chapter" data-level="4.4.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-64x64-2"><i class="fa fa-check"></i><b>4.4.3</b> Organism size 64x64</a></li>
-<li class="chapter" data-level="4.4.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-128x128-2"><i class="fa fa-check"></i><b>4.4.4</b> Organism size 128x128</a></li>
-<li class="chapter" data-level="4.4.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-256x256-2"><i class="fa fa-check"></i><b>4.4.5</b> Organism size 256x256</a></li>
-<li class="chapter" data-level="4.4.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-512x512-2"><i class="fa fa-check"></i><b>4.4.6</b> Organism size 512x512</a></li>
+<li class="chapter" data-level="4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#statistics-2"><i class="fa fa-check"></i><b>4.5</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-genome-length-plots"><i class="fa fa-check"></i><b>4.5</b> Single genome length plots</a><ul>
-<li class="chapter" data-level="4.5.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes"><i class="fa fa-check"></i><b>4.5.1</b> 25-bit genomes</a></li>
-<li class="chapter" data-level="4.5.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-1"><i class="fa fa-check"></i><b>4.5.2</b> 50-bit genomes</a></li>
-<li class="chapter" data-level="4.5.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-2"><i class="fa fa-check"></i><b>4.5.3</b> 100-bit genomes</a></li>
-<li class="chapter" data-level="4.5.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-3"><i class="fa fa-check"></i><b>4.5.4</b> 200-bit genomes</a></li>
-<li class="chapter" data-level="4.5.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-4"><i class="fa fa-check"></i><b>4.5.5</b> 400-bit genomes</a></li>
+<li class="chapter" data-level="5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html"><i class="fa fa-check"></i><b>5</b> Genome Length Sweep</a><ul>
+<li class="chapter" data-level="5.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-cleaning-2"><i class="fa fa-check"></i><b>5.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="5.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-integrity-check-3"><i class="fa fa-check"></i><b>5.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="5.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#aggregate-plots-3"><i class="fa fa-check"></i><b>5.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-genome-length"><i class="fa fa-check"></i><b>5.3.1</b> Facet by genome length</a></li>
+<li class="chapter" data-level="5.3.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-organism-size-2"><i class="fa fa-check"></i><b>5.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="4.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#statistics-2"><i class="fa fa-check"></i><b>4.6</b> Statistics</a></li>
+<li class="chapter" data-level="5.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-organism-size-plots-3"><i class="fa fa-check"></i><b>5.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-16x16-2"><i class="fa fa-check"></i><b>5.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="5.4.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-32x32-2"><i class="fa fa-check"></i><b>5.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="5.4.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-64x64-2"><i class="fa fa-check"></i><b>5.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="5.4.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-128x128-2"><i class="fa fa-check"></i><b>5.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="5.4.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-256x256-2"><i class="fa fa-check"></i><b>5.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="5.4.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-512x512-2"><i class="fa fa-check"></i><b>5.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="size-1024x1024-organisms.html"><a href="size-1024x1024-organisms.html"><i class="fa fa-check"></i><b>5</b> Size 1024x1024 organisms</a></li>
+<li class="chapter" data-level="5.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-genome-length-plots"><i class="fa fa-check"></i><b>5.5</b> Single genome length plots</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes"><i class="fa fa-check"></i><b>5.5.1</b> 25-bit genomes</a></li>
+<li class="chapter" data-level="5.5.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-1"><i class="fa fa-check"></i><b>5.5.2</b> 50-bit genomes</a></li>
+<li class="chapter" data-level="5.5.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-2"><i class="fa fa-check"></i><b>5.5.3</b> 100-bit genomes</a></li>
+<li class="chapter" data-level="5.5.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-3"><i class="fa fa-check"></i><b>5.5.4</b> 200-bit genomes</a></li>
+<li class="chapter" data-level="5.5.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-4"><i class="fa fa-check"></i><b>5.5.5</b> 400-bit genomes</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#statistics-3"><i class="fa fa-check"></i><b>5.6</b> Statistics</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="test-of-timing-sample-counts.html"><a href="test-of-timing-sample-counts.html"><i class="fa fa-check"></i><b>6</b> Test of timing sample counts</a></li>
 <li class="chapter" data-level="7" data-path="interactive-web-app.html"><a href="interactive-web-app.html"><i class="fa fa-check"></i><b>7</b> Interactive web app</a></li>
 <li class="divider"></li>
@@ -231,155 +239,155 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="genome-length-sweep" class="section level1">
-<h1><span class="header-section-number">Section 4</span> Genome Length Sweep</h1>
+<h1><span class="header-section-number">Section 5</span> Genome Length Sweep</h1>
 <p>By default, all genomes are bitstrings with 100 bits.
 Here, we look into the effects of varying this genome length (we use values 25, 50, 100, 200, and 400 bits).</p>
 <p>The configuration script and data for the experiment can be found under <code>2021_02_27__genome_length/</code> in the experiments directory of the git repository.</p>
-<div id="data-cleaning-1" class="section level2">
-<h2><span class="header-section-number">4.1</span> Data cleaning</h2>
+<div id="data-cleaning-2" class="section level2">
+<h2><span class="header-section-number">5.1</span> Data cleaning</h2>
 <p>Load necessary libraries</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb19-2" title="2"><span class="kw">library</span>(ggplot2)</a>
-<a class="sourceLine" id="cb19-3" title="3"><span class="kw">library</span>(ggridges)</a>
-<a class="sourceLine" id="cb19-4" title="4"><span class="kw">library</span>(scales)</a>
-<a class="sourceLine" id="cb19-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb28-2" title="2"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb28-3" title="3"><span class="kw">library</span>(ggridges)</a>
+<a class="sourceLine" id="cb28-4" title="4"><span class="kw">library</span>(scales)</a>
+<a class="sourceLine" id="cb28-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
 <p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="co"># Load the data</span></a>
-<a class="sourceLine" id="cb20-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_50.csv&#39;</span>)</a>
-<a class="sourceLine" id="cb20-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_200.csv&#39;</span>))</a>
-<a class="sourceLine" id="cb20-4" title="4">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_100.csv&#39;</span>))</a>
-<a class="sourceLine" id="cb20-5" title="5">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_400.csv&#39;</span>))</a>
-<a class="sourceLine" id="cb20-6" title="6">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_25.csv&#39;</span>))</a>
-<a class="sourceLine" id="cb20-7" title="7"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
-<a class="sourceLine" id="cb20-8" title="8">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
-<a class="sourceLine" id="cb20-9" title="9"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
-<a class="sourceLine" id="cb20-10" title="10">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="co"># Load the data</span></a>
+<a class="sourceLine" id="cb29-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_50.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb29-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_200.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb29-4" title="4">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_100.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb29-5" title="5">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_400.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb29-6" title="6">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_25.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb29-7" title="7"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
+<a class="sourceLine" id="cb29-8" title="8">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
+<a class="sourceLine" id="cb29-9" title="9"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
+<a class="sourceLine" id="cb29-10" title="10">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
 <p>We group and summarize the data to make to ensure all replicates are present.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
-<a class="sourceLine" id="cb21-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, LENGTH)</a>
-<a class="sourceLine" id="cb21-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
+<a class="sourceLine" id="cb30-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, LENGTH)</a>
+<a class="sourceLine" id="cb30-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
 <p>We clean the data and create a few helper variables to make plotting easier.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="co">## Set variables to make plotting easier</span></a>
-<a class="sourceLine" id="cb22-2" title="2"><span class="co"># Calculate restraint value (x - 60% of the genome length)</span></a>
-<a class="sourceLine" id="cb22-3" title="3">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span>(df2<span class="op">$</span>LENGTH <span class="op">*</span><span class="st"> </span><span class="fl">0.6</span>)</a>
-<a class="sourceLine" id="cb22-4" title="4"><span class="co"># Make a nice, clean factor for size</span></a>
-<a class="sourceLine" id="cb22-5" title="5">df2<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, df2<span class="op">$</span>MCSIZE)</a>
-<a class="sourceLine" id="cb22-6" title="6">df2<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
-<a class="sourceLine" id="cb22-7" title="7">df2<span class="op">$</span>size_factor_reversed =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>)))</a>
-<a class="sourceLine" id="cb22-8" title="8">df2<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
-<a class="sourceLine" id="cb22-9" title="9">df2<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
-<a class="sourceLine" id="cb22-10" title="10">data_summary<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, data_summary<span class="op">$</span>MCSIZE)</a>
-<a class="sourceLine" id="cb22-11" title="11">data_summary<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
-<a class="sourceLine" id="cb22-12" title="12">data_summary<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
-<a class="sourceLine" id="cb22-13" title="13">data_summary<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
-<a class="sourceLine" id="cb22-14" title="14"><span class="co"># Create a map of colors we&#39;ll use to plot the different organism sizes</span></a>
-<a class="sourceLine" id="cb22-15" title="15">color_vec =<span class="st"> </span><span class="kw">as.character</span>(khroma<span class="op">::</span><span class="kw">color</span>(<span class="st">&#39;bright&#39;</span>)(<span class="dv">7</span>))</a>
-<a class="sourceLine" id="cb22-16" title="16">color_map =<span class="st"> </span><span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb22-17" title="17">  <span class="st">&#39;16x16&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">1</span>],</a>
-<a class="sourceLine" id="cb22-18" title="18">  <span class="st">&#39;32x32&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">2</span>],</a>
-<a class="sourceLine" id="cb22-19" title="19">  <span class="st">&#39;64x64&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">3</span>],</a>
-<a class="sourceLine" id="cb22-20" title="20">  <span class="st">&#39;128x128&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">4</span>],</a>
-<a class="sourceLine" id="cb22-21" title="21">  <span class="st">&#39;256x256&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">5</span>],</a>
-<a class="sourceLine" id="cb22-22" title="22">  <span class="st">&#39;512x512&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">6</span>],</a>
-<a class="sourceLine" id="cb22-23" title="23">  <span class="st">&#39;1024x1024&#39;</span> =<span class="st"> </span>color_vec[<span class="dv">7</span>]</a>
-<a class="sourceLine" id="cb22-24" title="24">)</a>
-<a class="sourceLine" id="cb22-25" title="25"><span class="co"># Set the sizes for text in plots</span></a>
-<a class="sourceLine" id="cb22-26" title="26">text_major_size =<span class="st"> </span><span class="dv">18</span></a>
-<a class="sourceLine" id="cb22-27" title="27">text_minor_size =<span class="st"> </span><span class="dv">16</span> </a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="co">## Set variables to make plotting easier</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="co"># Calculate restraint value (x - 60% of the genome length)</span></a>
+<a class="sourceLine" id="cb31-3" title="3">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span>(df2<span class="op">$</span>LENGTH <span class="op">*</span><span class="st"> </span><span class="fl">0.6</span>)</a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="co"># Make a nice, clean factor for size</span></a>
+<a class="sourceLine" id="cb31-5" title="5">df2<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, df2<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb31-6" title="6">df2<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb31-7" title="7">df2<span class="op">$</span>size_factor_reversed =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>)))</a>
+<a class="sourceLine" id="cb31-8" title="8">df2<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
+<a class="sourceLine" id="cb31-9" title="9">df2<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
+<a class="sourceLine" id="cb31-10" title="10">data_summary<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, data_summary<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb31-11" title="11">data_summary<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb31-12" title="12">data_summary<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
+<a class="sourceLine" id="cb31-13" title="13">data_summary<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
+<a class="sourceLine" id="cb31-14" title="14"><span class="co"># Create a map of colors we&#39;ll use to plot the different organism sizes</span></a>
+<a class="sourceLine" id="cb31-15" title="15">color_vec =<span class="st"> </span><span class="kw">as.character</span>(khroma<span class="op">::</span><span class="kw">color</span>(<span class="st">&#39;bright&#39;</span>)(<span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb31-16" title="16">color_map =<span class="st"> </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb31-17" title="17">  <span class="st">&#39;16x16&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb31-18" title="18">  <span class="st">&#39;32x32&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb31-19" title="19">  <span class="st">&#39;64x64&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb31-20" title="20">  <span class="st">&#39;128x128&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">4</span>],</a>
+<a class="sourceLine" id="cb31-21" title="21">  <span class="st">&#39;256x256&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">5</span>],</a>
+<a class="sourceLine" id="cb31-22" title="22">  <span class="st">&#39;512x512&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">6</span>],</a>
+<a class="sourceLine" id="cb31-23" title="23">  <span class="st">&#39;1024x1024&#39;</span> =<span class="st"> </span>color_vec[<span class="dv">7</span>]</a>
+<a class="sourceLine" id="cb31-24" title="24">)</a>
+<a class="sourceLine" id="cb31-25" title="25"><span class="co"># Set the sizes for text in plots</span></a>
+<a class="sourceLine" id="cb31-26" title="26">text_major_size =<span class="st"> </span><span class="dv">18</span></a>
+<a class="sourceLine" id="cb31-27" title="27">text_minor_size =<span class="st"> </span><span class="dv">16</span> </a></code></pre></div>
 </div>
-<div id="data-integrity-check-2" class="section level2">
-<h2><span class="header-section-number">4.2</span> Data integrity check</h2>
+<div id="data-integrity-check-3" class="section level2">
+<h2><span class="header-section-number">5.2</span> Data integrity check</h2>
 <p>Now we plot the number of finished replicates for each treatment to make sure all data are present.
 Each row shows a different genome length (in bits).
 Each bar/color shows a different organism size.
-<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-53-1.png" width="576" /></p>
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-62-1.png" width="576" /></p>
 </div>
-<div id="aggregate-plots-2" class="section level2">
-<h2><span class="header-section-number">4.3</span> Aggregate plots</h2>
+<div id="aggregate-plots-3" class="section level2">
+<h2><span class="header-section-number">5.3</span> Aggregate plots</h2>
 <div id="facet-by-genome-length" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> Facet by genome length</h3>
+<h3><span class="header-section-number">5.3.1</span> Facet by genome length</h3>
 <p>Here we plot all the data at once.
 Each row showing a different somatic mutation rate and each boxplot shows a given organism size.</p>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-54-1.png" width="576" /></p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-63-1.png" width="576" /></p>
 <p>Here we plot the same data, only we allow the y-axis to vary between rows.
-<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-55-1.png" width="576" /></p>
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-64-1.png" width="576" /></p>
 </div>
 <div id="facet-by-organism-size-2" class="section level3">
-<h3><span class="header-section-number">4.3.2</span> Facet by organism size</h3>
+<h3><span class="header-section-number">5.3.2</span> Facet by organism size</h3>
 <p>Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.</p>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-56-1.png" width="576" /></p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-65-1.png" width="576" /></p>
 <p>Here is the identical plot but now we allow the y-axis to vary between the rows.</p>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-57-1.png" width="576" /></p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-66-1.png" width="576" /></p>
 </div>
 </div>
 <div id="single-organism-size-plots-3" class="section level2">
-<h2><span class="header-section-number">4.4</span> Single organism size plots</h2>
+<h2><span class="header-section-number">5.4</span> Single organism size plots</h2>
 <p>Here we plot each organism size independently, with the genome length on the x-axis.</p>
 <div id="organism-size-16x16-2" class="section level3">
-<h3><span class="header-section-number">4.4.1</span> Organism size 16x16</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-58-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.1</span> Organism size 16x16</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-67-1.png" width="576" /></p>
 </div>
 <div id="organism-size-32x32-2" class="section level3">
-<h3><span class="header-section-number">4.4.2</span> Organism size 32x32</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-59-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.2</span> Organism size 32x32</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-68-1.png" width="576" /></p>
 </div>
 <div id="organism-size-64x64-2" class="section level3">
-<h3><span class="header-section-number">4.4.3</span> Organism size 64x64</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-60-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.3</span> Organism size 64x64</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-69-1.png" width="576" /></p>
 </div>
 <div id="organism-size-128x128-2" class="section level3">
-<h3><span class="header-section-number">4.4.4</span> Organism size 128x128</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-61-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.4</span> Organism size 128x128</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-70-1.png" width="576" /></p>
 </div>
 <div id="organism-size-256x256-2" class="section level3">
-<h3><span class="header-section-number">4.4.5</span> Organism size 256x256</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-62-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.5</span> Organism size 256x256</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-71-1.png" width="576" /></p>
 </div>
 <div id="organism-size-512x512-2" class="section level3">
-<h3><span class="header-section-number">4.4.6</span> Organism size 512x512</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-63-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.4.6</span> Organism size 512x512</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-72-1.png" width="576" /></p>
 </div>
 </div>
 <div id="single-genome-length-plots" class="section level2">
-<h2><span class="header-section-number">4.5</span> Single genome length plots</h2>
+<h2><span class="header-section-number">5.5</span> Single genome length plots</h2>
 <p>Here we plot each genome length independently, with the organism size on the x-axis.</p>
 <div id="bit-genomes" class="section level3">
-<h3><span class="header-section-number">4.5.1</span> 25-bit genomes</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-64-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.5.1</span> 25-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-73-1.png" width="576" /></p>
 </div>
 <div id="bit-genomes-1" class="section level3">
-<h3><span class="header-section-number">4.5.2</span> 50-bit genomes</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-65-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.5.2</span> 50-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-74-1.png" width="576" /></p>
 </div>
 <div id="bit-genomes-2" class="section level3">
-<h3><span class="header-section-number">4.5.3</span> 100-bit genomes</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-66-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.5.3</span> 100-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-75-1.png" width="576" /></p>
 </div>
 <div id="bit-genomes-3" class="section level3">
-<h3><span class="header-section-number">4.5.4</span> 200-bit genomes</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-67-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.5.4</span> 200-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-76-1.png" width="576" /></p>
 </div>
 <div id="bit-genomes-4" class="section level3">
-<h3><span class="header-section-number">4.5.5</span> 400-bit genomes</h3>
-<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-68-1.png" width="576" /></p>
+<h3><span class="header-section-number">5.5.5</span> 400-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-77-1.png" width="576" /></p>
 </div>
 </div>
-<div id="statistics-2" class="section level2">
-<h2><span class="header-section-number">4.6</span> Statistics</h2>
+<div id="statistics-3" class="section level2">
+<h2><span class="header-section-number">5.6</span> Statistics</h2>
 <p>Since organism size is our main point of comparison, we calculate stats for each genome length.</p>
 <p>First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">  length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
-<a class="sourceLine" id="cb23-2" title="2">  df_kruskal =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">4</span>))</a>
-<a class="sourceLine" id="cb23-3" title="3">  <span class="kw">colnames</span>(df_kruskal) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;p_value&#39;</span>, <span class="st">&#39;chi_squared&#39;</span>, <span class="st">&#39;df&#39;</span>)</a>
-<a class="sourceLine" id="cb23-4" title="4">  <span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
-<a class="sourceLine" id="cb23-5" title="5">    df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
-<a class="sourceLine" id="cb23-6" title="6">    res =<span class="st"> </span><span class="kw">kruskal.test</span>(df_test<span class="op">$</span>restraint_value <span class="op">~</span><span class="st"> </span>df_test<span class="op">$</span>MCSIZE, df_test)</a>
-<a class="sourceLine" id="cb23-7" title="7">    df_kruskal[<span class="kw">nrow</span>(df_kruskal) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>], <span class="kw">as.numeric</span>(res<span class="op">$</span>parameter)[<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb23-8" title="8">  }</a>
-<a class="sourceLine" id="cb23-9" title="9">  df_kruskal<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_kruskal<span class="op">$</span>p_value <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
-<a class="sourceLine" id="cb23-10" title="10">  <span class="kw">print</span>(df_kruskal)</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1">  length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
+<a class="sourceLine" id="cb32-2" title="2">  df_kruskal =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb32-3" title="3">  <span class="kw">colnames</span>(df_kruskal) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;p_value&#39;</span>, <span class="st">&#39;chi_squared&#39;</span>, <span class="st">&#39;df&#39;</span>)</a>
+<a class="sourceLine" id="cb32-4" title="4">  <span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
+<a class="sourceLine" id="cb32-5" title="5">    df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
+<a class="sourceLine" id="cb32-6" title="6">    res =<span class="st"> </span><span class="kw">kruskal.test</span>(df_test<span class="op">$</span>restraint_value <span class="op">~</span><span class="st"> </span>df_test<span class="op">$</span>MCSIZE, df_test)</a>
+<a class="sourceLine" id="cb32-7" title="7">    df_kruskal[<span class="kw">nrow</span>(df_kruskal) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>], <span class="kw">as.numeric</span>(res<span class="op">$</span>parameter)[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb32-8" title="8">  }</a>
+<a class="sourceLine" id="cb32-9" title="9">  df_kruskal<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_kruskal<span class="op">$</span>p_value <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
+<a class="sourceLine" id="cb32-10" title="10">  <span class="kw">print</span>(df_kruskal)</a></code></pre></div>
 <pre><code>##   genome_length      p_value chi_squared df less_0.01
 ## 1            25 1.508889e-97    461.6473  5      TRUE
 ## 2            50 9.772852e-87    411.5159  5      TRUE
@@ -387,25 +395,25 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
 ## 4           200 1.626963e-75    359.4358  5      TRUE
 ## 5           400 2.857912e-49    237.3380  5      TRUE</code></pre>
 <p>We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
-<a class="sourceLine" id="cb25-2" title="2">length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
-<a class="sourceLine" id="cb25-3" title="3"><span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
-<a class="sourceLine" id="cb25-4" title="4">  df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
-<a class="sourceLine" id="cb25-5" title="5">  df_wilcox =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">6</span>))</a>
-<a class="sourceLine" id="cb25-6" title="6">  <span class="kw">colnames</span>(df_wilcox) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;size_a&#39;</span>, <span class="st">&#39;size_b&#39;</span>, <span class="st">&#39;p_value_corrected&#39;</span>, <span class="st">&#39;p_value_raw&#39;</span>, <span class="st">&#39;W&#39;</span>)</a>
-<a class="sourceLine" id="cb25-7" title="7">  <span class="cf">for</span>(size_idx_a <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(<span class="kw">length</span>(size_vec) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)){</a>
-<a class="sourceLine" id="cb25-8" title="8">    size_a =<span class="st"> </span>size_vec[size_idx_a]</a>
-<a class="sourceLine" id="cb25-9" title="9">    <span class="cf">for</span>(size_idx_b <span class="cf">in</span> (size_idx_a <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span><span class="kw">length</span>(size_vec)){</a>
-<a class="sourceLine" id="cb25-10" title="10">      size_b =<span class="st"> </span>size_vec[size_idx_b]</a>
-<a class="sourceLine" id="cb25-11" title="11">      res =<span class="st"> </span><span class="kw">wilcox.test</span>(df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_a,]<span class="op">$</span>restraint_value, df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_b,]<span class="op">$</span>restraint_value, <span class="dt">alternative =</span> <span class="st">&#39;two.sided&#39;</span>) </a>
-<a class="sourceLine" id="cb25-12" title="12">      df_wilcox[<span class="kw">nrow</span>(df_wilcox) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, size_a, size_b, <span class="dv">0</span>, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb25-13" title="13">    }</a>
-<a class="sourceLine" id="cb25-14" title="14">  }</a>
-<a class="sourceLine" id="cb25-15" title="15">  df_wilcox<span class="op">$</span>p_value_corrected =<span class="st"> </span><span class="kw">p.adjust</span>(df_wilcox<span class="op">$</span>p_value_raw, <span class="dt">method =</span> <span class="st">&#39;holm&#39;</span>)</a>
-<a class="sourceLine" id="cb25-16" title="16">  df_wilcox<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_wilcox<span class="op">$</span>p_value_corrected <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
-<a class="sourceLine" id="cb25-17" title="17">  <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&#39;Genome length: &#39;</span>, genome_length))</a>
-<a class="sourceLine" id="cb25-18" title="18">  <span class="kw">print</span>(df_wilcox)</a>
-<a class="sourceLine" id="cb25-19" title="19">}</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
+<a class="sourceLine" id="cb34-2" title="2">length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
+<a class="sourceLine" id="cb34-3" title="3"><span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
+<a class="sourceLine" id="cb34-4" title="4">  df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
+<a class="sourceLine" id="cb34-5" title="5">  df_wilcox =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">6</span>))</a>
+<a class="sourceLine" id="cb34-6" title="6">  <span class="kw">colnames</span>(df_wilcox) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;size_a&#39;</span>, <span class="st">&#39;size_b&#39;</span>, <span class="st">&#39;p_value_corrected&#39;</span>, <span class="st">&#39;p_value_raw&#39;</span>, <span class="st">&#39;W&#39;</span>)</a>
+<a class="sourceLine" id="cb34-7" title="7">  <span class="cf">for</span>(size_idx_a <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(<span class="kw">length</span>(size_vec) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)){</a>
+<a class="sourceLine" id="cb34-8" title="8">    size_a =<span class="st"> </span>size_vec[size_idx_a]</a>
+<a class="sourceLine" id="cb34-9" title="9">    <span class="cf">for</span>(size_idx_b <span class="cf">in</span> (size_idx_a <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span><span class="kw">length</span>(size_vec)){</a>
+<a class="sourceLine" id="cb34-10" title="10">      size_b =<span class="st"> </span>size_vec[size_idx_b]</a>
+<a class="sourceLine" id="cb34-11" title="11">      res =<span class="st"> </span><span class="kw">wilcox.test</span>(df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_a,]<span class="op">$</span>restraint_value, df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_b,]<span class="op">$</span>restraint_value, <span class="dt">alternative =</span> <span class="st">&#39;two.sided&#39;</span>) </a>
+<a class="sourceLine" id="cb34-12" title="12">      df_wilcox[<span class="kw">nrow</span>(df_wilcox) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, size_a, size_b, <span class="dv">0</span>, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb34-13" title="13">    }</a>
+<a class="sourceLine" id="cb34-14" title="14">  }</a>
+<a class="sourceLine" id="cb34-15" title="15">  df_wilcox<span class="op">$</span>p_value_corrected =<span class="st"> </span><span class="kw">p.adjust</span>(df_wilcox<span class="op">$</span>p_value_raw, <span class="dt">method =</span> <span class="st">&#39;holm&#39;</span>)</a>
+<a class="sourceLine" id="cb34-16" title="16">  df_wilcox<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_wilcox<span class="op">$</span>p_value_corrected <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
+<a class="sourceLine" id="cb34-17" title="17">  <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&#39;Genome length: &#39;</span>, genome_length))</a>
+<a class="sourceLine" id="cb34-18" title="18">  <span class="kw">print</span>(df_wilcox)</a>
+<a class="sourceLine" id="cb34-19" title="19">}</a></code></pre></div>
 <pre><code>## [1] &quot;Genome length: 25&quot;
 ##    genome_length size_a size_b p_value_corrected  p_value_raw       W less_0.01
 ## 1             25     16     32      2.337475e-07 2.337475e-07  2883.5      TRUE
@@ -500,7 +508,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
         </div>
       </div>
 <a href="germ-mutation-rate-sweep.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="size-1024x1024-organisms.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="test-of-timing-sample-counts.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
