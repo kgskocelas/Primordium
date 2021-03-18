@@ -500,7 +500,384 @@ We see that significant variation exists within each mutation rate, so we perfor
 \hypertarget{germ-mutation-rate-sweep}{%
 \chapter{Germ Mutation Rate Sweep}\label{germ-mutation-rate-sweep}}
 
-TBD
+This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
+We varied the mutation rate, the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.
+
+The final default germ mutation rate was 0.02 (\emph{i.e.}, each organism reproduction has a 2\% chance of mutation).
+
+The configuration script and data for the experiment can be found under \texttt{2021\_02\_16\_\_germ\_mut\_fin/} in the experiments directory of the git repository.
+
+Load necessary libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggridges)}
+\KeywordTok{library}\NormalTok{(scales)}
+\KeywordTok{library}\NormalTok{(khroma)}
+\end{Highlighting}
+\end{Shaded}
+
+Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
+\CommentTok{#df = read.csv('/research/rogue_cell/Primordium/experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv')}
+\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
+\KeywordTok{cat}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(df), }\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## X generation ave_ones ave_repro_time min_ones max_ones var_ones rep_id MCSIZE COST GENS MUT POP SAMPLES REPS ONES CELLMUT
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+We group and summarize the data to make to ensure all replicates are present.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Group the data by size and summarize}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, MUT)}
+\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+Further cleaning of the data plus adding some variables to make plotting easier.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
+\CommentTok{# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{germ_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'GERM MUT'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MUT)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{germ_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'GERM MUT'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MUT)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
+\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\NormalTok{)}
+\CommentTok{# Set the sizes for text in plots}
+\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\NormalTok{boxplot_color =}\StringTok{ '#9ecae1'}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-integrity-check-1}{%
+\section{Data integrity check}\label{data-integrity-check-1}}
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Each row shows a different germ mutation rate.
+Each bar/color shows a different organism size.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-29-1.pdf}
+
+\hypertarget{aggregate-plots-1}{%
+\section{Aggregate plots}\label{aggregate-plots-1}}
+
+\hypertarget{facet-by-germ-mutation-rate}{%
+\subsection{Facet by germ mutation rate}\label{facet-by-germ-mutation-rate}}
+
+Here we plot all the data at once.
+Each row shows a different germ mutation rate and each boxplot shows a given organism size.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-30-1.pdf}
+
+Here is the same data, plotted identically other than now each row can have a different y-axis.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\hypertarget{facet-by-organism-size-1}{%
+\subsection{Facet by organism size}\label{facet-by-organism-size-1}}
+
+Next, we plot the same data, but this time each row corresponds to a certain organism size while germ mutation rate varies along the x-axis.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-32-1.pdf}
+
+Again, we plot the same data again, but now the y-axis can change between rows.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-33-1.pdf}
+
+\hypertarget{single-organism-size-plots-1}{%
+\section{Single organism size plots}\label{single-organism-size-plots-1}}
+
+Here we plot each organism size independently, with the germ mutation rate on the x-axis.
+
+\hypertarget{organism-size-16x16-1}{%
+\subsection{Organism size 16x16}\label{organism-size-16x16-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-34-1.pdf}
+
+\hypertarget{organism-size-32x32-1}{%
+\subsection{Organism size 32x32}\label{organism-size-32x32-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-35-1.pdf}
+
+\hypertarget{organism-size-64x64-1}{%
+\subsection{Organism size 64x64}\label{organism-size-64x64-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-36-1.pdf}
+
+\hypertarget{organism-size-128x128-1}{%
+\subsection{Organism size 128x128}\label{organism-size-128x128-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-37-1.pdf}
+
+\hypertarget{organism-size-256x256-1}{%
+\subsection{Organism size 256x256}\label{organism-size-256x256-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-38-1.pdf}
+
+\hypertarget{organism-size-512x512-1}{%
+\subsection{Organism size 512x512}\label{organism-size-512x512-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-39-1.pdf}
+
+\hypertarget{single-organism-size-plots-2}{%
+\section{Single organism size plots}\label{single-organism-size-plots-2}}
+
+Similarly, here we plot each germ mutation rate independently, with the organism size on the x-axis.
+
+\hypertarget{germ-mut.-rate-0.01}{%
+\subsection{Germ mut. rate 0.01}\label{germ-mut.-rate-0.01}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-40-1.pdf}
+
+\hypertarget{germ-mut.-rate-0.02}{%
+\subsection{Germ mut. rate 0.02}\label{germ-mut.-rate-0.02}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-41-1.pdf}
+
+\hypertarget{germ-mut.-rate-0.05}{%
+\subsection{Germ mut. rate 0.05}\label{germ-mut.-rate-0.05}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-42-1.pdf}
+
+\hypertarget{germ-mut.-rate-0.1}{%
+\subsection{Germ mut. rate 0.1}\label{germ-mut.-rate-0.1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-43-1.pdf}
+
+\hypertarget{germ-mut.-rate-0.2}{%
+\subsection{Germ mut. rate 0.2}\label{germ-mut.-rate-0.2}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-44-1.pdf}
+
+\hypertarget{germ-mut.-rate-0.5}{%
+\subsection{Germ mut. rate 0.5}\label{germ-mut.-rate-0.5}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-45-1.pdf}
+
+\hypertarget{germ-mut.-rate-1.0}{%
+\subsection{Germ mut. rate 1.0}\label{germ-mut.-rate-1.0}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-46-1.pdf}
+
+\hypertarget{statistics-1}{%
+\section{Statistics}\label{statistics-1}}
+
+Since organism size is our main point of comparison, we calculate stats for each germ mutation rate.
+
+First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
+If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'germ_mut_rate'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
+\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
+\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   germ_mut_rate      p_value chi_squared df less_0.01
+## 1          0.01 9.191452e-79    374.5160  5      TRUE
+## 2          0.02 6.227269e-82    389.2251  5      TRUE
+## 3          0.05 1.934895e-82    391.5809  5      TRUE
+## 4          0.10 1.983976e-83    396.1708  5      TRUE
+## 5          0.20 3.180895e-85    404.4991  5      TRUE
+## 6          0.50 4.313881e-91    431.7152  5      TRUE
+## 7          1.00 2.144229e-92    437.7600  5      TRUE
+\end{verbatim}
+
+We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
+\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
+\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'germ_mut_rate'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
+    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
+\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
+\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
+\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Germ mutation rate: '}\NormalTok{, mut_rate))}
+  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Germ mutation rate: 0.01"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1           0.01     16     32      1.161192e-21 1.161192e-22  990.0      TRUE
+## 2           0.01     16     64      1.990837e-31 1.484433e-32  137.0      TRUE
+## 3           0.01     16    128      2.032847e-30 1.694039e-31  221.0      TRUE
+## 4           0.01     16    256      1.721090e-07 5.736966e-08 2778.5      TRUE
+## 5           0.01     16    512      1.237738e-13 2.062896e-14 8130.0      TRUE
+## 6           0.01     32     64      4.401194e-15 5.501492e-16 1684.5      TRUE
+## 7           0.01     32    128      1.423615e-13 2.847230e-14 1887.0      TRUE
+## 8           0.01     32    256      2.438849e-01 1.219425e-01 5633.5     FALSE
+## 9           0.01     32    512      5.140604e-27 4.673276e-28 9495.0      TRUE
+## 10          0.01     64    128      9.221418e-01 9.221418e-01 5040.5     FALSE
+## 11          0.01     64    256      4.110744e-14 5.872491e-15 8195.5      TRUE
+## 12          0.01     64    512      6.122051e-32 4.081368e-33 9907.0      TRUE
+## 13          0.01    128    256      5.020912e-13 1.255228e-13 8033.5      TRUE
+## 14          0.01    128    512      1.990837e-31 1.422026e-32 9864.5      TRUE
+## 15          0.01    256    512      1.882508e-17 2.091675e-18 8582.5      TRUE
+## [1] "Germ mutation rate: 0.02"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1           0.02     16     32      5.385908e-24 5.385908e-25  773.5      TRUE
+## 2           0.02     16     64      3.620092e-31 2.585780e-32  156.0      TRUE
+## 3           0.02     16    128      5.876058e-29 4.896715e-30  339.5      TRUE
+## 4           0.02     16    256      7.355430e-06 2.451810e-06 3071.0      TRUE
+## 5           0.02     16    512      2.935849e-18 3.669812e-19 8662.0      TRUE
+## 6           0.02     32     64      5.800574e-18 8.286535e-19 1375.0      TRUE
+## 7           0.02     32    128      4.715120e-12 1.178780e-12 2090.5      TRUE
+## 8           0.02     32    256      4.080762e-04 2.040381e-04 6520.5      TRUE
+## 9           0.02     32    512      6.645814e-27 6.041649e-28 9485.5      TRUE
+## 10          0.02     64    128      2.889472e-01 2.889472e-01 5434.5     FALSE
+## 11          0.02     64    256      2.039804e-17 3.399674e-18 8560.0      TRUE
+## 12          0.02     64    512      4.109271e-32 2.739514e-33 9920.5      TRUE
+## 13          0.02    128    256      2.514342e-14 5.028683e-15 8203.5      TRUE
+## 14          0.02    128    512      4.123142e-31 3.171647e-32 9837.0      TRUE
+## 15          0.02    256    512      4.866893e-20 5.407659e-21 8848.0      TRUE
+## [1] "Germ mutation rate: 0.05"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1           0.05     16     32      1.591362e-24 1.768180e-25  730.0      TRUE
+## 2           0.05     16     64      1.063762e-30 8.864684e-32  198.5      TRUE
+## 3           0.05     16    128      3.321119e-21 4.151399e-22 1043.0      TRUE
+## 4           0.05     16    256      2.538532e-02 1.269266e-02 3979.5     FALSE
+## 5           0.05     16    512      1.050337e-26 9.548517e-28 9468.5      TRUE
+## 6           0.05     32     64      3.387540e-14 5.645899e-15 1802.5      TRUE
+## 7           0.05     32    128      1.306936e-05 4.356453e-06 3119.5      TRUE
+## 8           0.05     32    256      1.528740e-07 3.821850e-08 7251.0      TRUE
+## 9           0.05     32    512      3.162116e-32 2.258654e-33 9927.0      TRUE
+## 10          0.05     64    128      1.546546e-01 1.546546e-01 5583.0     FALSE
+## 11          0.05     64    256      4.390965e-19 6.272808e-20 8741.0      TRUE
+## 12          0.05     64    512      6.208612e-33 4.139074e-34 9984.0      TRUE
+## 13          0.05    128    256      2.838701e-12 5.677403e-13 7950.5      TRUE
+## 14          0.05    128    512      9.845016e-32 7.573090e-33 9886.0      TRUE
+## 15          0.05    256    512      3.142822e-26 3.142822e-27 9424.0      TRUE
+## [1] "Germ mutation rate: 0.1"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            0.1     16     32      2.006447e-24 2.229385e-25  739.0      TRUE
+## 2            0.1     16     64      2.197505e-25 1.997732e-26  646.0      TRUE
+## 3            0.1     16    128      3.982057e-19 6.636762e-20 1261.5      TRUE
+## 4            0.1     16    256      2.853915e-06 9.513050e-07 7006.5      TRUE
+## 5            0.1     16    512      1.146029e-26 9.550238e-28 9468.5      TRUE
+## 6            0.1     32     64      6.866683e-07 1.716671e-07 2860.0      TRUE
+## 7            0.1     32    128      5.714627e-02 5.714627e-02 4221.0     FALSE
+## 8            0.1     32    256      7.451552e-21 9.314440e-22 8923.0      TRUE
+## 9            0.1     32    512      1.091653e-31 7.797522e-33 9885.0      TRUE
+## 10           0.1     64    128      2.618271e-02 1.309135e-02 6016.0     FALSE
+## 11           0.1     64    256      6.893655e-25 6.893655e-26 9306.5      TRUE
+## 12           0.1     64    512      4.295636e-32 2.863757e-33 9919.0      TRUE
+## 13           0.1    128    256      9.294756e-21 1.327822e-21 8908.0      TRUE
+## 14           0.1    128    512      2.475810e-31 1.904469e-32 9854.5      TRUE
+## 15           0.1    256    512      7.440793e-16 1.488159e-16 8380.0      TRUE
+## [1] "Germ mutation rate: 0.2"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw       W less_0.01
+## 1            0.2     16     32      6.711164e-17 9.587377e-18  1488.5      TRUE
+## 2            0.2     16     64      2.652853e-08 5.305706e-09  2610.5      TRUE
+## 3            0.2     16    128      5.723537e-01 4.033561e-01  4657.5     FALSE
+## 4            0.2     16    256      9.414689e-28 1.046077e-28  9550.0      TRUE
+## 5            0.2     16    512      3.841700e-33 2.561134e-34 10000.0      TRUE
+## 6            0.2     32     64      5.723537e-01 2.861769e-01  5437.0     FALSE
+## 7            0.2     32    128      2.713788e-06 6.784470e-07  7033.5      TRUE
+## 8            0.2     32    256      2.557355e-30 2.324869e-31  9768.0      TRUE
+## 9            0.2     32    512      3.841700e-33 2.561422e-34 10000.0      TRUE
+## 10           0.2     64    128      8.967634e-04 2.989211e-04  6480.5      TRUE
+## 11           0.2     64    256      3.597156e-29 3.597156e-30  9671.5      TRUE
+## 12           0.2     64    512      3.841700e-33 2.561422e-34 10000.0      TRUE
+## 13           0.2    128    256      3.256203e-24 4.070254e-25  9237.5      TRUE
+## 14           0.2    128    512      1.052551e-31 8.771259e-33  9881.0      TRUE
+## 15           0.2    256    512      1.558734e-09 2.597889e-10  7587.5      TRUE
+## [1] "Germ mutation rate: 0.5"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw       W less_0.01
+## 1            0.5     16     32      3.627488e-11 7.254975e-12  2195.0      TRUE
+## 2            0.5     16     64      1.774145e-01 1.774145e-01  5552.5     FALSE
+## 3            0.5     16    128      9.003159e-21 1.125395e-21  8915.0      TRUE
+## 4            0.5     16    256      3.840402e-33 2.560268e-34 10000.0      TRUE
+## 5            0.5     16    512      3.840402e-33 2.560412e-34 10000.0      TRUE
+## 6            0.5     32     64      1.574642e-07 5.248808e-08  7228.0      TRUE
+## 7            0.5     32    128      3.547680e-25 3.941867e-26  9328.0      TRUE
+## 8            0.5     32    256      3.840402e-33 2.560701e-34 10000.0      TRUE
+## 9            0.5     32    512      3.840402e-33 2.560845e-34 10000.0      TRUE
+## 10           0.5     64    128      4.292292e-17 6.131846e-18  8532.5      TRUE
+## 11           0.5     64    256      3.128938e-32 3.128938e-33  9916.0      TRUE
+## 12           0.5     64    512      1.333109e-32 1.211917e-33  9948.0      TRUE
+## 13           0.5    128    256      2.868826e-09 7.172065e-10  7522.5      TRUE
+## 14           0.5    128    512      9.393819e-14 1.565636e-14  8144.5      TRUE
+## 15           0.5    256    512      3.381624e-03 1.690812e-03  6285.5      TRUE
+## [1] "Germ mutation rate: 1"
+##    germ_mut_rate size_a size_b p_value_corrected  p_value_raw       W less_0.01
+## 1              1     16     32      1.080497e-01 5.402483e-02  5789.0     FALSE
+## 2              1     16     64      2.560330e-24 2.844811e-25  9251.5      TRUE
+## 3              1     16    128      3.840402e-33 2.560268e-34 10000.0      TRUE
+## 4              1     16    256      3.840402e-33 2.887894e-34  9996.0      TRUE
+## 5              1     16    512      3.840402e-33 2.560412e-34 10000.0      TRUE
+## 6              1     32     64      1.004804e-19 1.674674e-20  8799.0      TRUE
+## 7              1     32    128      8.265949e-32 8.265949e-33  9883.0      TRUE
+## 8              1     32    256      7.190219e-32 6.536563e-33  9891.0      TRUE
+## 9              1     32    512      5.842919e-32 4.869099e-33  9901.0      TRUE
+## 10             1     64    128      1.007238e-18 2.014476e-19  8689.0      TRUE
+## 11             1     64    256      7.963405e-23 1.137629e-23  9105.0      TRUE
+## 12             1     64    512      5.680932e-23 7.101164e-24  9124.0      TRUE
+## 13             1    128    256      1.357430e-02 3.393576e-03  6199.5     FALSE
+## 14             1    128    512      3.704384e-02 1.234795e-02  6024.5     FALSE
+## 15             1    256    512      4.892624e-01 4.892624e-01  4716.5     FALSE
+\end{verbatim}
 
 \hypertarget{genome-length-sweep}{%
 \chapter{Genome Length Sweep}\label{genome-length-sweep}}
