@@ -8,7 +8,8 @@ rmd_files: [
   "baseline/main.Rmd",
   "soma_sweep/main.Rmd",
   "germ_sweep/main.Rmd",
-  "genome_length_sweep/main.Rmd",
   "sample_test/main.Rmd",
+  "genome_length_sweep/main.Rmd",
+  "genome_length_control/main.Rmd",
 ]
 
