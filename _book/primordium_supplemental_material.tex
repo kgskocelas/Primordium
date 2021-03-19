@@ -122,39 +122,37 @@
 \hypertarget{introduction}{%
 \chapter{Introduction}\label{introduction}}
 
-This document serves as the supplemental material for our ALife 2021 conference submission ``The Evolution of Cellular Restraint in Multicellular Organisms''.
+This document serves as the supplemental material for the ALife 2021 conference submission ``The Evolution of Cellular Restraint in Multicellular Organisms''.
 
 \hypertarget{overview}{%
 \section{Overview}\label{overview}}
 
-The document is split into sections.
-Each section can be accessed via the navigation bar on the left side of the screen.
-Sections mostly correspond to experiments (some that were discussed at length in the paper, others that were not).
-As such, most sections follow the same formula: setup, plots, and then statistics.
+The document is split into sections that are assessable via the navigation bar on the left side of the screen.
+Each section corresponds to an experiment (some that were discussed at length in the paper, others that were not included).
+As such, each section follows the same formula: setup, plots, and statistics.
 
 \hypertarget{interactive-web-app}{%
 \section{Interactive web app}\label{interactive-web-app}}
 
-To build intuition on how organisms fill, we created an interactive web app.
-The web app is available here: \url{http://fergusonaj.com/webapps/primordium/}
+To build intuition on how organisms fill, we created an interactive web app, available here: \url{http://fergusonaj.com/webapps/primordium/}
 
 \hypertarget{baseline-varying-organism-size}{%
 \chapter{Baseline: Varying organism size}\label{baseline-varying-organism-size}}
 
-Here we show all the data for the baseline experiment, where we vary organism size but otherwise all parameters are set to the defaults.
+Here we show all of the data for the baseline experiment in which we vary organism size while all other parameters are set to their default values.
 
-For this experiment (with all default parameters), we also ran size 8x8 and 1024x1024 organisms.
-In the paper, however, we only included sizes from 16x16 to 512x512.
+For this experiment, we also tested size 8x8 and 1024x1024 organisms.
+In the paper, however, we only included sizes 16x16 to 512x512.
 Size 8x8 organisms are quick to run, but these smaller organisms see the most noise in the fitness data.
-Conversely, size 1024x1024 organisms take so long to run that it was impractical to run them for each experiment.
+Conversely, size 1024x1024 organisms take so long to run that it was not computationally feasible to run them for each experiment.
 
-Here, we show these results for the baseline experiment, including this additional sizes.
+Here, we show these results for the baseline experiment, including these additional sizes.
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_26\_\_org\_sizes/} in the experiments directory of the git repository.
 
 \hypertarget{data-cleaning}{%
 \section{Data cleaning}\label{data-cleaning}}
 
-Load necessary libraries
+Load necessary R libraries
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -166,7 +164,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim to only include the final generation
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -177,7 +175,7 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \end{Highlighting}
 \end{Shaded}
 
-We group and summarize the data to make to ensure all replicates are present.
+Group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -187,7 +185,7 @@ We group and summarize the data to make to ensure all replicates are present.
 \end{Highlighting}
 \end{Shaded}
 
-We clean the data and create a few helper variables to make plotting easier.
+Clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -268,7 +266,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 1 1.506351e-127    610.2553  7      TRUE
 \end{verbatim}
 
-We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -312,9 +310,8 @@ We see that significant variation exists, so we perform pariwise Wilcoxon tests 
 \hypertarget{somatic-mutation-rate-sweep}{%
 \chapter{Somatic Mutation Rate Sweep}\label{somatic-mutation-rate-sweep}}
 
-This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-Here, we vary the somatic mutation rate, the probability that a cell replication will result in the offspring cell having a different restraint value from its parent.
-
+This was one of the prelimary experiments we conducted to find the default parameters for Primordium.
+Here, we vary the somatic mutation rate, which is the probability that a cell replication will result in a mutation to the offspring's genome.
 We settled on a somatic mutation rate of 0.5 (\emph{i.e.}, each cell replication has a 50\% chance of mutation).
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_soma\_mut\_fin/} in the experiments directory of the git repository.
@@ -334,7 +331,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -347,7 +344,7 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \end{Highlighting}
 \end{Shaded}
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -414,7 +411,7 @@ Here we plot the same data, only we allow the y-axis to vary between rows.
 \hypertarget{facet-by-organism-size}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size}}
 
-Next, we plot the same data, but this time each row corresponds to a certain organism size while somatic mutation rate changes along the x-axis.
+Next, we plot the same data, but this time each row corresponds to a certain organism size, while somatic mutation rate changes along the x-axis.
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-17-1.pdf}
 
 Again, we replot the same data but allow the y-axis to vary between rows.
@@ -498,7 +495,7 @@ Here we plot each somatic mutation rate independently, with organism size varyin
 \hypertarget{statistics-1}{%
 \section{Statistics}\label{statistics-1}}
 
-Since organism size is our main point of comparison, we calculate stats for each somatic mutation rate.
+Since organism size is our main point of comparison, we calculate statistics for each somatic mutation rate.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
@@ -530,7 +527,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 7          1.00 5.474947e-99    468.3229  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -682,13 +679,12 @@ We see that significant variation exists within each mutation rate, so we perfor
 \chapter{Germ Mutation Rate Sweep}\label{germ-mutation-rate-sweep}}
 
 This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-We varied the mutation rate, the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.
-
+We varied the mutation rate, which is the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.
 The final default germ mutation rate was 0.02 (\emph{i.e.}, each organism reproduction has a 2\% chance of mutation).
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_16\_\_germ\_mut\_fin/} in the experiments directory of the git repository.
 
-Load necessary libraries
+Load necessary R libraries
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -700,7 +696,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -724,7 +720,7 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \end{Highlighting}
 \end{Shaded}
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -912,7 +908,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 7          1.00 2.144229e-92    437.7600  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1063,14 +1059,14 @@ We see that significant variation exists within each mutation rate, so we perfor
 \hypertarget{timing-sample-count-experiment}{%
 \chapter{Timing sample count experiment}\label{timing-sample-count-experiment}}
 
-By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
-With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
+By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for organism fitness in Primordium (a new batch was generated for each experiment).
+This experiment showed that increasing from 100 samples to 10,000 samples has no qualitative difference on results.
 This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.
 
 \hypertarget{data-cleaning-2}{%
 \section{Data cleaning}\label{data-cleaning-2}}
 
-Load necessary libraries
+Load necessary R libraries
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1082,7 +1078,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1158,11 +1154,11 @@ Inside each subplot, the number of timing samples is shown on the x-axis.
 \hypertarget{statistics-3}{%
 \section{Statistics}\label{statistics-3}}
 
-The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
-Further, we see that the evolved buffer values are fairly consistent between the two sample counts.
+The plot shows that the general trend, that the evolved restraint buffer initially increases with organism size then decreases, holds true at both sample counts.
+Furthermore, we see that the evolved buffer values are fairly consistent between the two sample counts.
 
-While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
-Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
+While we concluded that this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
+Since we treat each organism size as a group, we simply conduct a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
 
 \begin{verbatim}
 ##   org_size      p_value      W less_0.01
@@ -1177,7 +1173,7 @@ Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum
 \hypertarget{population-size-experiment}{%
 \chapter{Population size experiment}\label{population-size-experiment}}
 
-By default, all populations of contain 200 organisms.
+By default, all populations contain 200 organisms.
 This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint.
 
 \hypertarget{data-cleaning-3}{%
@@ -1195,7 +1191,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1209,7 +1205,7 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \end{Highlighting}
 \end{Shaded}
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1268,9 +1264,9 @@ Inside each subplot, population size is shown on the x-axis.
 \section{Statistics}\label{statistics-4}}
 
 The plot shows that increasing population size increases the evolved restraint buffer at organism sizes.
-Further, we see that the same general trend holds at both population sizes, evolved restriant peaks at size 128x128.
+Further, we see that the same general trend holds at both population sizes, that evolved restriant peaks at size 128x128.
 
-Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum test between the population sizes.
+Finally, we treat each organism size as a group and conduct a Wilcoxon Rank-Sum test between the population sizes.
 
 \begin{verbatim}
 ##   org_size      p_value      W less_0.01
@@ -1286,7 +1282,7 @@ Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum tes
 \chapter{Genome Length Sweep}\label{genome-length-sweep}}
 
 By default, all genomes are bitstrings with 100 bits.
-Here, we look into the effects of varying this genome length (we use values 25, 50, 100, 200, and 400 bits).
+Here, we look into the effects of varying this genome length using lengths of 25, 50, 100, 200, and 400 bits.
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_genome\_length/} in the experiments directory of the git repository.
 
@@ -1305,7 +1301,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1322,7 +1318,7 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \end{Highlighting}
 \end{Shaded}
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1381,7 +1377,7 @@ Each bar/color shows a different organism size.
 \subsection{Facet by genome length}\label{facet-by-genome-length}}
 
 Here we plot all the data at once.
-Each row showing a different somatic mutation rate and each boxplot shows a given organism size.
+Each row shows a different genome length and each boxplot shows a given organism size.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-77-1.pdf}
 
@@ -1395,7 +1391,7 @@ Here we plot the same data again, only now each row shows an organims size while
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-79-1.pdf}
 
-Here is the identical plot but now we allow the y-axis to vary between the rows.
+Here is the identical plot, but now we allow the y-axis to vary between the rows.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-80-1.pdf}
 
@@ -1467,7 +1463,7 @@ Here we plot each genome length independently, with the organism size on the x-a
 \hypertarget{statistics-5}{%
 \section{Statistics}\label{statistics-5}}
 
-Since organism size is our main point of comparison, we calculate stats for each genome length.
+Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
@@ -1497,7 +1493,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 5           400 2.857912e-49    237.3380  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1614,15 +1610,15 @@ We see that significant variation exists within each genome length, so we perfor
 \hypertarget{genome-length-control-experiment}{%
 \chapter{Genome Length Control Experiment}\label{genome-length-control-experiment}}
 
-In the genome length experiment we observed that varying the genome length affects the evolution of organism in two ways:
-1) mutational pressure is reduced at the population level as genome length increases
+In the genome length experiment, we observed that varying the genome length affects the evolution of organisms in two ways:
+1) mutational pressure is reduced at the population level as genome length increases, and
 2) longer genomes have a higher organism fitness at the same restraint buffer value.
 We wanted to test the effect of reduced mutational pressure by itself.
 
 To accomplish this, we generated fitness data for organisms with 400-bit genomes.
-For smaller genome lengths we reuse the 400-bit data by lining up restraint buffer values.
+For smaller genome lengths, we reuse the 400-bit data by lining up restraint buffer values.
 Thus the difference in genome lengths simply changes the range of restraint buffer values available in the genome.
-The fitness data for 64x64 organisms is shown below, showing the range of each genome.
+The fitness data for 64x64 organisms is shown below, showing the range of each genome length.
 
 \begin{figure}
 \centering
@@ -1635,7 +1631,7 @@ The configuration script and data for the experiment can be found under \texttt{
 \hypertarget{data-cleaning-5}{%
 \section{Data cleaning}\label{data-cleaning-5}}
 
-Load necessary libraries
+Load necessary R libraries
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1647,7 +1643,7 @@ Load necessary libraries
 \end{Highlighting}
 \end{Shaded}
 
-Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1722,7 +1718,7 @@ Each bar/color shows a different organism size.
 \subsection{Facet by genome length}\label{facet-by-genome-length-1}}
 
 Here we plot all the data at once.
-Each row shows a different somatic mutation rate and each boxplot shows a given organism size.
+Each row shows a different genome length and each boxplot shows a given organism size.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-99-1.pdf}
 
@@ -1808,7 +1804,7 @@ Here we plot each genome length independently, with the organism size on the x-a
 \hypertarget{statistics-6}{%
 \section{Statistics}\label{statistics-6}}
 
-Since organism size is our main point of comparison, we calculate stats for each genome length.
+Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
@@ -1838,7 +1834,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 5           400 3.667815e-58    278.7645  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1950,6 +1946,184 @@ We see that significant variation exists within each genome length, so we perfor
 ## 13           400    128    256      2.106836e-06 4.213672e-07 2929.0      TRUE
 ## 14           400    128    512      3.669212e-11 6.115353e-12 7815.0      TRUE
 ## 15           400    256    512      9.548472e-15 1.364067e-15 8270.0      TRUE
+\end{verbatim}
+
+\hypertarget{infinite-genome-experiment}{%
+\chapter{Infinite genome experiment}\label{infinite-genome-experiment}}
+
+Building off the genome length experiment, we wanted to ensure our results were not an artifact of limited genome size.
+Genomes in biological organisms can be extremely large compared to our 400-bit genomes.
+Therefore, we extended the model to support infinite genomes.
+Organisms with infinite genomes have no limit on the restraint buffer values they can evolve.
+In an infinite genome, restraint threshold is set at zero, and thus all non-negative restraint values are restrained.
+Organisms begin with a restraint buffer of zero.
+Each mutation (both somatic and germ) \emph{always} has a 60\% probability of lowering restraint.
+In this way, the infinite genome has the same probability of a restraint-reducing mutation as finite genomes have at their restraint threshold.
+Furthermore, mutational pressure does not increase with the restraint buffer as it does in finite genomes.
+
+Here, we show the results of re-running the baseline experiment using an infnite genome.
+Since we are replicating the baseline experiment, we also include the 8x8 and 1024x1024 organism sizes.
+The configuration script and data for the experiment can be found under \texttt{2021\_03\_12\_\_org\_sizes\_inf/} in the experiments directory of the git repository.
+
+\hypertarget{data-cleaning-6}{%
+\section{Data cleaning}\label{data-cleaning-6}}
+
+Load necessary R libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggridges)}
+\KeywordTok{library}\NormalTok{(scales)}
+\KeywordTok{library}\NormalTok{(khroma)}
+\end{Highlighting}
+\end{Shaded}
+
+Load the data and trim to only include the final generation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_12__org_sizes_inf/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
+\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+We group and summarize the data to make to ensure all replicates are present.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Group the data by size and summarize}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE)}
+\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+We clean the data and create a few helper variables to make plotting easier.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate restraint value (infinite genome there is no difference)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones}
+\CommentTok{# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
+\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{'8x8'}\NormalTok{ =}\StringTok{       '#333333'}\NormalTok{,}
+  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\NormalTok{)}
+\CommentTok{# Set the sizes for text in plots}
+\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-integrity-check-7}{%
+\section{Data integrity check}\label{data-integrity-check-7}}
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Each bar/color shows a different organism size.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-120-1.pdf}
+
+\hypertarget{plot-2}{%
+\section{Plot}\label{plot-2}}
+
+Here we plot all the data at once.
+Colors/boxplots represent different organism sizes.
+
+\hypertarget{boxplots-1}{%
+\subsection{Boxplots}\label{boxplots-1}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-121-1.pdf}
+
+\hypertarget{raincloud-plots-1}{%
+\subsection{Raincloud plots}\label{raincloud-plots-1}}
+
+We can plot the same data via raincloud plots.
+
+\begin{verbatim}
+## Picking joint bandwidth of 3.57
+\end{verbatim}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-122-1.pdf}
+
+These plots show that the same trend observed in the baseline experiment (that evolved restraint buffers initially increase and then decrease with increasing organims size) still appears when organism genomes are not limited in length.
+
+\hypertarget{statistics-7}{%
+\section{Statistics}\label{statistics-7}}
+
+First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df2}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE, df2)}
+\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
+\NormalTok{  df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        p_value chi_squared df less_0.01
+## 1 6.606587e-79    383.9432  7      TRUE
+\end{verbatim}
+
+We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{df_test =}\StringTok{ }\NormalTok{df2}
+\NormalTok{df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
+\KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{  size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
+  \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
+\NormalTok{    size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
+\NormalTok{    df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
+\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+\KeywordTok{print}\NormalTok{(df_wilcox)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1      16     32      3.317841e-10 4.739773e-11 2307.0      TRUE
+## 2      16     64      3.767632e-24 3.767632e-25  759.5      TRUE
+## 3      16    128      5.749859e-30 3.833239e-31  249.5      TRUE
+## 4      16    256      2.254278e-29 1.610199e-30  300.0      TRUE
+## 5      16    512      1.575007e-04 3.150014e-05 3296.0      TRUE
+## 6      32     64      4.352278e-10 7.253796e-11 2333.0      TRUE
+## 7      32    128      1.138873e-26 1.035339e-27  534.5      TRUE
+## 8      32    256      2.625866e-29 2.019897e-30  308.0      TRUE
+## 9      32    512      2.824927e-04 7.062318e-05 3373.0      TRUE
+## 10     64    128      1.477957e-23 1.642174e-24  817.5      TRUE
+## 11     64    256      5.981331e-28 4.984443e-29  423.0      TRUE
+## 12     64    512      7.003790e-04 2.334597e-04 3493.5      TRUE
+## 13    128    256      5.681587e-23 7.101983e-24  876.0      TRUE
+## 14    128    512      4.314526e-03 2.157263e-03 3744.0      TRUE
+## 15    256    512      3.971985e-01 3.971985e-01 5347.0     FALSE
 \end{verbatim}
 
 \end{document}

@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 5 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 5 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 5 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -277,18 +286,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="timing-sample-count-experiment" class="section level1">
 <h1><span class="header-section-number">Section 5</span> Timing sample count experiment</h1>
-<p>By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
-With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
+<p>By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for organism fitness in Primordium (a new batch was generated for each experiment).
+This experiment showed that increasing from 100 samples to 10,000 samples has no qualitative difference on results.
 This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.</p>
 <div id="data-cleaning-2" class="section level2">
 <h2><span class="header-section-number">5.1</span> Data cleaning</h2>
-<p>Load necessary libraries</p>
+<p>Load necessary R libraries</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb28-2" title="2"><span class="kw">library</span>(ggplot2)</a>
 <a class="sourceLine" id="cb28-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb28-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb28-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim include only the final generation data for sizes 16x16 to 512x512.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb29-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb29-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv&#39;</span>))</a>
@@ -344,10 +353,10 @@ Inside each subplot, the number of timing samples is shown on the x-axis.
 </div>
 <div id="statistics-3" class="section level2">
 <h2><span class="header-section-number">5.4</span> Statistics</h2>
-<p>The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
-Further, we see that the evolved buffer values are fairly consistent between the two sample counts.</p>
-<p>While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
-Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples</p>
+<p>The plot shows that the general trend, that the evolved restraint buffer initially increases with organism size then decreases, holds true at both sample counts.
+Furthermore, we see that the evolved buffer values are fairly consistent between the two sample counts.</p>
+<p>While we concluded that this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
+Since we treat each organism size as a group, we simply conduct a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples</p>
 <pre><code>##   org_size      p_value      W less_0.01
 ## 1       16 4.243294e-02 5831.0     FALSE
 ## 2       32 3.489808e-04 6464.0      TRUE

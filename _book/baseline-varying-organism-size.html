@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 2 Baseline: Varying organism size | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 2 Baseline: Varying organism size | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 2 Baseline: Varying organism size | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -277,31 +286,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="baseline-varying-organism-size" class="section level1">
 <h1><span class="header-section-number">Section 2</span> Baseline: Varying organism size</h1>
-<p>Here we show all the data for the baseline experiment, where we vary organism size but otherwise all parameters are set to the defaults.</p>
-<p>For this experiment (with all default parameters), we also ran size 8x8 and 1024x1024 organisms.
-In the paper, however, we only included sizes from 16x16 to 512x512.
+<p>Here we show all of the data for the baseline experiment in which we vary organism size while all other parameters are set to their default values.</p>
+<p>For this experiment, we also tested size 8x8 and 1024x1024 organisms.
+In the paper, however, we only included sizes 16x16 to 512x512.
 Size 8x8 organisms are quick to run, but these smaller organisms see the most noise in the fitness data.
-Conversely, size 1024x1024 organisms take so long to run that it was impractical to run them for each experiment.</p>
-<p>Here, we show these results for the baseline experiment, including this additional sizes.
+Conversely, size 1024x1024 organisms take so long to run that it was not computationally feasible to run them for each experiment.</p>
+<p>Here, we show these results for the baseline experiment, including these additional sizes.
 The configuration script and data for the experiment can be found under <code>2021_02_26__org_sizes/</code> in the experiments directory of the git repository.</p>
 <div id="data-cleaning" class="section level2">
 <h2><span class="header-section-number">2.1</span> Data cleaning</h2>
-<p>Load necessary libraries</p>
+<p>Load necessary R libraries</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(ggplot2)</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb1-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb1-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim to only include the final generation</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb2-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_26__org_sizes/evolution/data/scraped_evolution_data.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
 <a class="sourceLine" id="cb2-4" title="4">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a></code></pre></div>
-<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<p>Group and summarize the data to ensure all replicates are present.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
 <a class="sourceLine" id="cb3-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE)</a>
 <a class="sourceLine" id="cb3-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
-<p>We clean the data and create a few helper variables to make plotting easier.</p>
+<p>Clean the data and create a few helper variables to make plotting easier.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Calculate restraint value (x - 60 because genome length is 100 here)</span></a>
 <a class="sourceLine" id="cb4-2" title="2">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span><span class="dv">60</span></a>
 <a class="sourceLine" id="cb4-3" title="3"><span class="co"># Make a nice, clean factor for size</span></a>
@@ -359,7 +368,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
 <a class="sourceLine" id="cb6-6" title="6">  <span class="kw">print</span>(df_kruskal)</a></code></pre></div>
 <pre><code>##         p_value chi_squared df less_0.01
 ## 1 1.506351e-127    610.2553  7      TRUE</code></pre>
-<p>We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
+<p>We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
 <a class="sourceLine" id="cb8-2" title="2">df_test =<span class="st"> </span>df2</a>
 <a class="sourceLine" id="cb8-3" title="3">df_wilcox =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">5</span>))</a>

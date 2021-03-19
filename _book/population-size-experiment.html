@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -277,7 +286,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="population-size-experiment" class="section level1">
 <h1><span class="header-section-number">Section 6</span> Population size experiment</h1>
-<p>By default, all populations of contain 200 organisms.
+<p>By default, all populations contain 200 organisms.
 This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint.</p>
 <div id="data-cleaning-3" class="section level2">
 <h2><span class="header-section-number">6.1</span> Data cleaning</h2>
@@ -287,7 +296,7 @@ This experiment tested if increasing the population size to 2,000 organisms has 
 <a class="sourceLine" id="cb33-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb33-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb33-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim include only the final generation data for sizes 16x16 to 512x512.</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb34-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_200.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb34-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_2k.csv&#39;</span>))</a>
@@ -295,7 +304,7 @@ This experiment tested if increasing the population size to 2,000 organisms has 
 <a class="sourceLine" id="cb34-5" title="5">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
 <a class="sourceLine" id="cb34-6" title="6"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
 <a class="sourceLine" id="cb34-7" title="7">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
-<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<p>We group and summarize the data to ensure all replicates are present.</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
 <a class="sourceLine" id="cb35-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, POP)</a>
 <a class="sourceLine" id="cb35-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
@@ -340,8 +349,8 @@ Inside each subplot, population size is shown on the x-axis.
 <div id="statistics-4" class="section level2">
 <h2><span class="header-section-number">6.4</span> Statistics</h2>
 <p>The plot shows that increasing population size increases the evolved restraint buffer at organism sizes.
-Further, we see that the same general trend holds at both population sizes, evolved restriant peaks at size 128x128.</p>
-<p>Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum test between the population sizes.</p>
+Further, we see that the same general trend holds at both population sizes, that evolved restriant peaks at size 128x128.</p>
+<p>Finally, we treat each organism size as a group and conduct a Wilcoxon Rank-Sum test between the population sizes.</p>
 <pre><code>##   org_size      p_value      W less_0.01
 ## 1       16 3.921812e-19 1341.0      TRUE
 ## 2       32 8.416553e-06 3176.5      TRUE
