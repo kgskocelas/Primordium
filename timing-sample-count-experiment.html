@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Section 6 Test of timing sample counts | The Evolution of Cellular Restraint in Multicellular Organisms</title>
+  <title>Section 6 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms</title>
   <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Section 6 Test of timing sample counts | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:title" content="Section 6 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Section 6 Test of timing sample counts | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta name="twitter:title" content="Section 6 Timing sample count experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
   <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
   
@@ -216,7 +216,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#statistics-3"><i class="fa fa-check"></i><b>5.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="test-of-timing-sample-counts.html"><a href="test-of-timing-sample-counts.html"><i class="fa fa-check"></i><b>6</b> Test of timing sample counts</a></li>
+<li class="chapter" data-level="6" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html"><i class="fa fa-check"></i><b>6</b> Timing sample count experiment</a><ul>
+<li class="chapter" data-level="6.1" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-cleaning-3"><i class="fa fa-check"></i><b>6.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="6.2" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-integrity-check-4"><i class="fa fa-check"></i><b>6.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="6.3" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#plot"><i class="fa fa-check"></i><b>6.3</b> Plot</a></li>
+<li class="chapter" data-level="6.4" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#statistics-4"><i class="fa fa-check"></i><b>6.4</b> Statistics</a></li>
+</ul></li>
 <li class="chapter" data-level="7" data-path="interactive-web-app.html"><a href="interactive-web-app.html"><i class="fa fa-check"></i><b>7</b> Interactive web app</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
@@ -238,10 +243,88 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="test-of-timing-sample-counts" class="section level1">
-<h1><span class="header-section-number">Section 6</span> Test of timing sample counts</h1>
-<p>TBD</p>
+<div id="timing-sample-count-experiment" class="section level1">
+<h1><span class="header-section-number">Section 6</span> Timing sample count experiment</h1>
+<p>By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
+With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
+This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.</p>
+<div id="data-cleaning-3" class="section level2">
+<h2><span class="header-section-number">6.1</span> Data cleaning</h2>
+<p>Load necessary libraries</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb36-2" title="2"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb36-3" title="3"><span class="kw">library</span>(ggridges)</a>
+<a class="sourceLine" id="cb36-4" title="4"><span class="kw">library</span>(scales)</a>
+<a class="sourceLine" id="cb36-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
+<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="co"># Load the data</span></a>
+<a class="sourceLine" id="cb37-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb37-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb37-4" title="4">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb37-5" title="5">df<span class="op">$</span>LENGTH =<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb37-6" title="6">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb37-7" title="7">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb37-8" title="8"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
+<a class="sourceLine" id="cb37-9" title="9">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
+<a class="sourceLine" id="cb37-10" title="10"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
+<a class="sourceLine" id="cb37-11" title="11">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
+<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
+<a class="sourceLine" id="cb38-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, SAMPLES)</a>
+<a class="sourceLine" id="cb38-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
+<p>We clean the data and create a few helper variables to make plotting easier.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1"><span class="co"># Calculate restraint value (x - 60 because genome length is 100 here)</span></a>
+<a class="sourceLine" id="cb39-2" title="2">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span><span class="dv">60</span></a>
+<a class="sourceLine" id="cb39-3" title="3"><span class="co"># Make a nice, clean factor for size</span></a>
+<a class="sourceLine" id="cb39-4" title="4">df2<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, df2<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb39-5" title="5">df2<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb39-6" title="6">df2<span class="op">$</span>size_factor_reversed =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>)))</a>
+<a class="sourceLine" id="cb39-7" title="7">data_summary<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, data_summary<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb39-8" title="8">data_summary<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb39-9" title="9"><span class="co"># Create a map of colors we&#39;ll use to plot the different organism sizes</span></a>
+<a class="sourceLine" id="cb39-10" title="10">color_vec =<span class="st"> </span><span class="kw">as.character</span>(khroma<span class="op">::</span><span class="kw">color</span>(<span class="st">&#39;bright&#39;</span>)(<span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb39-11" title="11">color_map =<span class="st"> </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb39-12" title="12">  <span class="st">&#39;16x16&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb39-13" title="13">  <span class="st">&#39;32x32&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb39-14" title="14">  <span class="st">&#39;64x64&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb39-15" title="15">  <span class="st">&#39;128x128&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">4</span>],</a>
+<a class="sourceLine" id="cb39-16" title="16">  <span class="st">&#39;256x256&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">5</span>],</a>
+<a class="sourceLine" id="cb39-17" title="17">  <span class="st">&#39;512x512&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">6</span>],</a>
+<a class="sourceLine" id="cb39-18" title="18">  <span class="st">&#39;1024x1024&#39;</span> =<span class="st"> </span>color_vec[<span class="dv">7</span>]</a>
+<a class="sourceLine" id="cb39-19" title="19">)</a>
+<a class="sourceLine" id="cb39-20" title="20"><span class="co"># Set the sizes for text in plots</span></a>
+<a class="sourceLine" id="cb39-21" title="21">text_major_size =<span class="st"> </span><span class="dv">18</span></a>
+<a class="sourceLine" id="cb39-22" title="22">text_minor_size =<span class="st"> </span><span class="dv">16</span> </a></code></pre></div>
+</div>
+<div id="data-integrity-check-4" class="section level2">
+<h2><span class="header-section-number">6.2</span> Data integrity check</h2>
+<p>Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Rows show the number of samples used for fitness.
+Each bar/color shows a different organism size.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-84-1.png" width="576" /></p>
+</div>
+<div id="plot" class="section level2">
+<h2><span class="header-section-number">6.3</span> Plot</h2>
+<p>Here we plot all the data.
+The figure is split into 6 subplots, each showing a different organism size.
+Inside each subplot, the number of timing samples is shown on the x-axis.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-85-1.png" width="576" /></p>
+</div>
+<div id="statistics-4" class="section level2">
+<h2><span class="header-section-number">6.4</span> Statistics</h2>
+<p>The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
+Further, we see that the evolved buffer values are fairly consistent between the two sample counts.</p>
+<p>While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
+Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples</p>
+<pre><code>##   org_size      p_value      W less_0.01
+## 1       16 4.243294e-02 5831.0     FALSE
+## 2       32 3.489808e-04 6464.0      TRUE
+## 3       64 4.913265e-05 3338.0      TRUE
+## 4      128 3.021256e-02 5887.5     FALSE
+## 5      256 2.561216e-02 4086.0     FALSE
+## 6      512 9.066359e-01 5048.5     FALSE</code></pre>
 
+</div>
 </div>
             </section>
 
