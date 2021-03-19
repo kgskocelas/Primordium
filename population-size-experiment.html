@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>The Evolution of Cellular Restraint in Multicellular Organisms</title>
+  <title>Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms</title>
   <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:title" content="Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta name="twitter:title" content="Section 6 Population size experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
   <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="baseline-varying-organism-size.html"/>
+<link rel="prev" href="timing-sample-count-experiment.html"/>
+<link rel="next" href="genome-length-sweep.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -275,25 +275,80 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">The Evolution of Cellular Restraint in Multicellular Organisms</h1>
-<p class="author"><em>Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria</em></p>
-<p class="date"><em>2021-03-19</em></p>
+<div id="population-size-experiment" class="section level1">
+<h1><span class="header-section-number">Section 6</span> Population size experiment</h1>
+<p>By default, all populations of contain 200 organisms.
+This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint.</p>
+<div id="data-cleaning-3" class="section level2">
+<h2><span class="header-section-number">6.1</span> Data cleaning</h2>
+<p>Load necessary libraries</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb33-2" title="2"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb33-3" title="3"><span class="kw">library</span>(ggridges)</a>
+<a class="sourceLine" id="cb33-4" title="4"><span class="kw">library</span>(scales)</a>
+<a class="sourceLine" id="cb33-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
+<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="co"># Load the data</span></a>
+<a class="sourceLine" id="cb34-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_200.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb34-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_2k.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb34-4" title="4"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
+<a class="sourceLine" id="cb34-5" title="5">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
+<a class="sourceLine" id="cb34-6" title="6"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
+<a class="sourceLine" id="cb34-7" title="7">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
+<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
+<a class="sourceLine" id="cb35-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, POP)</a>
+<a class="sourceLine" id="cb35-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
+<p>We clean the data and create a few helper variables to make plotting easier.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="co"># Calculate restraint value (x - 60 because genome length is 100 here)</span></a>
+<a class="sourceLine" id="cb36-2" title="2">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span><span class="dv">60</span></a>
+<a class="sourceLine" id="cb36-3" title="3"><span class="co"># Make a nice, clean factor for size</span></a>
+<a class="sourceLine" id="cb36-4" title="4">df2<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, df2<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb36-5" title="5">df2<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb36-6" title="6">df2<span class="op">$</span>size_factor_reversed =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>)))</a>
+<a class="sourceLine" id="cb36-7" title="7">data_summary<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, data_summary<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb36-8" title="8">data_summary<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb36-9" title="9"><span class="co"># Create a map of colors we&#39;ll use to plot the different organism sizes</span></a>
+<a class="sourceLine" id="cb36-10" title="10">color_vec =<span class="st"> </span><span class="kw">as.character</span>(khroma<span class="op">::</span><span class="kw">color</span>(<span class="st">&#39;bright&#39;</span>)(<span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb36-11" title="11">color_map =<span class="st"> </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb36-12" title="12">  <span class="st">&#39;16x16&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb36-13" title="13">  <span class="st">&#39;32x32&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb36-14" title="14">  <span class="st">&#39;64x64&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb36-15" title="15">  <span class="st">&#39;128x128&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">4</span>],</a>
+<a class="sourceLine" id="cb36-16" title="16">  <span class="st">&#39;256x256&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">5</span>],</a>
+<a class="sourceLine" id="cb36-17" title="17">  <span class="st">&#39;512x512&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">6</span>],</a>
+<a class="sourceLine" id="cb36-18" title="18">  <span class="st">&#39;1024x1024&#39;</span> =<span class="st"> </span>color_vec[<span class="dv">7</span>]</a>
+<a class="sourceLine" id="cb36-19" title="19">)</a>
+<a class="sourceLine" id="cb36-20" title="20"><span class="co"># Set the sizes for text in plots</span></a>
+<a class="sourceLine" id="cb36-21" title="21">text_major_size =<span class="st"> </span><span class="dv">18</span></a>
+<a class="sourceLine" id="cb36-22" title="22">text_minor_size =<span class="st"> </span><span class="dv">16</span> </a></code></pre></div>
 </div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">Section 1</span> Introduction</h1>
-<p>This document serves as the supplemental material for our ALife 2021 conference submission “The Evolution of Cellular Restraint in Multicellular Organisms”.</p>
-<div id="overview" class="section level2">
-<h2><span class="header-section-number">1.1</span> Overview</h2>
-<p>The document is split into sections.
-Each section can be accessed via the navigation bar on the left side of the screen.
-Sections mostly correspond to experiments (some that were discussed at length in the paper, others that were not).
-As such, most sections follow the same formula: setup, plots, and then statistics.</p>
+<div id="data-integrity-check-4" class="section level2">
+<h2><span class="header-section-number">6.2</span> Data integrity check</h2>
+<p>Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Rows show the number of samples used for fitness.
+Each bar/color shows a different organism size.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-69-1.png" width="576" /></p>
 </div>
-<div id="interactive-web-app" class="section level2">
-<h2><span class="header-section-number">1.2</span> Interactive web app</h2>
-<p>To build intuition on how organisms fill, we created an interactive web app.
-The web app is available here: <a href="http://fergusonaj.com/webapps/primordium/" class="uri">http://fergusonaj.com/webapps/primordium/</a></p>
+<div id="plot-1" class="section level2">
+<h2><span class="header-section-number">6.3</span> Plot</h2>
+<p>Here we plot all the data.
+The figure is split into 6 subplots, each showing a different organism size.
+Inside each subplot, population size is shown on the x-axis.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-70-1.png" width="576" /></p>
+</div>
+<div id="statistics-4" class="section level2">
+<h2><span class="header-section-number">6.4</span> Statistics</h2>
+<p>The plot shows that increasing population size increases the evolved restraint buffer at organism sizes.
+Further, we see that the same general trend holds at both population sizes, evolved restriant peaks at size 128x128.</p>
+<p>Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum test between the population sizes.</p>
+<pre><code>##   org_size      p_value      W less_0.01
+## 1       16 3.921812e-19 1341.0      TRUE
+## 2       32 8.416553e-06 3176.5      TRUE
+## 3       64 4.238745e-32  173.0      TRUE
+## 4      128 1.013881e-33   46.0      TRUE
+## 5      256 2.781080e-33   80.0      TRUE
+## 6      512 4.954199e-34   22.0      TRUE</code></pre>
 
 </div>
 </div>
@@ -302,8 +357,8 @@ The web app is available here: <a href="http://fergusonaj.com/webapps/primordium
           </div>
         </div>
       </div>
-
-<a href="baseline-varying-organism-size.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="timing-sample-count-experiment.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="genome-length-sweep.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -334,7 +389,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/kgskocelas/Primordium/tree/main/index.Rmd",
+"link": "https://github.com/kgskocelas/Primordium/tree/main/pop_size/main.Rmd",
 "text": "Edit"
 },
 "history": {

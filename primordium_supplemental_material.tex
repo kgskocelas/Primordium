@@ -1174,6 +1174,114 @@ Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum
 ## 6      512 9.066359e-01 5048.5     FALSE
 \end{verbatim}
 
+\hypertarget{population-size-experiment}{%
+\chapter{Population size experiment}\label{population-size-experiment}}
+
+By default, all populations of contain 200 organisms.
+This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint.
+
+\hypertarget{data-cleaning-3}{%
+\section{Data cleaning}\label{data-cleaning-3}}
+
+Load necessary libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggridges)}
+\KeywordTok{library}\NormalTok{(scales)}
+\KeywordTok{library}\NormalTok{(khroma)}
+\end{Highlighting}
+\end{Shaded}
+
+Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_200.csv'}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_2k.csv'}\NormalTok{))}
+\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+We group and summarize the data to make to ensure all replicates are present.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Group the data by size and summarize}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, POP)}
+\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+We clean the data and create a few helper variables to make plotting easier.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
+\CommentTok{# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
+\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\NormalTok{)}
+\CommentTok{# Set the sizes for text in plots}
+\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-integrity-check-4}{%
+\section{Data integrity check}\label{data-integrity-check-4}}
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Rows show the number of samples used for fitness.
+Each bar/color shows a different organism size.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-69-1.pdf}
+
+\hypertarget{plot-1}{%
+\section{Plot}\label{plot-1}}
+
+Here we plot all the data.
+The figure is split into 6 subplots, each showing a different organism size.
+Inside each subplot, population size is shown on the x-axis.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-70-1.pdf}
+
+\hypertarget{statistics-4}{%
+\section{Statistics}\label{statistics-4}}
+
+The plot shows that increasing population size increases the evolved restraint buffer at organism sizes.
+Further, we see that the same general trend holds at both population sizes, evolved restriant peaks at size 128x128.
+
+Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum test between the population sizes.
+
+\begin{verbatim}
+##   org_size      p_value      W less_0.01
+## 1       16 3.921812e-19 1341.0      TRUE
+## 2       32 8.416553e-06 3176.5      TRUE
+## 3       64 4.238745e-32  173.0      TRUE
+## 4      128 1.013881e-33   46.0      TRUE
+## 5      256 2.781080e-33   80.0      TRUE
+## 6      512 4.954199e-34   22.0      TRUE
+\end{verbatim}
+
 \hypertarget{genome-length-sweep}{%
 \chapter{Genome Length Sweep}\label{genome-length-sweep}}
 
@@ -1182,8 +1290,8 @@ Here, we look into the effects of varying this genome length (we use values 25, 
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_genome\_length/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-3}{%
-\section{Data cleaning}\label{data-cleaning-3}}
+\hypertarget{data-cleaning-4}{%
+\section{Data cleaning}\label{data-cleaning-4}}
 
 Load necessary libraries
 
@@ -1258,13 +1366,13 @@ We clean the data and create a few helper variables to make plotting easier.
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{data-integrity-check-4}{%
-\section{Data integrity check}\label{data-integrity-check-4}}
+\hypertarget{data-integrity-check-5}{%
+\section{Data integrity check}\label{data-integrity-check-5}}
 
 Now we plot the number of finished replicates for each treatment to make sure all data are present.
 Each row shows a different genome length (in bits).
 Each bar/color shows a different organism size.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-69-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-76-1.pdf}
 
 \hypertarget{aggregate-plots-3}{%
 \section{Aggregate plots}\label{aggregate-plots-3}}
@@ -1275,21 +1383,21 @@ Each bar/color shows a different organism size.
 Here we plot all the data at once.
 Each row showing a different somatic mutation rate and each boxplot shows a given organism size.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-70-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 Here we plot the same data, only we allow the y-axis to vary between rows.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-71-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-78-1.pdf}
 
 \hypertarget{facet-by-organism-size-2}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size-2}}
 
 Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-72-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-79-1.pdf}
 
 Here is the identical plot but now we allow the y-axis to vary between the rows.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-80-1.pdf}
 
 \hypertarget{single-organism-size-plots-3}{%
 \section{Single organism size plots}\label{single-organism-size-plots-3}}
@@ -1299,32 +1407,32 @@ Here we plot each organism size independently, with the genome length on the x-a
 \hypertarget{organism-size-16x16-2}{%
 \subsection{Organism size 16x16}\label{organism-size-16x16-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-74-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-81-1.pdf}
 
 \hypertarget{organism-size-32x32-2}{%
 \subsection{Organism size 32x32}\label{organism-size-32x32-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-75-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-82-1.pdf}
 
 \hypertarget{organism-size-64x64-2}{%
 \subsection{Organism size 64x64}\label{organism-size-64x64-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-76-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-83-1.pdf}
 
 \hypertarget{organism-size-128x128-2}{%
 \subsection{Organism size 128x128}\label{organism-size-128x128-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-77-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-84-1.pdf}
 
 \hypertarget{organism-size-256x256-2}{%
 \subsection{Organism size 256x256}\label{organism-size-256x256-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-78-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-85-1.pdf}
 
 \hypertarget{organism-size-512x512-2}{%
 \subsection{Organism size 512x512}\label{organism-size-512x512-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-79-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-86-1.pdf}
 
 \hypertarget{single-genome-length-plots}{%
 \section{Single genome length plots}\label{single-genome-length-plots}}
@@ -1334,30 +1442,30 @@ Here we plot each genome length independently, with the organism size on the x-a
 \hypertarget{bit-genomes}{%
 \subsection{25-bit genomes}\label{bit-genomes}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-80-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-87-1.pdf}
 
 \hypertarget{bit-genomes-1}{%
 \subsection{50-bit genomes}\label{bit-genomes-1}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-81-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-88-1.pdf}
 
 \hypertarget{bit-genomes-2}{%
 \subsection{100-bit genomes}\label{bit-genomes-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-82-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-89-1.pdf}
 
 \hypertarget{bit-genomes-3}{%
 \subsection{200-bit genomes}\label{bit-genomes-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-83-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-90-1.pdf}
 
 \hypertarget{bit-genomes-4}{%
 \subsection{400-bit genomes}\label{bit-genomes-4}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-84-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-91-1.pdf}
 
-\hypertarget{statistics-4}{%
-\section{Statistics}\label{statistics-4}}
+\hypertarget{statistics-5}{%
+\section{Statistics}\label{statistics-5}}
 
 Since organism size is our main point of comparison, we calculate stats for each genome length.
 
@@ -1524,8 +1632,8 @@ The fitness data for 64x64 organisms is shown below, showing the range of each g
 
 The configuration script and data for the experiment can be found under \texttt{2021\_03\_04\_\_genome\_length\_control/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-4}{%
-\section{Data cleaning}\label{data-cleaning-4}}
+\hypertarget{data-cleaning-5}{%
+\section{Data cleaning}\label{data-cleaning-5}}
 
 Load necessary libraries
 
@@ -1599,13 +1707,13 @@ We clean the data and create a few helper variables to make plotting easier.
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{data-integrity-check-5}{%
-\section{Data integrity check}\label{data-integrity-check-5}}
+\hypertarget{data-integrity-check-6}{%
+\section{Data integrity check}\label{data-integrity-check-6}}
 
 Now we plot the number of finished replicates for each treatment to make sure all data are present.
 Each row shows a different genome length (in bits).
 Each bar/color shows a different organism size.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-91-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-98-1.pdf}
 
 \hypertarget{aggregate-plots-4}{%
 \section{Aggregate plots}\label{aggregate-plots-4}}
@@ -1616,21 +1724,21 @@ Each bar/color shows a different organism size.
 Here we plot all the data at once.
 Each row shows a different somatic mutation rate and each boxplot shows a given organism size.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-92-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-99-1.pdf}
 
 Here we plot the same data, only we allow the y-axis to vary between rows.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-93-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-100-1.pdf}
 
 \hypertarget{facet-by-organism-size-3}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size-3}}
 
 Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-94-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-101-1.pdf}
 
 Here is the identical plot but now we allow the y-axis to vary between the rows.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-95-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-102-1.pdf}
 
 \hypertarget{single-organism-size-plots-4}{%
 \section{Single organism size plots}\label{single-organism-size-plots-4}}
@@ -1640,32 +1748,32 @@ Here we plot each organism size independently, with the genome length on the x-a
 \hypertarget{organism-size-16x16-3}{%
 \subsection{Organism size 16x16}\label{organism-size-16x16-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-96-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-103-1.pdf}
 
 \hypertarget{organism-size-32x32-3}{%
 \subsection{Organism size 32x32}\label{organism-size-32x32-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-97-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-104-1.pdf}
 
 \hypertarget{organism-size-64x64-3}{%
 \subsection{Organism size 64x64}\label{organism-size-64x64-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-98-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-105-1.pdf}
 
 \hypertarget{organism-size-128x128-3}{%
 \subsection{Organism size 128x128}\label{organism-size-128x128-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-99-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-106-1.pdf}
 
 \hypertarget{organism-size-256x256-3}{%
 \subsection{Organism size 256x256}\label{organism-size-256x256-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-100-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-107-1.pdf}
 
 \hypertarget{organism-size-512x512-3}{%
 \subsection{Organism size 512x512}\label{organism-size-512x512-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-101-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-108-1.pdf}
 
 \hypertarget{single-genome-length-plots-1}{%
 \section{Single genome length plots}\label{single-genome-length-plots-1}}
@@ -1675,30 +1783,30 @@ Here we plot each genome length independently, with the organism size on the x-a
 \hypertarget{bit-genomes-5}{%
 \subsection{25-bit genomes}\label{bit-genomes-5}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-102-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-109-1.pdf}
 
 \hypertarget{bit-genomes-6}{%
 \subsection{50-bit genomes}\label{bit-genomes-6}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-103-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-110-1.pdf}
 
 \hypertarget{bit-genomes-7}{%
 \subsection{100-bit genomes}\label{bit-genomes-7}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-104-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-111-1.pdf}
 
 \hypertarget{bit-genomes-8}{%
 \subsection{200-bit genomes}\label{bit-genomes-8}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-105-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-112-1.pdf}
 
 \hypertarget{bit-genomes-9}{%
 \subsection{400-bit genomes}\label{bit-genomes-9}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-106-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-113-1.pdf}
 
-\hypertarget{statistics-5}{%
-\section{Statistics}\label{statistics-5}}
+\hypertarget{statistics-6}{%
+\section{Statistics}\label{statistics-6}}
 
 Since organism size is our main point of comparison, we calculate stats for each genome length.
 
