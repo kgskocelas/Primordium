@@ -5,21 +5,19 @@ date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Introduction
 
-This document serves as the supplemental material for our ALife 2021 conference submission "The Evolution of Cellular Restraint in Multicellular Organisms".
+This document serves as the supplemental material for the ALife 2021 conference submission "The Evolution of Cellular Restraint in Multicellular Organisms".
 
 ## Overview
 
-The document is split into sections.
-Each section can be accessed via the navigation bar on the left side of the screen. 
-Sections mostly correspond to experiments (some that were discussed at length in the paper, others that were not).
-As such, most sections follow the same formula: setup, plots, and then statistics. 
+The document is split into sections that are assessable via the navigation bar on the left side of the screen. 
+Each section corresponds to an experiment (some that were discussed at length in the paper, others that were not included).
+As such, each section follows the same formula: setup, plots, and statistics. 
 
 ## Interactive web app 
 
-To build intuition on how organisms fill, we created an interactive web app. 
-The web app is available here: http://fergusonaj.com/webapps/primordium/
+To build intuition on how organisms fill, we created an interactive web app, available here: http://fergusonaj.com/webapps/primordium/
