@@ -110,7 +110,7 @@
 
 \title{The Evolution of Cellular Restraint in Multicellular Organisms}
 \author{Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria}
-\date{2021-03-18}
+\date{2021-03-19}
 
 \begin{document}
 \maketitle
@@ -1060,6 +1060,120 @@ We see that significant variation exists within each mutation rate, so we perfor
 ## 15             1    256    512      4.892624e-01 4.892624e-01  4716.5     FALSE
 \end{verbatim}
 
+\hypertarget{timing-sample-count-experiment}{%
+\chapter{Timing sample count experiment}\label{timing-sample-count-experiment}}
+
+By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
+With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
+This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.
+
+\hypertarget{data-cleaning-2}{%
+\section{Data cleaning}\label{data-cleaning-2}}
+
+Load necessary libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggridges)}
+\KeywordTok{library}\NormalTok{(scales)}
+\KeywordTok{library}\NormalTok{(khroma)}
+\end{Highlighting}
+\end{Shaded}
+
+Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv'}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv'}\NormalTok{))}
+\NormalTok{df}\OperatorTok{$}\NormalTok{LENGTH =}\StringTok{ }\DecValTok{100}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'}\NormalTok{))}
+\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+We group and summarize the data to make to ensure all replicates are present.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Group the data by size and summarize}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, SAMPLES)}
+\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+We clean the data and create a few helper variables to make plotting easier.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
+\CommentTok{# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
+\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\NormalTok{)}
+\CommentTok{# Set the sizes for text in plots}
+\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-integrity-check-3}{%
+\section{Data integrity check}\label{data-integrity-check-3}}
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Rows show the number of samples used for fitness.
+Each bar/color shows a different organism size.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-62-1.pdf}
+
+\hypertarget{plot}{%
+\section{Plot}\label{plot}}
+
+Here we plot all the data.
+The figure is split into 6 subplots, each showing a different organism size.
+Inside each subplot, the number of timing samples is shown on the x-axis.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-63-1.pdf}
+
+\hypertarget{statistics-3}{%
+\section{Statistics}\label{statistics-3}}
+
+The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
+Further, we see that the evolved buffer values are fairly consistent between the two sample counts.
+
+While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
+Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
+
+\begin{verbatim}
+##   org_size      p_value      W less_0.01
+## 1       16 4.243294e-02 5831.0     FALSE
+## 2       32 3.489808e-04 6464.0      TRUE
+## 3       64 4.913265e-05 3338.0      TRUE
+## 4      128 3.021256e-02 5887.5     FALSE
+## 5      256 2.561216e-02 4086.0     FALSE
+## 6      512 9.066359e-01 5048.5     FALSE
+\end{verbatim}
+
 \hypertarget{genome-length-sweep}{%
 \chapter{Genome Length Sweep}\label{genome-length-sweep}}
 
@@ -1068,8 +1182,8 @@ Here, we look into the effects of varying this genome length (we use values 25, 
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_genome\_length/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-2}{%
-\section{Data cleaning}\label{data-cleaning-2}}
+\hypertarget{data-cleaning-3}{%
+\section{Data cleaning}\label{data-cleaning-3}}
 
 Load necessary libraries
 
@@ -1144,13 +1258,13 @@ We clean the data and create a few helper variables to make plotting easier.
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{data-integrity-check-3}{%
-\section{Data integrity check}\label{data-integrity-check-3}}
+\hypertarget{data-integrity-check-4}{%
+\section{Data integrity check}\label{data-integrity-check-4}}
 
 Now we plot the number of finished replicates for each treatment to make sure all data are present.
 Each row shows a different genome length (in bits).
 Each bar/color shows a different organism size.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-62-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-69-1.pdf}
 
 \hypertarget{aggregate-plots-3}{%
 \section{Aggregate plots}\label{aggregate-plots-3}}
@@ -1161,21 +1275,21 @@ Each bar/color shows a different organism size.
 Here we plot all the data at once.
 Each row showing a different somatic mutation rate and each boxplot shows a given organism size.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-63-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-70-1.pdf}
 
 Here we plot the same data, only we allow the y-axis to vary between rows.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-64-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-71-1.pdf}
 
 \hypertarget{facet-by-organism-size-2}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size-2}}
 
 Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-65-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-72-1.pdf}
 
 Here is the identical plot but now we allow the y-axis to vary between the rows.
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-66-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-73-1.pdf}
 
 \hypertarget{single-organism-size-plots-3}{%
 \section{Single organism size plots}\label{single-organism-size-plots-3}}
@@ -1185,32 +1299,32 @@ Here we plot each organism size independently, with the genome length on the x-a
 \hypertarget{organism-size-16x16-2}{%
 \subsection{Organism size 16x16}\label{organism-size-16x16-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-67-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-74-1.pdf}
 
 \hypertarget{organism-size-32x32-2}{%
 \subsection{Organism size 32x32}\label{organism-size-32x32-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-68-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-75-1.pdf}
 
 \hypertarget{organism-size-64x64-2}{%
 \subsection{Organism size 64x64}\label{organism-size-64x64-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-69-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-76-1.pdf}
 
 \hypertarget{organism-size-128x128-2}{%
 \subsection{Organism size 128x128}\label{organism-size-128x128-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-70-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 \hypertarget{organism-size-256x256-2}{%
 \subsection{Organism size 256x256}\label{organism-size-256x256-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-71-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-78-1.pdf}
 
 \hypertarget{organism-size-512x512-2}{%
 \subsection{Organism size 512x512}\label{organism-size-512x512-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-72-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-79-1.pdf}
 
 \hypertarget{single-genome-length-plots}{%
 \section{Single genome length plots}\label{single-genome-length-plots}}
@@ -1220,30 +1334,30 @@ Here we plot each genome length independently, with the organism size on the x-a
 \hypertarget{bit-genomes}{%
 \subsection{25-bit genomes}\label{bit-genomes}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-80-1.pdf}
 
 \hypertarget{bit-genomes-1}{%
 \subsection{50-bit genomes}\label{bit-genomes-1}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-74-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-81-1.pdf}
 
 \hypertarget{bit-genomes-2}{%
 \subsection{100-bit genomes}\label{bit-genomes-2}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-75-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-82-1.pdf}
 
 \hypertarget{bit-genomes-3}{%
 \subsection{200-bit genomes}\label{bit-genomes-3}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-76-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-83-1.pdf}
 
 \hypertarget{bit-genomes-4}{%
 \subsection{400-bit genomes}\label{bit-genomes-4}}
 
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-77-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-84-1.pdf}
 
-\hypertarget{statistics-3}{%
-\section{Statistics}\label{statistics-3}}
+\hypertarget{statistics-4}{%
+\section{Statistics}\label{statistics-4}}
 
 Since organism size is our main point of comparison, we calculate stats for each genome length.
 
@@ -1389,15 +1503,29 @@ We see that significant variation exists within each genome length, so we perfor
 ## 15           400    256    512      6.084030e-12 1.014005e-12 7918.0      TRUE
 \end{verbatim}
 
-\hypertarget{timing-sample-count-experiment}{%
-\chapter{Timing sample count experiment}\label{timing-sample-count-experiment}}
+\hypertarget{genome-length-control-experiment}{%
+\chapter{Genome Length Control Experiment}\label{genome-length-control-experiment}}
 
-By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
-With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
-This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.
+In the genome length experiment we observed that varying the genome length affects the evolution of organism in two ways:
+1) mutational pressure is reduced at the population level as genome length increases
+2) longer genomes have a higher organism fitness at the same restraint buffer value.
+We wanted to test the effect of reduced mutational pressure by itself.
 
-\hypertarget{data-cleaning-3}{%
-\section{Data cleaning}\label{data-cleaning-3}}
+To accomplish this, we generated fitness data for organisms with 400-bit genomes.
+For smaller genome lengths we reuse the 400-bit data by lining up restraint buffer values.
+Thus the difference in genome lengths simply changes the range of restraint buffer values available in the genome.
+The fitness data for 64x64 organisms is shown below, showing the range of each genome.
+
+\begin{figure}
+\centering
+\includegraphics{./genome_length_control/timing_control_explanation.png}
+\caption{Genome length control explainer}
+\end{figure}
+
+The configuration script and data for the experiment can be found under \texttt{2021\_03\_04\_\_genome\_length\_control/} in the experiments directory of the git repository.
+
+\hypertarget{data-cleaning-4}{%
+\section{Data cleaning}\label{data-cleaning-4}}
 
 Load necessary libraries
 
@@ -1416,12 +1544,11 @@ Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran siz
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv'}\NormalTok{)}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv'}\NormalTok{))}
-\NormalTok{df}\OperatorTok{$}\NormalTok{LENGTH =}\StringTok{ }\DecValTok{100}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(          }\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_50.csv'}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_200.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_100.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_400.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_25.csv'}\NormalTok{))}
 \CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
 \NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
 \CommentTok{# Ignore data for size 8x8 and 1024x1024}
@@ -1434,7 +1561,7 @@ We group and summarize the data to make to ensure all replicates are present.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, SAMPLES)}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, LENGTH)}
 \NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
@@ -1443,14 +1570,18 @@ We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
+\CommentTok{# Calculate restraint value (x - 60% of the genome length)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{*}\StringTok{ }\FloatTok{0.6}\NormalTok{)}
 \CommentTok{# Make a nice, clean factor for size}
 \NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
 \NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
 \NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
 \NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
 \NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
 \CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
 \NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
 \NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
@@ -1468,39 +1599,249 @@ We clean the data and create a few helper variables to make plotting easier.
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{data-integrity-check-4}{%
-\section{Data integrity check}\label{data-integrity-check-4}}
+\hypertarget{data-integrity-check-5}{%
+\section{Data integrity check}\label{data-integrity-check-5}}
 
 Now we plot the number of finished replicates for each treatment to make sure all data are present.
-Rows show the number of samples used for fitness.
+Each row shows a different genome length (in bits).
 Each bar/color shows a different organism size.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-84-1.pdf}
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-91-1.pdf}
 
-\hypertarget{plot}{%
-\section{Plot}\label{plot}}
+\hypertarget{aggregate-plots-4}{%
+\section{Aggregate plots}\label{aggregate-plots-4}}
 
-Here we plot all the data.
-The figure is split into 6 subplots, each showing a different organism size.
-Inside each subplot, the number of timing samples is shown on the x-axis.
-\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-85-1.pdf}
+\hypertarget{facet-by-genome-length-1}{%
+\subsection{Facet by genome length}\label{facet-by-genome-length-1}}
 
-\hypertarget{statistics-4}{%
-\section{Statistics}\label{statistics-4}}
+Here we plot all the data at once.
+Each row shows a different somatic mutation rate and each boxplot shows a given organism size.
 
-The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
-Further, we see that the evolved buffer values are fairly consistent between the two sample counts.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-92-1.pdf}
 
-While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
-Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
+Here we plot the same data, only we allow the y-axis to vary between rows.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-93-1.pdf}
+
+\hypertarget{facet-by-organism-size-3}{%
+\subsection{Facet by organism size}\label{facet-by-organism-size-3}}
+
+Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-94-1.pdf}
+
+Here is the identical plot but now we allow the y-axis to vary between the rows.
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-95-1.pdf}
+
+\hypertarget{single-organism-size-plots-4}{%
+\section{Single organism size plots}\label{single-organism-size-plots-4}}
+
+Here we plot each organism size independently, with the genome length on the x-axis.
+
+\hypertarget{organism-size-16x16-3}{%
+\subsection{Organism size 16x16}\label{organism-size-16x16-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-96-1.pdf}
+
+\hypertarget{organism-size-32x32-3}{%
+\subsection{Organism size 32x32}\label{organism-size-32x32-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-97-1.pdf}
+
+\hypertarget{organism-size-64x64-3}{%
+\subsection{Organism size 64x64}\label{organism-size-64x64-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-98-1.pdf}
+
+\hypertarget{organism-size-128x128-3}{%
+\subsection{Organism size 128x128}\label{organism-size-128x128-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-99-1.pdf}
+
+\hypertarget{organism-size-256x256-3}{%
+\subsection{Organism size 256x256}\label{organism-size-256x256-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-100-1.pdf}
+
+\hypertarget{organism-size-512x512-3}{%
+\subsection{Organism size 512x512}\label{organism-size-512x512-3}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-101-1.pdf}
+
+\hypertarget{single-genome-length-plots-1}{%
+\section{Single genome length plots}\label{single-genome-length-plots-1}}
+
+Here we plot each genome length independently, with the organism size on the x-axis.
+
+\hypertarget{bit-genomes-5}{%
+\subsection{25-bit genomes}\label{bit-genomes-5}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-102-1.pdf}
+
+\hypertarget{bit-genomes-6}{%
+\subsection{50-bit genomes}\label{bit-genomes-6}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-103-1.pdf}
+
+\hypertarget{bit-genomes-7}{%
+\subsection{100-bit genomes}\label{bit-genomes-7}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-104-1.pdf}
+
+\hypertarget{bit-genomes-8}{%
+\subsection{200-bit genomes}\label{bit-genomes-8}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-105-1.pdf}
+
+\hypertarget{bit-genomes-9}{%
+\subsection{400-bit genomes}\label{bit-genomes-9}}
+
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-106-1.pdf}
+
+\hypertarget{statistics-5}{%
+\section{Statistics}\label{statistics-5}}
+
+Since organism size is our main point of comparison, we calculate stats for each genome length.
+
+First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
+If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
+\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
+\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
-##   org_size      p_value      W less_0.01
-## 1       16 4.243294e-02 5831.0     FALSE
-## 2       32 3.489808e-04 6464.0      TRUE
-## 3       64 4.913265e-05 3338.0      TRUE
-## 4      128 3.021256e-02 5887.5     FALSE
-## 5      256 2.561216e-02 4086.0     FALSE
-## 6      512 9.066359e-01 5048.5     FALSE
+##   genome_length      p_value chi_squared df less_0.01
+## 1            25 9.945818e-62    295.3623  5      TRUE
+## 2            50 1.677718e-69    331.5020  5      TRUE
+## 3           100 1.870502e-63    303.3893  5      TRUE
+## 4           200 7.717483e-60    286.5693  5      TRUE
+## 5           400 3.667815e-58    278.7645  5      TRUE
+\end{verbatim}
+
+We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
+\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
+\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
+    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
+\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{)}
+\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
+\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Genome length: '}\NormalTok{, genome_length))}
+  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Genome length: 25"
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1             25     16     32      3.071685e-07 4.388121e-08 2759.0      TRUE
+## 2             25     16     64      2.643511e-06 4.405852e-07 2932.5      TRUE
+## 3             25     16    128      2.296087e-02 7.653623e-03 3908.0     FALSE
+## 4             25     16    256      4.468816e-06 8.937632e-07 7011.5      TRUE
+## 5             25     16    512      1.225546e-26 1.021288e-27 9466.0      TRUE
+## 6             25     32     64      8.795871e-01 8.795871e-01 4937.5     FALSE
+## 7             25     32    128      1.781242e-02 4.453105e-03 6164.5     FALSE
+## 8             25     32    256      8.642790e-19 7.857082e-20 8731.0      TRUE
+## 9             25     32    512      1.295762e-31 8.638414e-33 9881.5      TRUE
+## 10            25     64    128      2.755884e-02 1.377942e-02 6008.5     FALSE
+## 11            25     64    256      8.087490e-17 8.087490e-18 8519.5      TRUE
+## 12            25     64    512      7.929046e-31 5.663604e-32 9817.0      TRUE
+## 13            25    128    256      1.175675e-11 1.469594e-12 7897.0      TRUE
+## 14            25    128    512      9.159152e-29 7.045501e-30 9647.5      TRUE
+## 15            25    256    512      9.448611e-16 1.049846e-16 8397.0      TRUE
+## [1] "Genome length: 50"
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1             50     16     32      1.000000e+00 8.003516e-01 5104.0     FALSE
+## 2             50     16     64      2.328801e-28 1.791386e-29  386.0      TRUE
+## 3             50     16    128      8.546113e-13 1.220873e-13 1965.0      TRUE
+## 4             50     16    256      1.000000e+00 6.285321e-01 5198.5     FALSE
+## 5             50     16    512      2.425365e-23 2.425365e-24 9167.0      TRUE
+## 6             50     32     64      3.889977e-24 3.536343e-25  757.0      TRUE
+## 7             50     32    128      5.002137e-12 8.336895e-13 2071.0      TRUE
+## 8             50     32    256      1.000000e+00 4.257132e-01 5326.5     FALSE
+## 9             50     32    512      4.318415e-25 3.598679e-26 9331.5      TRUE
+## 10            50     64    128      1.000000e+00 3.356981e-01 5394.5     FALSE
+## 11            50     64    256      2.224828e-18 2.781035e-19 8674.5      TRUE
+## 12            50     64    512      7.094686e-32 4.729791e-33 9902.0      TRUE
+## 13            50    128    256      3.110374e-11 6.220748e-12 7814.0      TRUE
+## 14            50    128    512      2.255738e-29 1.611242e-30 9700.0      TRUE
+## 15            50    256    512      1.283931e-19 1.426590e-20 8806.0      TRUE
+## [1] "Genome length: 100"
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            100     16     32      2.153944e-14 2.692430e-15 1764.5      TRUE
+## 2            100     16     64      2.038910e-29 1.359273e-30  294.0      TRUE
+## 3            100     16    128      5.713029e-29 4.080735e-30  333.0      TRUE
+## 4            100     16    256      1.058025e-17 1.175583e-18 1391.0      TRUE
+## 5            100     16    512      3.828744e-06 9.571861e-07 7006.0      TRUE
+## 6            100     32     64      1.000000e+00 7.740365e-01 5118.0     FALSE
+## 7            100     32    128      1.546290e-09 2.577150e-10 2412.0      TRUE
+## 8            100     32    256      1.000000e+00 9.522646e-01 4975.0     FALSE
+## 9            100     32    512      3.415932e-19 3.105393e-20 8772.0      TRUE
+## 10           100     64    128      4.799386e-14 6.856265e-15 1812.5      TRUE
+## 11           100     64    256      1.000000e+00 3.718233e-01 4634.0     FALSE
+## 12           100     64    512      1.603099e-22 1.335916e-23 9098.5      TRUE
+## 13           100    128    256      1.394401e-08 2.788802e-09 7433.0      TRUE
+## 14           100    128    512      1.814275e-28 1.395596e-29 9623.0      TRUE
+## 15           100    256    512      4.379891e-18 4.379891e-19 8654.0      TRUE
+## [1] "Genome length: 200"
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            200     16     32      1.968049e-20 1.640041e-21 1101.0      TRUE
+## 2            200     16     64      4.701928e-31 3.358520e-32  165.0      TRUE
+## 3            200     16    128      4.881587e-33 3.254391e-34    8.0      TRUE
+## 4            200     16    256      1.626707e-20 1.251313e-21 1089.5      TRUE
+## 5            200     16    512      1.000000e+00 5.236501e-01 4738.5     FALSE
+## 6            200     32     64      1.000000e+00 6.010522e-01 4785.5     FALSE
+## 7            200     32    128      5.703607e-18 5.703607e-19 1358.0      TRUE
+## 8            200     32    256      3.453153e-11 4.933076e-12 2172.5      TRUE
+## 9            200     32    512      3.769973e-08 9.424932e-09 7350.0      TRUE
+## 10           200     64    128      4.460538e-12 5.575672e-13 2048.5      TRUE
+## 11           200     64    256      1.883098e-10 3.138497e-11 2282.0      TRUE
+## 12           200     64    512      4.056747e-09 8.113493e-10 7514.5      TRUE
+## 13           200    128    256      9.334382e-03 3.111461e-03 3789.5      TRUE
+## 14           200    128    512      1.801191e-19 1.637446e-20 8800.0      TRUE
+## 15           200    256    512      1.367136e-15 1.519040e-16 8379.0      TRUE
+## [1] "Genome length: 400"
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            400     16     32      1.535030e-25 1.180792e-26  626.0      TRUE
+## 2            400     16     64      4.020270e-29 2.871622e-30  320.5      TRUE
+## 3            400     16    128      2.139736e-30 1.426491e-31  215.0      TRUE
+## 4            400     16    256      3.047545e-19 2.770496e-20 1223.0      TRUE
+## 5            400     16    512      6.790903e-02 1.697726e-02 4022.5     FALSE
+## 6            400     32     64      7.702973e-01 7.702973e-01 5120.0     FALSE
+## 7            400     32    128      2.353267e-24 1.961056e-25  734.0      TRUE
+## 8            400     32    256      3.922288e-16 4.358098e-17 1560.5      TRUE
+## 9            400     32    512      7.607630e-02 3.803815e-02 5849.5     FALSE
+## 10           400     64    128      3.142885e-18 3.142885e-19 1331.0      TRUE
+## 11           400     64    256      6.103704e-16 7.629630e-17 1587.5      TRUE
+## 12           400     64    512      6.790903e-02 2.149175e-02 5941.5     FALSE
+## 13           400    128    256      2.106836e-06 4.213672e-07 2929.0      TRUE
+## 14           400    128    512      3.669212e-11 6.115353e-12 7815.0      TRUE
+## 15           400    256    512      9.548472e-15 1.364067e-15 8270.0      TRUE
 \end{verbatim}
 
 \end{document}

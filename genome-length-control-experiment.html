@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 7 Genome Length Control Experiment | The Evolution of Cellular Restraint in Multicellular Organisms</title>
+  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 7 Genome Length Control Experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="github-repo" content="kgskocelas/Primordium" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 7 Genome Length Control Experiment | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  
+  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  
+
+<meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
+
+
+<meta name="date" content="2021-03-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="genome-length-sweep.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Supplemental Material</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#overview"><i class="fa fa-check"></i><b>1.1</b> Overview</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#interactive-web-app"><i class="fa fa-check"></i><b>1.2</b> Interactive web app</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html"><i class="fa fa-check"></i><b>2</b> Baseline: Varying organism size</a><ul>
+<li class="chapter" data-level="2.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-cleaning"><i class="fa fa-check"></i><b>2.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="2.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-integrity-check"><i class="fa fa-check"></i><b>2.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="2.3" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#aggregate-plots"><i class="fa fa-check"></i><b>2.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#boxplots"><i class="fa fa-check"></i><b>2.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="2.3.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#raincloud-plots"><i class="fa fa-check"></i><b>2.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#statistics"><i class="fa fa-check"></i><b>2.4</b> Statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>3</b> Somatic Mutation Rate Sweep</a><ul>
+<li class="chapter" data-level="3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-cleaning-1"><i class="fa fa-check"></i><b>3.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-integrity-check-1"><i class="fa fa-check"></i><b>3.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="3.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#aggregate-plots-1"><i class="fa fa-check"></i><b>3.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-somatic-mutation-rate"><i class="fa fa-check"></i><b>3.3.1</b> Facet by somatic mutation rate</a></li>
+<li class="chapter" data-level="3.3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-organism-size"><i class="fa fa-check"></i><b>3.3.2</b> Facet by organism size</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-organism-size-plots"><i class="fa fa-check"></i><b>3.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-16x16"><i class="fa fa-check"></i><b>3.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="3.4.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-32x32"><i class="fa fa-check"></i><b>3.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="3.4.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-64x64"><i class="fa fa-check"></i><b>3.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="3.4.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-128x128"><i class="fa fa-check"></i><b>3.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="3.4.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-256x256"><i class="fa fa-check"></i><b>3.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="3.4.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-512x512"><i class="fa fa-check"></i><b>3.4.6</b> Organism size 512x512</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-somatic-mutation-rate-plots"><i class="fa fa-check"></i><b>3.5</b> Single somatic mutation rate plots</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.01"><i class="fa fa-check"></i><b>3.5.1</b> Somatic mut. rate 0.01</a></li>
+<li class="chapter" data-level="3.5.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.02"><i class="fa fa-check"></i><b>3.5.2</b> Somatic mut. rate 0.02</a></li>
+<li class="chapter" data-level="3.5.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.05"><i class="fa fa-check"></i><b>3.5.3</b> Somatic mut. rate 0.05</a></li>
+<li class="chapter" data-level="3.5.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.1"><i class="fa fa-check"></i><b>3.5.4</b> Somatic mut. rate 0.1</a></li>
+<li class="chapter" data-level="3.5.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.2"><i class="fa fa-check"></i><b>3.5.5</b> Somatic mut. rate 0.2</a></li>
+<li class="chapter" data-level="3.5.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.5"><i class="fa fa-check"></i><b>3.5.6</b> Somatic mut. rate 0.5</a></li>
+<li class="chapter" data-level="3.5.7" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-1.0"><i class="fa fa-check"></i><b>3.5.7</b> Somatic mut. rate 1.0</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#statistics-1"><i class="fa fa-check"></i><b>3.6</b> Statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>4</b> Germ Mutation Rate Sweep</a><ul>
+<li class="chapter" data-level="4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-integrity-check-2"><i class="fa fa-check"></i><b>4.1</b> Data integrity check</a></li>
+<li class="chapter" data-level="4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#aggregate-plots-2"><i class="fa fa-check"></i><b>4.2</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-germ-mutation-rate"><i class="fa fa-check"></i><b>4.2.1</b> Facet by germ mutation rate</a></li>
+<li class="chapter" data-level="4.2.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-organism-size-1"><i class="fa fa-check"></i><b>4.2.2</b> Facet by organism size</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-1"><i class="fa fa-check"></i><b>4.3</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-16x16-1"><i class="fa fa-check"></i><b>4.3.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="4.3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-32x32-1"><i class="fa fa-check"></i><b>4.3.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="4.3.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-64x64-1"><i class="fa fa-check"></i><b>4.3.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="4.3.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-128x128-1"><i class="fa fa-check"></i><b>4.3.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="4.3.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-256x256-1"><i class="fa fa-check"></i><b>4.3.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="4.3.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-512x512-1"><i class="fa fa-check"></i><b>4.3.6</b> Organism size 512x512</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-2"><i class="fa fa-check"></i><b>4.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.01"><i class="fa fa-check"></i><b>4.4.1</b> Germ mut. rate 0.01</a></li>
+<li class="chapter" data-level="4.4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.02"><i class="fa fa-check"></i><b>4.4.2</b> Germ mut. rate 0.02</a></li>
+<li class="chapter" data-level="4.4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.05"><i class="fa fa-check"></i><b>4.4.3</b> Germ mut. rate 0.05</a></li>
+<li class="chapter" data-level="4.4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.1"><i class="fa fa-check"></i><b>4.4.4</b> Germ mut. rate 0.1</a></li>
+<li class="chapter" data-level="4.4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.2"><i class="fa fa-check"></i><b>4.4.5</b> Germ mut. rate 0.2</a></li>
+<li class="chapter" data-level="4.4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.5"><i class="fa fa-check"></i><b>4.4.6</b> Germ mut. rate 0.5</a></li>
+<li class="chapter" data-level="4.4.7" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-1.0"><i class="fa fa-check"></i><b>4.4.7</b> Germ mut. rate 1.0</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#statistics-2"><i class="fa fa-check"></i><b>4.5</b> Statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html"><i class="fa fa-check"></i><b>5</b> Timing sample count experiment</a><ul>
+<li class="chapter" data-level="5.1" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-cleaning-2"><i class="fa fa-check"></i><b>5.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="5.2" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-integrity-check-3"><i class="fa fa-check"></i><b>5.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="5.3" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#plot"><i class="fa fa-check"></i><b>5.3</b> Plot</a></li>
+<li class="chapter" data-level="5.4" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#statistics-3"><i class="fa fa-check"></i><b>5.4</b> Statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html"><i class="fa fa-check"></i><b>6</b> Genome Length Sweep</a><ul>
+<li class="chapter" data-level="6.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-cleaning-3"><i class="fa fa-check"></i><b>6.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="6.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-integrity-check-4"><i class="fa fa-check"></i><b>6.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="6.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#aggregate-plots-3"><i class="fa fa-check"></i><b>6.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-genome-length"><i class="fa fa-check"></i><b>6.3.1</b> Facet by genome length</a></li>
+<li class="chapter" data-level="6.3.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-organism-size-2"><i class="fa fa-check"></i><b>6.3.2</b> Facet by organism size</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-organism-size-plots-3"><i class="fa fa-check"></i><b>6.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-16x16-2"><i class="fa fa-check"></i><b>6.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="6.4.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-32x32-2"><i class="fa fa-check"></i><b>6.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="6.4.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-64x64-2"><i class="fa fa-check"></i><b>6.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="6.4.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-128x128-2"><i class="fa fa-check"></i><b>6.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="6.4.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-256x256-2"><i class="fa fa-check"></i><b>6.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="6.4.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-512x512-2"><i class="fa fa-check"></i><b>6.4.6</b> Organism size 512x512</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-genome-length-plots"><i class="fa fa-check"></i><b>6.5</b> Single genome length plots</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes"><i class="fa fa-check"></i><b>6.5.1</b> 25-bit genomes</a></li>
+<li class="chapter" data-level="6.5.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-1"><i class="fa fa-check"></i><b>6.5.2</b> 50-bit genomes</a></li>
+<li class="chapter" data-level="6.5.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-2"><i class="fa fa-check"></i><b>6.5.3</b> 100-bit genomes</a></li>
+<li class="chapter" data-level="6.5.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-3"><i class="fa fa-check"></i><b>6.5.4</b> 200-bit genomes</a></li>
+<li class="chapter" data-level="6.5.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-4"><i class="fa fa-check"></i><b>6.5.5</b> 400-bit genomes</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#statistics-4"><i class="fa fa-check"></i><b>6.6</b> Statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html"><i class="fa fa-check"></i><b>7</b> Genome Length Control Experiment</a><ul>
+<li class="chapter" data-level="7.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#data-cleaning-4"><i class="fa fa-check"></i><b>7.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="7.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#data-integrity-check-5"><i class="fa fa-check"></i><b>7.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="7.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#aggregate-plots-4"><i class="fa fa-check"></i><b>7.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#facet-by-genome-length-1"><i class="fa fa-check"></i><b>7.3.1</b> Facet by genome length</a></li>
+<li class="chapter" data-level="7.3.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#facet-by-organism-size-3"><i class="fa fa-check"></i><b>7.3.2</b> Facet by organism size</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-organism-size-plots-4"><i class="fa fa-check"></i><b>7.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-16x16-3"><i class="fa fa-check"></i><b>7.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="7.4.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-32x32-3"><i class="fa fa-check"></i><b>7.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="7.4.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-64x64-3"><i class="fa fa-check"></i><b>7.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="7.4.4" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-128x128-3"><i class="fa fa-check"></i><b>7.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="7.4.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-256x256-3"><i class="fa fa-check"></i><b>7.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="7.4.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-512x512-3"><i class="fa fa-check"></i><b>7.4.6</b> Organism size 512x512</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-genome-length-plots-1"><i class="fa fa-check"></i><b>7.5</b> Single genome length plots</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-5"><i class="fa fa-check"></i><b>7.5.1</b> 25-bit genomes</a></li>
+<li class="chapter" data-level="7.5.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-6"><i class="fa fa-check"></i><b>7.5.2</b> 50-bit genomes</a></li>
+<li class="chapter" data-level="7.5.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-7"><i class="fa fa-check"></i><b>7.5.3</b> 100-bit genomes</a></li>
+<li class="chapter" data-level="7.5.4" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-8"><i class="fa fa-check"></i><b>7.5.4</b> 200-bit genomes</a></li>
+<li class="chapter" data-level="7.5.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-9"><i class="fa fa-check"></i><b>7.5.5</b> 400-bit genomes</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-5"><i class="fa fa-check"></i><b>7.6</b> Statistics</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The Evolution of Cellular Restraint in Multicellular Organisms</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="genome-length-control-experiment" class="section level1">
+<h1><span class="header-section-number">Section 7</span> Genome Length Control Experiment</h1>
+<p>In the genome length experiment we observed that varying the genome length affects the evolution of organism in two ways:
+1) mutational pressure is reduced at the population level as genome length increases
+2) longer genomes have a higher organism fitness at the same restraint buffer value.
+We wanted to test the effect of reduced mutational pressure by itself.</p>
+<p>To accomplish this, we generated fitness data for organisms with 400-bit genomes.
+For smaller genome lengths we reuse the 400-bit data by lining up restraint buffer values.
+Thus the difference in genome lengths simply changes the range of restraint buffer values available in the genome.
+The fitness data for 64x64 organisms is shown below, showing the range of each genome.</p>
+<div class="figure">
+<img src="genome_length_control/timing_control_explanation.png" title="Genome length control explainer" alt="Genome length control explainer" />
+<p class="caption">Genome length control explainer</p>
+</div>
+<p>The configuration script and data for the experiment can be found under <code>2021_03_04__genome_length_control/</code> in the experiments directory of the git repository.</p>
+<div id="data-cleaning-4" class="section level2">
+<h2><span class="header-section-number">7.1</span> Data cleaning</h2>
+<p>Load necessary libraries</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb41-3" title="3"><span class="kw">library</span>(ggridges)</a>
+<a class="sourceLine" id="cb41-4" title="4"><span class="kw">library</span>(scales)</a>
+<a class="sourceLine" id="cb41-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
+<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1"><span class="co"># Load the data</span></a>
+<a class="sourceLine" id="cb42-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(          <span class="st">&#39;../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_50.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb42-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_200.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb42-4" title="4">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_100.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb42-5" title="5">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_400.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb42-6" title="6">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_25.csv&#39;</span>))</a>
+<a class="sourceLine" id="cb42-7" title="7"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
+<a class="sourceLine" id="cb42-8" title="8">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
+<a class="sourceLine" id="cb42-9" title="9"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
+<a class="sourceLine" id="cb42-10" title="10">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
+<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
+<a class="sourceLine" id="cb43-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, LENGTH)</a>
+<a class="sourceLine" id="cb43-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
+<p>We clean the data and create a few helper variables to make plotting easier.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="co"># Calculate restraint value (x - 60% of the genome length)</span></a>
+<a class="sourceLine" id="cb44-2" title="2">df2<span class="op">$</span>restraint_value =<span class="st"> </span>df2<span class="op">$</span>ave_ones <span class="op">-</span><span class="st"> </span>(df2<span class="op">$</span>LENGTH <span class="op">*</span><span class="st"> </span><span class="fl">0.6</span>)</a>
+<a class="sourceLine" id="cb44-3" title="3"><span class="co"># Make a nice, clean factor for size</span></a>
+<a class="sourceLine" id="cb44-4" title="4">df2<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, df2<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb44-5" title="5">df2<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb44-6" title="6">df2<span class="op">$</span>size_factor_reversed =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>)))</a>
+<a class="sourceLine" id="cb44-7" title="7">df2<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(df2<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
+<a class="sourceLine" id="cb44-8" title="8">df2<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(df2<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
+<a class="sourceLine" id="cb44-9" title="9">data_summary<span class="op">$</span>size_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>MCSIZE, <span class="st">&#39;x&#39;</span>, data_summary<span class="op">$</span>MCSIZE)</a>
+<a class="sourceLine" id="cb44-10" title="10">data_summary<span class="op">$</span>size_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>size_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;16x16&#39;</span>, <span class="st">&#39;32x32&#39;</span>, <span class="st">&#39;64x64&#39;</span>, <span class="st">&#39;128x128&#39;</span>, <span class="st">&#39;256x256&#39;</span>, <span class="st">&#39;512x512&#39;</span>, <span class="st">&#39;1024x1024&#39;</span>))</a>
+<a class="sourceLine" id="cb44-11" title="11">data_summary<span class="op">$</span>length_str =<span class="st"> </span><span class="kw">paste0</span>(data_summary<span class="op">$</span>LENGTH, <span class="st">&#39;-bit&#39;</span>)</a>
+<a class="sourceLine" id="cb44-12" title="12">data_summary<span class="op">$</span>length_factor =<span class="st"> </span><span class="kw">factor</span>(data_summary<span class="op">$</span>length_str, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;25-bit&#39;</span>, <span class="st">&#39;50-bit&#39;</span>, <span class="st">&#39;100-bit&#39;</span>, <span class="st">&#39;200-bit&#39;</span>, <span class="st">&#39;400-bit&#39;</span>))</a>
+<a class="sourceLine" id="cb44-13" title="13"><span class="co"># Create a map of colors we&#39;ll use to plot the different organism sizes</span></a>
+<a class="sourceLine" id="cb44-14" title="14">color_vec =<span class="st"> </span><span class="kw">as.character</span>(khroma<span class="op">::</span><span class="kw">color</span>(<span class="st">&#39;bright&#39;</span>)(<span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb44-15" title="15">color_map =<span class="st"> </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb44-16" title="16">  <span class="st">&#39;16x16&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb44-17" title="17">  <span class="st">&#39;32x32&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb44-18" title="18">  <span class="st">&#39;64x64&#39;</span> =<span class="st">     </span>color_vec[<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb44-19" title="19">  <span class="st">&#39;128x128&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">4</span>],</a>
+<a class="sourceLine" id="cb44-20" title="20">  <span class="st">&#39;256x256&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">5</span>],</a>
+<a class="sourceLine" id="cb44-21" title="21">  <span class="st">&#39;512x512&#39;</span> =<span class="st">   </span>color_vec[<span class="dv">6</span>],</a>
+<a class="sourceLine" id="cb44-22" title="22">  <span class="st">&#39;1024x1024&#39;</span> =<span class="st"> </span>color_vec[<span class="dv">7</span>]</a>
+<a class="sourceLine" id="cb44-23" title="23">)</a>
+<a class="sourceLine" id="cb44-24" title="24"><span class="co"># Set the sizes for text in plots</span></a>
+<a class="sourceLine" id="cb44-25" title="25">text_major_size =<span class="st"> </span><span class="dv">18</span></a>
+<a class="sourceLine" id="cb44-26" title="26">text_minor_size =<span class="st"> </span><span class="dv">16</span> </a></code></pre></div>
+</div>
+<div id="data-integrity-check-5" class="section level2">
+<h2><span class="header-section-number">7.2</span> Data integrity check</h2>
+<p>Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Each row shows a different genome length (in bits).
+Each bar/color shows a different organism size.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-91-1.png" width="576" /></p>
+</div>
+<div id="aggregate-plots-4" class="section level2">
+<h2><span class="header-section-number">7.3</span> Aggregate plots</h2>
+<div id="facet-by-genome-length-1" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> Facet by genome length</h3>
+<p>Here we plot all the data at once.
+Each row shows a different somatic mutation rate and each boxplot shows a given organism size.</p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-92-1.png" width="576" /></p>
+<p>Here we plot the same data, only we allow the y-axis to vary between rows.
+<img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-93-1.png" width="576" /></p>
+</div>
+<div id="facet-by-organism-size-3" class="section level3">
+<h3><span class="header-section-number">7.3.2</span> Facet by organism size</h3>
+<p>Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.</p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-94-1.png" width="576" /></p>
+<p>Here is the identical plot but now we allow the y-axis to vary between the rows.</p>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-95-1.png" width="576" /></p>
+</div>
+</div>
+<div id="single-organism-size-plots-4" class="section level2">
+<h2><span class="header-section-number">7.4</span> Single organism size plots</h2>
+<p>Here we plot each organism size independently, with the genome length on the x-axis.</p>
+<div id="organism-size-16x16-3" class="section level3">
+<h3><span class="header-section-number">7.4.1</span> Organism size 16x16</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-96-1.png" width="576" /></p>
+</div>
+<div id="organism-size-32x32-3" class="section level3">
+<h3><span class="header-section-number">7.4.2</span> Organism size 32x32</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-97-1.png" width="576" /></p>
+</div>
+<div id="organism-size-64x64-3" class="section level3">
+<h3><span class="header-section-number">7.4.3</span> Organism size 64x64</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-98-1.png" width="576" /></p>
+</div>
+<div id="organism-size-128x128-3" class="section level3">
+<h3><span class="header-section-number">7.4.4</span> Organism size 128x128</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-99-1.png" width="576" /></p>
+</div>
+<div id="organism-size-256x256-3" class="section level3">
+<h3><span class="header-section-number">7.4.5</span> Organism size 256x256</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-100-1.png" width="576" /></p>
+</div>
+<div id="organism-size-512x512-3" class="section level3">
+<h3><span class="header-section-number">7.4.6</span> Organism size 512x512</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-101-1.png" width="576" /></p>
+</div>
+</div>
+<div id="single-genome-length-plots-1" class="section level2">
+<h2><span class="header-section-number">7.5</span> Single genome length plots</h2>
+<p>Here we plot each genome length independently, with the organism size on the x-axis.</p>
+<div id="bit-genomes-5" class="section level3">
+<h3><span class="header-section-number">7.5.1</span> 25-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-102-1.png" width="576" /></p>
+</div>
+<div id="bit-genomes-6" class="section level3">
+<h3><span class="header-section-number">7.5.2</span> 50-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-103-1.png" width="576" /></p>
+</div>
+<div id="bit-genomes-7" class="section level3">
+<h3><span class="header-section-number">7.5.3</span> 100-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-104-1.png" width="576" /></p>
+</div>
+<div id="bit-genomes-8" class="section level3">
+<h3><span class="header-section-number">7.5.4</span> 200-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-105-1.png" width="576" /></p>
+</div>
+<div id="bit-genomes-9" class="section level3">
+<h3><span class="header-section-number">7.5.5</span> 400-bit genomes</h3>
+<p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-106-1.png" width="576" /></p>
+</div>
+</div>
+<div id="statistics-5" class="section level2">
+<h2><span class="header-section-number">7.6</span> Statistics</h2>
+<p>Since organism size is our main point of comparison, we calculate stats for each genome length.</p>
+<p>First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
+If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">  length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
+<a class="sourceLine" id="cb45-2" title="2">  df_kruskal =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb45-3" title="3">  <span class="kw">colnames</span>(df_kruskal) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;p_value&#39;</span>, <span class="st">&#39;chi_squared&#39;</span>, <span class="st">&#39;df&#39;</span>)</a>
+<a class="sourceLine" id="cb45-4" title="4">  <span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
+<a class="sourceLine" id="cb45-5" title="5">    df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
+<a class="sourceLine" id="cb45-6" title="6">    res =<span class="st"> </span><span class="kw">kruskal.test</span>(df_test<span class="op">$</span>restraint_value <span class="op">~</span><span class="st"> </span>df_test<span class="op">$</span>MCSIZE, df_test)</a>
+<a class="sourceLine" id="cb45-7" title="7">    df_kruskal[<span class="kw">nrow</span>(df_kruskal) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>], <span class="kw">as.numeric</span>(res<span class="op">$</span>parameter)[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb45-8" title="8">  }</a>
+<a class="sourceLine" id="cb45-9" title="9">  df_kruskal<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_kruskal<span class="op">$</span>p_value <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
+<a class="sourceLine" id="cb45-10" title="10">  <span class="kw">print</span>(df_kruskal)</a></code></pre></div>
+<pre><code>##   genome_length      p_value chi_squared df less_0.01
+## 1            25 9.945818e-62    295.3623  5      TRUE
+## 2            50 1.677718e-69    331.5020  5      TRUE
+## 3           100 1.870502e-63    303.3893  5      TRUE
+## 4           200 7.717483e-60    286.5693  5      TRUE
+## 5           400 3.667815e-58    278.7645  5      TRUE</code></pre>
+<p>We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
+<a class="sourceLine" id="cb47-2" title="2">length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
+<a class="sourceLine" id="cb47-3" title="3"><span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>
+<a class="sourceLine" id="cb47-4" title="4">  df_test =<span class="st"> </span>df2[df2<span class="op">$</span>LENGTH <span class="op">==</span><span class="st"> </span>genome_length,]</a>
+<a class="sourceLine" id="cb47-5" title="5">  df_wilcox =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">data =</span> <span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">0</span>, <span class="dt">ncol =</span> <span class="dv">6</span>))</a>
+<a class="sourceLine" id="cb47-6" title="6">  <span class="kw">colnames</span>(df_wilcox) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;genome_length&#39;</span>, <span class="st">&#39;size_a&#39;</span>, <span class="st">&#39;size_b&#39;</span>, <span class="st">&#39;p_value_corrected&#39;</span>, <span class="st">&#39;p_value_raw&#39;</span>, <span class="st">&#39;W&#39;</span>)</a>
+<a class="sourceLine" id="cb47-7" title="7">  <span class="cf">for</span>(size_idx_a <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(<span class="kw">length</span>(size_vec) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)){</a>
+<a class="sourceLine" id="cb47-8" title="8">    size_a =<span class="st"> </span>size_vec[size_idx_a]</a>
+<a class="sourceLine" id="cb47-9" title="9">    <span class="cf">for</span>(size_idx_b <span class="cf">in</span> (size_idx_a <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span><span class="kw">length</span>(size_vec)){</a>
+<a class="sourceLine" id="cb47-10" title="10">      size_b =<span class="st"> </span>size_vec[size_idx_b]</a>
+<a class="sourceLine" id="cb47-11" title="11">      res =<span class="st"> </span><span class="kw">wilcox.test</span>(df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_a,]<span class="op">$</span>restraint_value, df_test[df_test<span class="op">$</span>MCSIZE <span class="op">==</span><span class="st"> </span>size_b,]<span class="op">$</span>restraint_value, <span class="dt">alternative =</span> <span class="st">&#39;two.sided&#39;</span>)</a>
+<a class="sourceLine" id="cb47-12" title="12">      df_wilcox[<span class="kw">nrow</span>(df_wilcox) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,] =<span class="st"> </span><span class="kw">c</span>(genome_length, size_a, size_b, <span class="dv">0</span>, res<span class="op">$</span>p.value, <span class="kw">as.numeric</span>(res<span class="op">$</span>statistic)[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb47-13" title="13">    }</a>
+<a class="sourceLine" id="cb47-14" title="14">  }</a>
+<a class="sourceLine" id="cb47-15" title="15">  df_wilcox<span class="op">$</span>p_value_corrected =<span class="st"> </span><span class="kw">p.adjust</span>(df_wilcox<span class="op">$</span>p_value_raw, <span class="dt">method =</span> <span class="st">&#39;holm&#39;</span>)</a>
+<a class="sourceLine" id="cb47-16" title="16">  df_wilcox<span class="op">$</span>less_<span class="fl">0.01</span> =<span class="st"> </span>df_wilcox<span class="op">$</span>p_value_corrected <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span></a>
+<a class="sourceLine" id="cb47-17" title="17">  <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&#39;Genome length: &#39;</span>, genome_length))</a>
+<a class="sourceLine" id="cb47-18" title="18">  <span class="kw">print</span>(df_wilcox)</a>
+<a class="sourceLine" id="cb47-19" title="19">}</a></code></pre></div>
+<pre><code>## [1] &quot;Genome length: 25&quot;
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1             25     16     32      3.071685e-07 4.388121e-08 2759.0      TRUE
+## 2             25     16     64      2.643511e-06 4.405852e-07 2932.5      TRUE
+## 3             25     16    128      2.296087e-02 7.653623e-03 3908.0     FALSE
+## 4             25     16    256      4.468816e-06 8.937632e-07 7011.5      TRUE
+## 5             25     16    512      1.225546e-26 1.021288e-27 9466.0      TRUE
+## 6             25     32     64      8.795871e-01 8.795871e-01 4937.5     FALSE
+## 7             25     32    128      1.781242e-02 4.453105e-03 6164.5     FALSE
+## 8             25     32    256      8.642790e-19 7.857082e-20 8731.0      TRUE
+## 9             25     32    512      1.295762e-31 8.638414e-33 9881.5      TRUE
+## 10            25     64    128      2.755884e-02 1.377942e-02 6008.5     FALSE
+## 11            25     64    256      8.087490e-17 8.087490e-18 8519.5      TRUE
+## 12            25     64    512      7.929046e-31 5.663604e-32 9817.0      TRUE
+## 13            25    128    256      1.175675e-11 1.469594e-12 7897.0      TRUE
+## 14            25    128    512      9.159152e-29 7.045501e-30 9647.5      TRUE
+## 15            25    256    512      9.448611e-16 1.049846e-16 8397.0      TRUE
+## [1] &quot;Genome length: 50&quot;
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1             50     16     32      1.000000e+00 8.003516e-01 5104.0     FALSE
+## 2             50     16     64      2.328801e-28 1.791386e-29  386.0      TRUE
+## 3             50     16    128      8.546113e-13 1.220873e-13 1965.0      TRUE
+## 4             50     16    256      1.000000e+00 6.285321e-01 5198.5     FALSE
+## 5             50     16    512      2.425365e-23 2.425365e-24 9167.0      TRUE
+## 6             50     32     64      3.889977e-24 3.536343e-25  757.0      TRUE
+## 7             50     32    128      5.002137e-12 8.336895e-13 2071.0      TRUE
+## 8             50     32    256      1.000000e+00 4.257132e-01 5326.5     FALSE
+## 9             50     32    512      4.318415e-25 3.598679e-26 9331.5      TRUE
+## 10            50     64    128      1.000000e+00 3.356981e-01 5394.5     FALSE
+## 11            50     64    256      2.224828e-18 2.781035e-19 8674.5      TRUE
+## 12            50     64    512      7.094686e-32 4.729791e-33 9902.0      TRUE
+## 13            50    128    256      3.110374e-11 6.220748e-12 7814.0      TRUE
+## 14            50    128    512      2.255738e-29 1.611242e-30 9700.0      TRUE
+## 15            50    256    512      1.283931e-19 1.426590e-20 8806.0      TRUE
+## [1] &quot;Genome length: 100&quot;
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            100     16     32      2.153944e-14 2.692430e-15 1764.5      TRUE
+## 2            100     16     64      2.038910e-29 1.359273e-30  294.0      TRUE
+## 3            100     16    128      5.713029e-29 4.080735e-30  333.0      TRUE
+## 4            100     16    256      1.058025e-17 1.175583e-18 1391.0      TRUE
+## 5            100     16    512      3.828744e-06 9.571861e-07 7006.0      TRUE
+## 6            100     32     64      1.000000e+00 7.740365e-01 5118.0     FALSE
+## 7            100     32    128      1.546290e-09 2.577150e-10 2412.0      TRUE
+## 8            100     32    256      1.000000e+00 9.522646e-01 4975.0     FALSE
+## 9            100     32    512      3.415932e-19 3.105393e-20 8772.0      TRUE
+## 10           100     64    128      4.799386e-14 6.856265e-15 1812.5      TRUE
+## 11           100     64    256      1.000000e+00 3.718233e-01 4634.0     FALSE
+## 12           100     64    512      1.603099e-22 1.335916e-23 9098.5      TRUE
+## 13           100    128    256      1.394401e-08 2.788802e-09 7433.0      TRUE
+## 14           100    128    512      1.814275e-28 1.395596e-29 9623.0      TRUE
+## 15           100    256    512      4.379891e-18 4.379891e-19 8654.0      TRUE
+## [1] &quot;Genome length: 200&quot;
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            200     16     32      1.968049e-20 1.640041e-21 1101.0      TRUE
+## 2            200     16     64      4.701928e-31 3.358520e-32  165.0      TRUE
+## 3            200     16    128      4.881587e-33 3.254391e-34    8.0      TRUE
+## 4            200     16    256      1.626707e-20 1.251313e-21 1089.5      TRUE
+## 5            200     16    512      1.000000e+00 5.236501e-01 4738.5     FALSE
+## 6            200     32     64      1.000000e+00 6.010522e-01 4785.5     FALSE
+## 7            200     32    128      5.703607e-18 5.703607e-19 1358.0      TRUE
+## 8            200     32    256      3.453153e-11 4.933076e-12 2172.5      TRUE
+## 9            200     32    512      3.769973e-08 9.424932e-09 7350.0      TRUE
+## 10           200     64    128      4.460538e-12 5.575672e-13 2048.5      TRUE
+## 11           200     64    256      1.883098e-10 3.138497e-11 2282.0      TRUE
+## 12           200     64    512      4.056747e-09 8.113493e-10 7514.5      TRUE
+## 13           200    128    256      9.334382e-03 3.111461e-03 3789.5      TRUE
+## 14           200    128    512      1.801191e-19 1.637446e-20 8800.0      TRUE
+## 15           200    256    512      1.367136e-15 1.519040e-16 8379.0      TRUE
+## [1] &quot;Genome length: 400&quot;
+##    genome_length size_a size_b p_value_corrected  p_value_raw      W less_0.01
+## 1            400     16     32      1.535030e-25 1.180792e-26  626.0      TRUE
+## 2            400     16     64      4.020270e-29 2.871622e-30  320.5      TRUE
+## 3            400     16    128      2.139736e-30 1.426491e-31  215.0      TRUE
+## 4            400     16    256      3.047545e-19 2.770496e-20 1223.0      TRUE
+## 5            400     16    512      6.790903e-02 1.697726e-02 4022.5     FALSE
+## 6            400     32     64      7.702973e-01 7.702973e-01 5120.0     FALSE
+## 7            400     32    128      2.353267e-24 1.961056e-25  734.0      TRUE
+## 8            400     32    256      3.922288e-16 4.358098e-17 1560.5      TRUE
+## 9            400     32    512      7.607630e-02 3.803815e-02 5849.5     FALSE
+## 10           400     64    128      3.142885e-18 3.142885e-19 1331.0      TRUE
+## 11           400     64    256      6.103704e-16 7.629630e-17 1587.5      TRUE
+## 12           400     64    512      6.790903e-02 2.149175e-02 5941.5     FALSE
+## 13           400    128    256      2.106836e-06 4.213672e-07 2929.0      TRUE
+## 14           400    128    512      3.669212e-11 6.115353e-12 7815.0      TRUE
+## 15           400    256    512      9.548472e-15 1.364067e-15 8270.0      TRUE</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="genome-length-sweep.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/kgskocelas/Primordium/tree/main/genome_length_control/main.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["primordium_supplemental_material.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
