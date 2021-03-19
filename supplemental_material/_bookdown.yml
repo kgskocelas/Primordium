@@ -9,6 +9,7 @@ rmd_files: [
   "soma_sweep/main.Rmd",
   "germ_sweep/main.Rmd",
   "sample_test/main.Rmd",
+  "pop_size/main.Rmd",
   "genome_length_sweep/main.Rmd",
   "genome_length_control/main.Rmd",
 ]
