@@ -1379,10 +1379,119 @@ We see that significant variation exists within each genome length, so we perfor
 ## 15           400    256    512      6.084030e-12 1.014005e-12 7918.0      TRUE
 \end{verbatim}
 
-\hypertarget{test-of-timing-sample-counts}{%
-\chapter{Test of timing sample counts}\label{test-of-timing-sample-counts}}
+\hypertarget{timing-sample-count-experiment}{%
+\chapter{Timing sample count experiment}\label{timing-sample-count-experiment}}
 
-TBD
+By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for fitness in Primordium (a fresh batch for each experiment).
+With this experiment we showed that increasing this number to 10,000 has no qualitative difference on results.
+This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.
+
+\hypertarget{data-cleaning-3}{%
+\section{Data cleaning}\label{data-cleaning-3}}
+
+Load necessary libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggridges)}
+\KeywordTok{library}\NormalTok{(scales)}
+\KeywordTok{library}\NormalTok{(khroma)}
+\end{Highlighting}
+\end{Shaded}
+
+Load the data and trim all the unecessay bits (\emph{e.g.}, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv'}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv'}\NormalTok{))}
+\NormalTok{df}\OperatorTok{$}\NormalTok{LENGTH =}\StringTok{ }\DecValTok{100}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'}\NormalTok{))}
+\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+We group and summarize the data to make to ensure all replicates are present.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Group the data by size and summarize}
+\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, SAMPLES)}
+\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+We clean the data and create a few helper variables to make plotting easier.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
+\CommentTok{# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
+\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
+\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\NormalTok{)}
+\CommentTok{# Set the sizes for text in plots}
+\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-integrity-check-4}{%
+\section{Data integrity check}\label{data-integrity-check-4}}
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Rows show the number of samples used for fitness.
+Each bar/color shows a different organism size.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-84-1.pdf}
+
+\hypertarget{plot}{%
+\section{Plot}\label{plot}}
+
+Here we plot all the data.
+The figure is split into 6 subplots, each showing a different organism size.
+Inside each subplot, the number of timing samples is shown on the x-axis.
+\includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-85-1.pdf}
+
+\hypertarget{statistics-4}{%
+\section{Statistics}\label{statistics-4}}
+
+The plot shows that the general trend, that the evolved restraint buffer initially increases with organism but then decreases, holds true at both sample counts.
+Further, we see that the evolved buffer values are fairly consistent between the two sample counts.
+
+While we concluded this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here.
+Since we treat each organism size as a group, we simply take a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
+
+\begin{verbatim}
+##   org_size      p_value      W less_0.01
+## 1       16 4.243294e-02 5831.0     FALSE
+## 2       32 3.489808e-04 6464.0      TRUE
+## 3       64 4.913265e-05 3338.0      TRUE
+## 4      128 3.021256e-02 5887.5     FALSE
+## 5      256 2.561216e-02 4086.0     FALSE
+## 6      512 9.066359e-01 5048.5     FALSE
+\end{verbatim}
 
 \hypertarget{interactive-web-app}{%
 \chapter{Interactive web app}\label{interactive-web-app}}
