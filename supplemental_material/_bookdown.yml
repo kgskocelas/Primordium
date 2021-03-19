@@ -10,6 +10,5 @@ rmd_files: [
   "germ_sweep/main.Rmd",
   "genome_length_sweep/main.Rmd",
   "sample_test/main.Rmd",
-  "web_app/main.Rmd"
 ]
 
