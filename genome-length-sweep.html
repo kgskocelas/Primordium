@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 7 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 7 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 7 Genome Length Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -278,7 +287,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="genome-length-sweep" class="section level1">
 <h1><span class="header-section-number">Section 7</span> Genome Length Sweep</h1>
 <p>By default, all genomes are bitstrings with 100 bits.
-Here, we look into the effects of varying this genome length (we use values 25, 50, 100, 200, and 400 bits).</p>
+Here, we look into the effects of varying this genome length using lengths of 25, 50, 100, 200, and 400 bits.</p>
 <p>The configuration script and data for the experiment can be found under <code>2021_02_27__genome_length/</code> in the experiments directory of the git repository.</p>
 <div id="data-cleaning-4" class="section level2">
 <h2><span class="header-section-number">7.1</span> Data cleaning</h2>
@@ -288,7 +297,7 @@ Here, we look into the effects of varying this genome length (we use values 25, 
 <a class="sourceLine" id="cb38-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb38-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb38-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim include only the final generation data for sizes 16x16 to 512x512.</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb39-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_50.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb39-3" title="3">df =<span class="st"> </span><span class="kw">rbind</span>(df, <span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_200.csv&#39;</span>))</a>
@@ -299,7 +308,7 @@ Here, we look into the effects of varying this genome length (we use values 25, 
 <a class="sourceLine" id="cb39-8" title="8">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
 <a class="sourceLine" id="cb39-9" title="9"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
 <a class="sourceLine" id="cb39-10" title="10">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
-<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<p>We group and summarize the data to ensure all replicates are present.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
 <a class="sourceLine" id="cb40-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, LENGTH)</a>
 <a class="sourceLine" id="cb40-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
@@ -344,7 +353,7 @@ Each bar/color shows a different organism size.
 <div id="facet-by-genome-length" class="section level3">
 <h3><span class="header-section-number">7.3.1</span> Facet by genome length</h3>
 <p>Here we plot all the data at once.
-Each row showing a different somatic mutation rate and each boxplot shows a given organism size.</p>
+Each row shows a different genome length and each boxplot shows a given organism size.</p>
 <p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-77-1.png" width="576" /></p>
 <p>Here we plot the same data, only we allow the y-axis to vary between rows.
 <img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-78-1.png" width="576" /></p>
@@ -353,7 +362,7 @@ Each row showing a different somatic mutation rate and each boxplot shows a give
 <h3><span class="header-section-number">7.3.2</span> Facet by organism size</h3>
 <p>Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.</p>
 <p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-79-1.png" width="576" /></p>
-<p>Here is the identical plot but now we allow the y-axis to vary between the rows.</p>
+<p>Here is the identical plot, but now we allow the y-axis to vary between the rows.</p>
 <p><img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-80-1.png" width="576" /></p>
 </div>
 </div>
@@ -411,7 +420,7 @@ Each row showing a different somatic mutation rate and each boxplot shows a give
 </div>
 <div id="statistics-5" class="section level2">
 <h2><span class="header-section-number">7.6</span> Statistics</h2>
-<p>Since organism size is our main point of comparison, we calculate stats for each genome length.</p>
+<p>Since organism size is our main point of comparison, we calculate statistics for each genome length.</p>
 <p>First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
@@ -431,7 +440,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
 ## 3           100 7.491319e-60    286.6294  5      TRUE
 ## 4           200 1.626963e-75    359.4358  5      TRUE
 ## 5           400 2.857912e-49    237.3380  5      TRUE</code></pre>
-<p>We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
+<p>We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
 <a class="sourceLine" id="cb44-2" title="2">length_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)</a>
 <a class="sourceLine" id="cb44-3" title="3"><span class="cf">for</span>(genome_length <span class="cf">in</span> length_vec){</a>

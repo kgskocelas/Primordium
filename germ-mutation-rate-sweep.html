@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 4 Germ Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 4 Germ Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 4 Germ Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -278,16 +287,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="germ-mutation-rate-sweep" class="section level1">
 <h1><span class="header-section-number">Section 4</span> Germ Mutation Rate Sweep</h1>
 <p>This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-We varied the mutation rate, the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.</p>
-<p>The final default germ mutation rate was 0.02 (<em>i.e.</em>, each organism reproduction has a 2% chance of mutation).</p>
+We varied the mutation rate, which is the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.
+The final default germ mutation rate was 0.02 (<em>i.e.</em>, each organism reproduction has a 2% chance of mutation).</p>
 <p>The configuration script and data for the experiment can be found under <code>2021_02_16__germ_mut_fin/</code> in the experiments directory of the git repository.</p>
-<p>Load necessary libraries</p>
+<p>Load necessary R libraries</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb18-2" title="2"><span class="kw">library</span>(ggplot2)</a>
 <a class="sourceLine" id="cb18-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb18-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb18-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim include only the final generation data for sizes 16x16 to 512x512.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb19-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb19-3" title="3"><span class="co">#df = read.csv(&#39;/research/rogue_cell/Primordium/experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv&#39;)</span></a>
@@ -297,7 +306,7 @@ We varied the mutation rate, the probability that an offspring experineces a mut
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
 <a class="sourceLine" id="cb21-2" title="2"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
 <a class="sourceLine" id="cb21-3" title="3">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
-<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<p>We group and summarize the data to ensure all replicates are present.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
 <a class="sourceLine" id="cb22-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, MUT)</a>
 <a class="sourceLine" id="cb22-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
@@ -438,7 +447,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
 ## 5          0.20 3.180895e-85    404.4991  5      TRUE
 ## 6          0.50 4.313881e-91    431.7152  5      TRUE
 ## 7          1.00 2.144229e-92    437.7600  5      TRUE</code></pre>
-<p>We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
+<p>We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
 <a class="sourceLine" id="cb26-2" title="2">mut_vec =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb26-3" title="3"><span class="cf">for</span>(mut_rate <span class="cf">in</span> mut_vec){</a>

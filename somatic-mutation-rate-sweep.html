@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Section 3 Somatic Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Section 3 Somatic Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Section 3 Somatic Mutation Rate Sweep | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for our ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
@@ -255,6 +255,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
+<li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
 
@@ -277,9 +286,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="somatic-mutation-rate-sweep" class="section level1">
 <h1><span class="header-section-number">Section 3</span> Somatic Mutation Rate Sweep</h1>
-<p>This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-Here, we vary the somatic mutation rate, the probability that a cell replication will result in the offspring cell having a different restraint value from its parent.</p>
-<p>We settled on a somatic mutation rate of 0.5 (<em>i.e.</em>, each cell replication has a 50% chance of mutation).</p>
+<p>This was one of the prelimary experiments we conducted to find the default parameters for Primordium.
+Here, we vary the somatic mutation rate, which is the probability that a cell replication will result in a mutation to the offspring’s genome.
+We settled on a somatic mutation rate of 0.5 (<em>i.e.</em>, each cell replication has a 50% chance of mutation).</p>
 <p>The configuration script and data for the experiment can be found under <code>2021_02_27__soma_mut_fin/</code> in the experiments directory of the git repository.</p>
 <div id="data-cleaning-1" class="section level2">
 <h2><span class="header-section-number">3.1</span> Data cleaning</h2>
@@ -289,14 +298,14 @@ Here, we vary the somatic mutation rate, the probability that a cell replication
 <a class="sourceLine" id="cb10-3" title="3"><span class="kw">library</span>(ggridges)</a>
 <a class="sourceLine" id="cb10-4" title="4"><span class="kw">library</span>(scales)</a>
 <a class="sourceLine" id="cb10-5" title="5"><span class="kw">library</span>(khroma)</a></code></pre></div>
-<p>Load the data and trim all the unecessay bits (<em>e.g.</em>, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read).</p>
+<p>Load the data and trim include only the final generation data for sizes 16x16 to 512x512.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># Load the data</span></a>
 <a class="sourceLine" id="cb11-2" title="2">df =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;../experiments/2021_02_27__soma_mut_fin/evolution/data/scraped_evolution_data.csv&#39;</span>)</a>
 <a class="sourceLine" id="cb11-3" title="3"><span class="co"># Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000</span></a>
 <a class="sourceLine" id="cb11-4" title="4">df2 =<span class="st"> </span>df[<span class="op">!</span><span class="kw">is.na</span>(df<span class="op">$</span>MCSIZE) <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>generation <span class="op">==</span><span class="st"> </span><span class="dv">10000</span>,]</a>
 <a class="sourceLine" id="cb11-5" title="5"><span class="co"># Ignore data for size 8x8 and 1024x1024</span></a>
 <a class="sourceLine" id="cb11-6" title="6">df2 =<span class="st"> </span>df2[df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>df2<span class="op">$</span>MCSIZE <span class="op">!=</span><span class="st"> </span><span class="dv">1024</span>,]</a></code></pre></div>
-<p>We group and summarize the data to make to ensure all replicates are present.</p>
+<p>We group and summarize the data to ensure all replicates are present.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co"># Group the data by size and summarize</span></a>
 <a class="sourceLine" id="cb12-2" title="2">data_grouped =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(df2, MCSIZE, CELLMUT)</a>
 <a class="sourceLine" id="cb12-3" title="3">data_summary =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(data_grouped, <span class="dt">mean_ones =</span> <span class="kw">mean</span>(ave_ones), <span class="dt">n =</span> dplyr<span class="op">::</span><span class="kw">n</span>())</a></code></pre></div>
@@ -347,7 +356,7 @@ Each row showing a different somatic mutation rate and each boxplot shows a give
 </div>
 <div id="facet-by-organism-size" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> Facet by organism size</h3>
-<p>Next, we plot the same data, but this time each row corresponds to a certain organism size while somatic mutation rate changes along the x-axis.
+<p>Next, we plot the same data, but this time each row corresponds to a certain organism size, while somatic mutation rate changes along the x-axis.
 <img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
 <p>Again, we replot the same data but allow the y-axis to vary between rows.
 <img src="primordium_supplemental_material_files/figure-html/unnamed-chunk-18-1.png" width="576" /></p>
@@ -415,7 +424,7 @@ Each row showing a different somatic mutation rate and each boxplot shows a give
 </div>
 <div id="statistics-1" class="section level2">
 <h2><span class="header-section-number">3.6</span> Statistics</h2>
-<p>Since organism size is our main point of comparison, we calculate stats for each somatic mutation rate.</p>
+<p>Since organism size is our main point of comparison, we calculate statistics for each somatic mutation rate.</p>
 <p>First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
@@ -437,7 +446,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.</p>
 ## 5          0.20 4.924029e-79    375.7743  5      TRUE
 ## 6          0.50 5.011460e-85    403.5832  5      TRUE
 ## 7          1.00 5.474947e-99    468.3229  5      TRUE</code></pre>
-<p>We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.</p>
+<p>We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">size_vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</a>
 <a class="sourceLine" id="cb16-2" title="2">mut_vec =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb16-3" title="3"><span class="cf">for</span>(mut_rate <span class="cf">in</span> mut_vec){</a>
