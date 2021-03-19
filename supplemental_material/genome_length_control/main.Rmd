@@ -5,20 +5,20 @@ date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Genome Length Control Experiment
 
-In the genome length experiment we observed that varying the genome length affects the evolution of organism in two ways: 
-1) mutational pressure is reduced at the population level as genome length increases
+In the genome length experiment, we observed that varying the genome length affects the evolution of organisms in two ways: 
+1) mutational pressure is reduced at the population level as genome length increases, and
 2) longer genomes have a higher organism fitness at the same restraint buffer value. 
 We wanted to test the effect of reduced mutational pressure by itself. 
 
 To accomplish this, we generated fitness data for organisms with 400-bit genomes. 
-For smaller genome lengths we reuse the 400-bit data by lining up restraint buffer values. 
+For smaller genome lengths, we reuse the 400-bit data by lining up restraint buffer values. 
 Thus the difference in genome lengths simply changes the range of restraint buffer values available in the genome. 
-The fitness data for 64x64 organisms is shown below, showing the range of each genome.
+The fitness data for 64x64 organisms is shown below, showing the range of each genome length.
 
 ![Genome length control explainer]( ./genome_length_control/timing_control_explanation.png "Genome length control explainer")
 
@@ -26,7 +26,7 @@ The fitness data for 64x64 organisms is shown below, showing the range of each g
 The configuration script and data for the experiment can be found under `2021_03_04__genome_length_control/` in the experiments directory of the git repository. 
 
 ## Data cleaning
-Load necessary libraries
+Load necessary R libraries
 ```{r, echo=T, message=F, warning=F}
 library(dplyr)
 library(ggplot2)
@@ -35,7 +35,7 @@ library(scales)
 library(khroma)
 ```
 
-Load the data and trim all the unecessay bits (_e.g._, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read). 
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 ```{r, echo = T}
 # Load the data
 df = read.csv(          '../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_50.csv')
@@ -120,7 +120,7 @@ ggplot(data_summary, aes(x = size_factor, y = n)) +
 ### Facet by genome length
 
 Here we plot all the data at once.
-Each row shows a different somatic mutation rate and each boxplot shows a given organism size.
+Each row shows a different genome length and each boxplot shows a given organism size.
 
 ```{r echo = F, fig.width=6, fig.height=10}
 # Plot the evolved restraint buffer as boxplots
@@ -497,7 +497,7 @@ ggplot(df2[df2$generation == 10000 & df2$LENGTH == 400,], aes(x = size_factor, y
 
 ## Statistics
 
-Since organism size is our main point of comparison, we calculate stats for each genome length.
+Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
@@ -517,7 +517,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ```
 
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different.
+We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)

@@ -5,12 +5,12 @@ date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Population size experiment
 
-By default, all populations of contain 200 organisms. 
+By default, all populations contain 200 organisms. 
 This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint. 
 
 
@@ -26,7 +26,7 @@ library(scales)
 library(khroma)
 ```
 
-Load the data and trim all the unecessay bits (_e.g._, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read). 
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 ```{r, echo = T}
 # Load the data
 df = read.csv('../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_200.csv')
@@ -37,7 +37,7 @@ df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
 ```
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 ```{r}
 # Group the data by size and summarize
 data_grouped = dplyr::group_by(df2, MCSIZE, POP)
@@ -129,9 +129,9 @@ ggplot(df2[df2$generation == 10000,], aes(x = as.factor(POP), y = restraint_valu
 ## Statistics
 
 The plot shows that increasing population size increases the evolved restraint buffer at organism sizes. 
-Further, we see that the same general trend holds at both population sizes, evolved restriant peaks at size 128x128. 
+Further, we see that the same general trend holds at both population sizes, that evolved restriant peaks at size 128x128. 
 
-Finally, we treat each organism size as a group and take a Wilcoxon Rank-Sum test between the population sizes.
+Finally, we treat each organism size as a group and conduct a Wilcoxon Rank-Sum test between the population sizes.
 ```{r echo = F, fig.width=6, fig.height=10}
 size_vec = c(16, 32, 64, 128, 256, 512)
 df_wilcox = data.frame(data = matrix(nrow = 0, ncol = 3))

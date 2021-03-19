@@ -1,18 +1,17 @@
 ---
-title: "Finite genome -- somatic mutation rate sweep"
+title: "Somatic Mutation Rate Sweep"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Somatic Mutation Rate Sweep
 
-This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium. 
-Here, we vary the somatic mutation rate, the probability that a cell replication will result in the offspring cell having a different restraint value from its parent. 
-
+This was one of the prelimary experiments we conducted to find the default parameters for Primordium. 
+Here, we vary the somatic mutation rate, which is the probability that a cell replication will result in a mutation to the offspring's genome.
 We settled on a somatic mutation rate of 0.5 (_i.e._, each cell replication has a 50% chance of mutation).
 
 The configuration script and data for the experiment can be found under `2021_02_27__soma_mut_fin/` in the experiments directory of the git repository. 
@@ -27,7 +26,7 @@ library(scales)
 library(khroma)
 ```
 
-Load the data and trim all the unecessay bits (_e.g._, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read). 
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 ```{r, echo = T}
 # Load the data
 df = read.csv('../experiments/2021_02_27__soma_mut_fin/evolution/data/scraped_evolution_data.csv')
@@ -37,7 +36,7 @@ df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
 ```
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 ```{r}
 # Group the data by size and summarize
 data_grouped = dplyr::group_by(df2, MCSIZE, CELLMUT)
@@ -157,7 +156,7 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
 
 ### Facet by organism size
 
-Next, we plot the same data, but this time each row corresponds to a certain organism size while somatic mutation rate changes along the x-axis. 
+Next, we plot the same data, but this time each row corresponds to a certain organism size, while somatic mutation rate changes along the x-axis. 
 ```{r echo = F, fig.width=6, fig.height=10}
 # Plot the evolved restraint buffer as boxplots
   # x-axis = soma mutation rate
@@ -512,7 +511,7 @@ Here we plot each somatic mutation rate independently, with organism size varyin
 
 ## Statistics
 
-Since organism size is our main point of comparison, we calculate stats for each somatic mutation rate. 
+Since organism size is our main point of comparison, we calculate statistics for each somatic mutation rate. 
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate. 
 If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ. 
@@ -531,7 +530,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
   print(df_kruskal)
 ```
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different. 
+We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)

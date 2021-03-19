@@ -1,27 +1,27 @@
 ---
-title: "Finite genome -- size 1024x1024 organisms"
+title: "Baseline -- Varying organism size"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Baseline: Varying organism size
 
-Here we show all the data for the baseline experiment, where we vary organism size but otherwise all parameters are set to the defaults. 
+Here we show all of the data for the baseline experiment in which we vary organism size while all other parameters are set to their default values. 
 
-For this experiment (with all default parameters), we also ran size 8x8 and 1024x1024 organisms.
-In the paper, however, we only included sizes from 16x16 to 512x512. 
+For this experiment, we also tested size 8x8 and 1024x1024 organisms.
+In the paper, however, we only included sizes 16x16 to 512x512. 
 Size 8x8 organisms are quick to run, but these smaller organisms see the most noise in the fitness data. 
-Conversely, size 1024x1024 organisms take so long to run that it was impractical to run them for each experiment. 
+Conversely, size 1024x1024 organisms take so long to run that it was not computationally feasible to run them for each experiment. 
 
-Here, we show these results for the baseline experiment, including this additional sizes.
+Here, we show these results for the baseline experiment, including these additional sizes.
 The configuration script and data for the experiment can be found under `2021_02_26__org_sizes/` in the experiments directory of the git repository. 
 
 ## Data cleaning
-Load necessary libraries
+Load necessary R libraries
 ```{r, echo=T, message=F, warning=F}
 library(dplyr)
 library(ggplot2)
@@ -30,7 +30,7 @@ library(scales)
 library(khroma)
 ```
 
-Load the data and trim all the unecessay bits (_e.g._, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read). 
+Load the data and trim to only include the final generation
 ```{r, echo = T}
 # Load the data
 df = read.csv('../experiments/2021_02_26__org_sizes/evolution/data/scraped_evolution_data.csv')
@@ -38,14 +38,14 @@ df = read.csv('../experiments/2021_02_26__org_sizes/evolution/data/scraped_evolu
 df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 ```
 
-We group and summarize the data to make to ensure all replicates are present.
+Group and summarize the data to ensure all replicates are present.
 ```{r}
 # Group the data by size and summarize
 data_grouped = dplyr::group_by(df2, MCSIZE)
 data_summary = dplyr::summarize(data_grouped, mean_ones = mean(ave_ones), n = dplyr::n())
 ```
 
-We clean the data and create a few helper variables to make plotting easier. 
+Clean the data and create a few helper variables to make plotting easier. 
 ```{r echo = T}
 # Calculate restraint value (x - 60 because genome length is 100 here)
 df2$restraint_value = df2$ave_ones - 60
@@ -171,7 +171,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ```
 
 
-We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different. 
+We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)

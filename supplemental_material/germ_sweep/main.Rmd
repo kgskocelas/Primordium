@@ -1,23 +1,22 @@
 ---
-title: "Finite genome -- germ mutation rate sweep"
+title: "Germ Mutation Rate Sweep"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2021 conference submission"
 ---
 
 # Germ Mutation Rate Sweep
 
 This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium. 
-We varied the mutation rate, the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction. 
-
+We varied the mutation rate, which is the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction. 
 The final default germ mutation rate was 0.02 (_i.e._, each organism reproduction has a 2% chance of mutation).
 
 The configuration script and data for the experiment can be found under `2021_02_16__germ_mut_fin/` in the experiments directory of the git repository. 
 
-Load necessary libraries
+Load necessary R libraries
 ```{r echo=T, message=F, warning=F}
 library(dplyr)
 library(ggplot2)
@@ -26,7 +25,7 @@ library(scales)
 library(khroma)
 ```
 
-Load the data and trim all the unecessay bits (_e.g._, we initially ran sizes 8x8, 1024x1024 but cut them from the paper to make plots easier to read). 
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
 ```{r echo=T, message=F,warning=F}
 # Load the data
 df = read.csv('../experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv')
@@ -39,7 +38,7 @@ df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
 ```
 
 
-We group and summarize the data to make to ensure all replicates are present.
+We group and summarize the data to ensure all replicates are present.
 ```{r echo = T, message=F,warning=F}
 # Group the data by size and summarize
 data_grouped = dplyr::group_by(df2, MCSIZE, MUT)
@@ -555,7 +554,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
   print(df_kruskal)
 ```
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pais of sizes are significantly different. 
+We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)
