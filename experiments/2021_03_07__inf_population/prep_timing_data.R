@@ -9,9 +9,6 @@ library(dplyr)
 recalc_summary = T
 if(recalc_summary){
   df = read.csv('./timing/data/scraped_timing_data.csv')
-  df = rbind(df, read.csv('./timing/data/scraped_timing_data_128.csv'))
-  df = rbind(df, read.csv('./timing/data/scraped_timing_data_256.csv'))
-  df = rbind(df, read.csv('./timing/data/scraped_timing_data_512.csv'))
   df = df[df$cells_side != 8 & df$cells_side != 1024,]
   # Group and summarize the data, we mostly just use the mean times  
   df_grouped = dplyr::group_by(df, cells_side, ancestor_1s)
