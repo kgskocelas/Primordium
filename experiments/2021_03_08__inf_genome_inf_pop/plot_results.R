@@ -57,13 +57,14 @@ if(!dir.exists('./simulation/plots/final')){
 }
 
 ggplot(df_summary[df_summary$generation <= 10000,], aes(x = generation, y = restraint_value ))  +
-  geom_line(aes(color = as.factor(mc_size)), size = 1.0) +
+  geom_line(aes(color = size_factor), size = 1.0) +
   xlab('Generation') + 
   ylab('Average restraint buffer') + 
   labs(color = 'Organism size') +
   #scale_color_manual(values = color_map) +
   scale_x_continuous(expand = c(0,0)) +
   theme_light() +
+  scale_color_manual(values = color_map) + 
   theme(axis.title = element_text(size = text_major_size)) +
   theme(axis.text = element_text(size = text_minor_size)) +
   theme(legend.title = element_text(size = text_major_size)) +
@@ -81,7 +82,7 @@ ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = res
   xlab('Organism size') + 
   ylab('Average restraint buffer') + 
   labs(color = 'Organism size') + 
-  scale_color_manual(values = color_map) + 
+  scale_fill_manual(values = color_map) + 
   scale_y_continuous(limits = c(0, 70)) +
   theme_light() + 
   theme(axis.title = element_text(size = text_major_size)) + 
@@ -94,8 +95,8 @@ ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = res
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) + 
   theme(strip.background = element_rect(fill = '#dddddd')) +
   theme(legend.position = 'none')  +
-  ggsave('./simulation/plots/final/evolved_bars.png', units = 'in', width = 3, height = 6) +
-  ggsave('./simulation/plots/final/evolved_bars.pdf', units = 'in', width = 3, height = 6)
+  ggsave('./simulation/plots/final/evolved_bars.png', units = 'in', width = 6, height = 6) +
+  ggsave('./simulation/plots/final/evolved_bars.pdf', units = 'in', width = 6, height = 6)
 
 
 #df_inf_summary = read.csv('../infinite/60_40/simulation/density/combined_simulation_summary_data.csv')
