@@ -66,6 +66,9 @@ To install the required libraries, open R in your target environment and run the
 install.packages('ggplot2')
 install.packages('dplyr')
 install.packages('hash')
+install.packages('khroma')
+install.packages('scales')
+install.packages('ggridges')
 ```
 
 ## Compilation
