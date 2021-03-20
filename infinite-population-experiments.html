@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>The Evolution of Cellular Restraint in Multicellular Organisms</title>
+  <title>Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms</title>
   <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:title" content="Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta name="twitter:title" content="Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms" />
   
   <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="infinite-genome-experiment.html"/>
 
-<link rel="next" href="baseline-varying-organism-size.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -292,24 +292,41 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">The Evolution of Cellular Restraint in Multicellular Organisms</h1>
-<p class="author"><em>Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria</em></p>
-<p class="date"><em>2021-03-20</em></p>
+<div id="infinite-population-experiments" class="section level1">
+<h1><span class="header-section-number">Section 10</span> Infinite population experiments</h1>
+<div id="finite-genome-experiment" class="section level2">
+<h2><span class="header-section-number">10.1</span> Finite genome experiment</h2>
+<p>The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of higher restraint buffers.
+However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint.
+To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simuate an infinite population.
+We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
+<img src="inf_pop/formula.png" title="Formula" alt="Formula" /></p>
+<p>The simulation script, plotting script, and timing data for this experiment can be found under <code>2021_03_07__inf_population/</code> in the experiments directory of the git repository.</p>
+<div id="plots" class="section level3">
+<h3><span class="header-section-number">10.1.1</span> Plots</h3>
+<p>Here we show how the evolved restraint buffer values change through the course of evolution.
+<img src="inf_pop/over_time.png" title="Finite over time plot" alt="Finite over time plot" /></p>
+<p>Here we show the evolved restraint buffer values at the end of 10,000 generations.
+Bar plots are used because the simulation is deterministic; there is only one sample needed for each organism size.
+<img src="inf_pop/evolved_bars.png" title="Finite final bars plot" alt="Finite final bars plot" /></p>
+<p>Thus, even with an infinite population and the higher selective pressures that come with it, we still see the turning point trend in the evolved restraint buffer values.</p>
 </div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">Section 1</span> Introduction</h1>
-<p>This document serves as the supplemental material for the ALife 2021 conference submission “The Evolution of Cellular Restraint in Multicellular Organisms”.</p>
-<div id="overview" class="section level2">
-<h2><span class="header-section-number">1.1</span> Overview</h2>
-<p>The document is split into sections that are assessable via the navigation bar on the left side of the screen.
-Each section corresponds to an experiment (some that were discussed at length in the paper, others that were not included).
-As such, each section follows the same formula: setup, plots, and statistics.</p>
 </div>
-<div id="interactive-web-app" class="section level2">
-<h2><span class="header-section-number">1.2</span> Interactive web app</h2>
-<p>To build intuition on how organisms fill, we created an interactive web app, available here: <a href="http://fergusonaj.com/webapps/primordium/" class="uri">http://fergusonaj.com/webapps/primordium/</a></p>
+<div id="infinite-genome-experiment-1" class="section level2">
+<h2><span class="header-section-number">10.2</span> Infinite genome experiment</h2>
+<p>Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome.
+Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
+The simulation script, plotting script, and timing data for this experiment can be found under <code>2021_03_08__inf_genome_inf_pop/</code> in the experiments directory of the git repository.</p>
+<div id="plots-1" class="section level3">
+<h3><span class="header-section-number">10.2.1</span> Plots</h3>
+<p>Here we show how the evolved restraint buffer values change through the course of evolution.
+<img src="inf_pop/inf_over_time.png" title="Infinite over time plot" alt="Infinite over time plot" /></p>
+<p>Here we show the evolved restraint buffer values at the end of 10,000 generations.
+Again, we use bar plots because the simulation is deterministic.
+<img src="inf_pop/inf_evolved_bars.png" title="Finite final bars plot" alt="Finite final bars plot" /></p>
+<p>Thus, we see that using <em>both</em> an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evovled restraint buffers monotonically increase with organism size.</p>
 
+</div>
 </div>
 </div>
             </section>
@@ -317,8 +334,8 @@ As such, each section follows the same formula: setup, plots, and statistics.</p
           </div>
         </div>
       </div>
+<a href="infinite-genome-experiment.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="baseline-varying-organism-size.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -349,7 +366,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/kgskocelas/Primordium/tree/main/index.Rmd",
+"link": "https://github.com/kgskocelas/Primordium/tree/main/inf_pop/main.Rmd",
 "text": "Edit"
 },
 "history": {
