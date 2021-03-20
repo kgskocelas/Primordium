@@ -12,6 +12,7 @@ rmd_files: [
   "pop_size/main.Rmd",
   "genome_length_sweep/main.Rmd",
   "genome_length_control/main.Rmd",
-  "inf_genome/main.Rmd"
+  "inf_genome/main.Rmd",
+  "inf_pop/main.Rmd"
 ]
 

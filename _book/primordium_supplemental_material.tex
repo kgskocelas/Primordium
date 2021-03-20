@@ -110,7 +110,7 @@
 
 \title{The Evolution of Cellular Restraint in Multicellular Organisms}
 \author{Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria}
-\date{2021-03-19}
+\date{2021-03-20}
 
 \begin{document}
 \maketitle
@@ -2125,5 +2125,50 @@ We see that significant variation exists, so we perform pariwise Wilcoxon tests 
 ## 14    128    512      4.314526e-03 2.157263e-03 3744.0      TRUE
 ## 15    256    512      3.971985e-01 3.971985e-01 5347.0     FALSE
 \end{verbatim}
+
+\hypertarget{infinite-population-experiments}{%
+\chapter{Infinite population experiments}\label{infinite-population-experiments}}
+
+\hypertarget{finite-genome-experiment}{%
+\section{Finite genome experiment}\label{finite-genome-experiment}}
+
+The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of higher restraint buffers.
+However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint.
+To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simuate an infinite population.
+We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
+\includegraphics{./inf_pop/formula.png}
+
+The simulation script, plotting script, and timing data for this experiment can be found under \texttt{2021\_03\_07\_\_inf\_population/} in the experiments directory of the git repository.
+
+\hypertarget{plots}{%
+\subsection{Plots}\label{plots}}
+
+Here we show how the evolved restraint buffer values change through the course of evolution.
+\includegraphics{./inf_pop/over_time.png}
+
+Here we show the evolved restraint buffer values at the end of 10,000 generations.
+Bar plots are used because the simulation is deterministic; there is only one sample needed for each organism size.
+\includegraphics{./inf_pop/evolved_bars.png}
+
+Thus, even with an infinite population and the higher selective pressures that come with it, we still see the turning point trend in the evolved restraint buffer values.
+
+\hypertarget{infinite-genome-experiment-1}{%
+\section{Infinite genome experiment}\label{infinite-genome-experiment-1}}
+
+Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome.
+Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
+The simulation script, plotting script, and timing data for this experiment can be found under \texttt{2021\_03\_08\_\_inf\_genome\_inf\_pop/} in the experiments directory of the git repository.
+
+\hypertarget{plots-1}{%
+\subsection{Plots}\label{plots-1}}
+
+Here we show how the evolved restraint buffer values change through the course of evolution.
+\includegraphics{./inf_pop/inf_over_time.png}
+
+Here we show the evolved restraint buffer values at the end of 10,000 generations.
+Again, we use bar plots because the simulation is deterministic.
+\includegraphics{./inf_pop/inf_evolved_bars.png}
+
+Thus, we see that using \emph{both} an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evovled restraint buffers monotonically increase with organism size.
 
 \end{document}
