@@ -1,0 +1,18 @@
+book_filename: "primordium_supplemental_material"
+language:
+  ui:
+    chapter_name: "Section "
+delete_merged_file: true
+rmd_files: [
+  "index.Rmd",
+  "baseline/main.Rmd",
+  "soma_sweep/main.Rmd",
+  "germ_sweep/main.Rmd",
+  "sample_test/main.Rmd",
+  "pop_size/main.Rmd",
+  "genome_length_sweep/main.Rmd",
+  "genome_length_control/main.Rmd",
+  "inf_genome/main.Rmd",
+  "inf_pop/main.Rmd"
+]
+

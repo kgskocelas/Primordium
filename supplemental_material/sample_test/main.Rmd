@@ -1,0 +1,155 @@
+---
+title: "Number of timing samples test"
+author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
+date: "`r Sys.Date()`"
+output: bookdown::gitbook
+documentclass: book
+github-repo: kgskocelas/Primordium
+description: "Supplemental material for our ALife 2021 conference submission"
+---
+
+# Timing sample count experiment
+
+By default, we calculated 100 timing samples for each combination of organism size and restraint buffer value to use for organism fitness in Primordium (a new batch was generated for each experiment).
+This experiment showed that increasing from 100 samples to 10,000 samples has no qualitative difference on results. 
+This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples. 
+
+
+## Data cleaning
+
+Load necessary R libraries
+
+```{r, echo=T, message=F, warning=F}
+library(dplyr)
+library(ggplot2)
+library(ggridges)
+library(scales)
+library(khroma)
+```
+
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
+```{r, echo = T}
+# Load the data
+df = read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv')
+df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv'))
+df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv'))
+df$LENGTH = 100
+df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'))
+df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'))
+# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
+# Ignore data for size 8x8 and 1024x1024
+df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
+```
+
+We group and summarize the data to make to ensure all replicates are present.
+```{r}
+# Group the data by size and summarize
+data_grouped = dplyr::group_by(df2, MCSIZE, SAMPLES)
+data_summary = dplyr::summarize(data_grouped, mean_ones = mean(ave_ones), n = dplyr::n())
+```
+
+We clean the data and create a few helper variables to make plotting easier. 
+```{r echo = T}
+# Calculate restraint value (x - 60 because genome length is 100 here)
+df2$restraint_value = df2$ave_ones - 60
+# Make a nice, clean factor for size
+df2$size_str = paste0(df2$MCSIZE, 'x', df2$MCSIZE)
+df2$size_factor = factor(df2$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
+df2$size_factor_reversed = factor(df2$size_str, levels = rev(c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024')))
+data_summary$size_str = paste0(data_summary$MCSIZE, 'x', data_summary$MCSIZE)
+data_summary$size_factor = factor(data_summary$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
+# Create a map of colors we'll use to plot the different organism sizes
+color_vec = as.character(khroma::color('bright')(7))
+color_map = c(
+  '16x16' =     color_vec[1],
+  '32x32' =     color_vec[2],
+  '64x64' =     color_vec[3],
+  '128x128' =   color_vec[4],
+  '256x256' =   color_vec[5],
+  '512x512' =   color_vec[6],
+  '1024x1024' = color_vec[7]
+)
+# Set the sizes for text in plots
+text_major_size = 18
+text_minor_size = 16 
+```
+
+## Data integrity check
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present. 
+Rows show the number of samples used for fitness. 
+Each bar/color shows a different organism size.
+```{r echo = F, fig.width=6, fig.height=10}
+# Plot the number of replicates for each organism size
+ggplot(data_summary, aes(x = size_factor, y = n)) +
+  geom_col(aes(fill = size_factor)) +
+  geom_text(aes(y = n + 5, label = n)) +
+  scale_fill_manual(values = color_map) +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(rows = vars(SAMPLES)) +
+  xlab('Organism size') +
+  ylab('Number of finished replicates')
+```
+
+
+## Plot
+
+Here we plot all the data. 
+The figure is split into 6 subplots, each showing a different organism size. 
+Inside each subplot, the number of timing samples is shown on the x-axis.
+```{r echo = F, fig.width=6, fig.height=6}
+# Plot the evolved restraint buffer for all reps of each org size as boxplots
+ggplot(df2[df2$generation == 10000,], aes(x = as.factor(SAMPLES), y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Number of timing samples') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size - 2, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(cols = vars(size_factor)) 
+```
+
+
+## Statistics
+
+The plot shows that the general trend, that the evolved restraint buffer initially increases with organism size then decreases, holds true at both sample counts. 
+Furthermore, we see that the evolved buffer values are fairly consistent between the two sample counts. 
+
+While we concluded that this was sufficient evidence to use only 100 samples (10,000 is intractable to run for multiple experiments), we include the statistics here. 
+Since we treat each organism size as a group, we simply conduct a Wilcoxon Rank-Sum test between 100 samples and 10,000 samples
+```{r echo = F, fig.width=6, fig.height=10}
+size_vec = c(16, 32, 64, 128, 256, 512)
+df_wilcox = data.frame(data = matrix(nrow = 0, ncol = 3))
+colnames(df_wilcox) = c('org_size', 'p_value', 'W')
+for(size in size_vec){
+  res = wilcox.test(
+    df2[df2$MCSIZE == size & df2$SAMPLES == 100,]$restraint_value, 
+    df2[df2$MCSIZE == size & df2$SAMPLES == 10000,]$restraint_value, 
+    alternative = 'two.sided') 
+  df_wilcox[nrow(df_wilcox) + 1,] = c(size, res$p.value, as.numeric(res$statistic)[1])
+}
+df_wilcox$less_0.01 = df_wilcox$p_value < 0.01
+print(df_wilcox)
+```
+

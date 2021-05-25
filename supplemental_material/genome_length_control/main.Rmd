@@ -1,0 +1,542 @@
+---
+title: "Genome length control"
+author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
+date: "`r Sys.Date()`"
+output: bookdown::gitbook
+documentclass: book
+github-repo: kgskocelas/Primordium
+description: "Supplemental material for the ALife 2021 conference submission"
+---
+
+# Genome Length Control Experiment
+
+In the genome length experiment, we observed that varying the genome length affects the evolution of organisms in two ways: 
+1) mutational pressure is reduced at the population level as genome length increases, and
+2) longer genomes have a higher organism fitness at the same restraint buffer value. 
+We wanted to test the effect of reduced mutational pressure by itself. 
+
+To accomplish this, we generated fitness data for organisms with 400-bit genomes. 
+For smaller genome lengths, we reuse the 400-bit data by lining up restraint buffer values. 
+Thus the difference in genome lengths simply changes the range of restraint buffer values available in the genome. 
+The fitness data for 64x64 organisms is shown below, showing the range of each genome length.
+
+![Genome length control explainer]( ./genome_length_control/timing_control_explanation.png "Genome length control explainer")
+
+
+The configuration script and data for the experiment can be found under `2021_03_04__genome_length_control/` in the experiments directory of the git repository. 
+
+## Data cleaning
+Load necessary R libraries
+```{r, echo=T, message=F, warning=F}
+library(dplyr)
+library(ggplot2)
+library(ggridges)
+library(scales)
+library(khroma)
+```
+
+Load the data and trim include only the final generation data for sizes 16x16 to 512x512.
+```{r, echo = T}
+# Load the data
+df = read.csv(          '../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_50.csv')
+df = rbind(df, read.csv('../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_200.csv'))
+df = rbind(df, read.csv('../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_100.csv'))
+df = rbind(df, read.csv('../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_400.csv'))
+df = rbind(df, read.csv('../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_25.csv'))
+# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
+# Ignore data for size 8x8 and 1024x1024
+df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
+```
+
+We group and summarize the data to make to ensure all replicates are present.
+```{r}
+# Group the data by size and summarize
+data_grouped = dplyr::group_by(df2, MCSIZE, LENGTH)
+data_summary = dplyr::summarize(data_grouped, mean_ones = mean(ave_ones), n = dplyr::n())
+```
+
+We clean the data and create a few helper variables to make plotting easier.
+```{r echo = T}
+# Calculate restraint value (x - 60% of the genome length)
+df2$restraint_value = df2$ave_ones - (df2$LENGTH * 0.6)
+# Make a nice, clean factor for size
+df2$size_str = paste0(df2$MCSIZE, 'x', df2$MCSIZE)
+df2$size_factor = factor(df2$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
+df2$size_factor_reversed = factor(df2$size_str, levels = rev(c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024')))
+df2$length_str = paste0(df2$LENGTH, '-bit')
+df2$length_factor = factor(df2$length_str, levels = c('25-bit', '50-bit', '100-bit', '200-bit', '400-bit'))
+data_summary$size_str = paste0(data_summary$MCSIZE, 'x', data_summary$MCSIZE)
+data_summary$size_factor = factor(data_summary$size_str, levels = c('16x16', '32x32', '64x64', '128x128', '256x256', '512x512', '1024x1024'))
+data_summary$length_str = paste0(data_summary$LENGTH, '-bit')
+data_summary$length_factor = factor(data_summary$length_str, levels = c('25-bit', '50-bit', '100-bit', '200-bit', '400-bit'))
+# Create a map of colors we'll use to plot the different organism sizes
+color_vec = as.character(khroma::color('bright')(7))
+color_map = c(
+  '16x16' =     color_vec[1],
+  '32x32' =     color_vec[2],
+  '64x64' =     color_vec[3],
+  '128x128' =   color_vec[4],
+  '256x256' =   color_vec[5],
+  '512x512' =   color_vec[6],
+  '1024x1024' = color_vec[7]
+)
+# Set the sizes for text in plots
+text_major_size = 18
+text_minor_size = 16 
+```
+
+
+## Data integrity check
+
+Now we plot the number of finished replicates for each treatment to make sure all data are present.
+Each row shows a different genome length (in bits).
+Each bar/color shows a different organism size.
+```{r echo = F, fig.width=6, fig.height=10}
+# Plot the number of replicates for each organism size
+ggplot(data_summary, aes(x = size_factor, y = n)) +
+  geom_col(aes(fill = size_factor)) +
+  geom_text(aes(y = n + 5, label = n)) +
+  scale_fill_manual(values = color_map) +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(rows = vars(length_factor)) +
+  xlab('Organism size') +
+  ylab('Number of finished replicates')
+```
+
+
+
+## Aggregate plots
+
+### Facet by genome length
+
+Here we plot all the data at once.
+Each row shows a different genome length and each boxplot shows a given organism size.
+
+```{r echo = F, fig.width=6, fig.height=10}
+# Plot the evolved restraint buffer as boxplots
+  # x-axis = organism size
+  # y-axis = average evolved restraint buffer for each replicate
+  # facet rows = genome length
+ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+Here we plot the same data, only we allow the y-axis to vary between rows.
+```{r echo = F, fig.width=6, fig.height=10}
+# Same plot but y axes are allowed to vary between rows
+ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor), scales = 'free_y')
+```
+
+
+
+### Facet by organism size
+
+Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
+
+```{r echo = F, fig.width=6, fig.height=10}
+# Plot the evolved restraint buffer as boxplots
+  # x-axis = genome length
+  # y-axis = average evolved restraint buffer for each replicate
+  # facet rows = organism size
+ggplot(df2[df2$generation == 10000,], aes(x = length_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Genome length') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(size_factor))
+```
+
+Here is the identical plot but now we allow the y-axis to vary between the rows.
+
+```{r echo = F, fig.width=6, fig.height=10}
+# Same plot, but allow each row's y-axis to vary
+ggplot(df2[df2$generation == 10000,], aes(x = length_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Genome length') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(size_factor), scales = 'free_y')
+```
+
+
+
+## Single organism size plots
+
+Here we plot each organism size independently, with the genome length on the x-axis.
+
+### Organism size 16x16
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 16,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+### Organism size 32x32
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 32,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+### Organism size 64x64
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 64,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+### Organism size 128x128
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 128,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+### Organism size 256x256
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 256,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+### Organism size 512x512
+```{r echo=F, fig.width=6, fig.height=6}
+  ggplot(df2[df2$generation == 10000 & df2$MCSIZE == 512,], aes(x = length_factor, y = restraint_value)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+    geom_boxplot(aes(fill = size_factor)) +
+    xlab('Genome length') +
+    ylab('Evolved restraint buffer') +
+    scale_fill_manual(values = color_map) +
+    labs(fill = 'Organism size') +
+    theme_light() +
+    theme(legend.position = 'none') +
+    theme(panel.grid.major.x = element_blank()) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(axis.title = element_text(size = text_major_size)) +
+    theme(axis.text = element_text(size = text_minor_size)) +
+    theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+    theme(legend.title = element_text(size = text_major_size)) +
+    theme(legend.text = element_text(size = text_minor_size)) +
+    theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+    theme(strip.background = element_rect(fill = '#dddddd')) +
+    facet_grid(vars(size_factor))
+```
+
+
+
+## Single genome length plots
+
+Here we plot each genome length independently, with the organism size on the x-axis.
+
+### 25-bit genomes
+```{r echo=F, fig.width=6, fig.height=6}
+ggplot(df2[df2$generation == 10000 & df2$LENGTH == 25,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+### 50-bit genomes
+```{r echo=F, fig.width=6, fig.height=6}
+ggplot(df2[df2$generation == 10000 & df2$LENGTH == 50,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+### 100-bit genomes
+```{r echo=F, fig.width=6, fig.height=6}
+ggplot(df2[df2$generation == 10000 & df2$LENGTH == 100,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+### 200-bit genomes
+```{r echo=F, fig.width=6, fig.height=6}
+ggplot(df2[df2$generation == 10000 & df2$LENGTH == 200,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+### 400-bit genomes
+```{r echo=F, fig.width=6, fig.height=6}
+ggplot(df2[df2$generation == 10000 & df2$LENGTH == 400,], aes(x = size_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Organism size') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_grid(vars(length_factor))
+```
+
+
+## Statistics
+
+Since organism size is our main point of comparison, we calculate statistics for each genome length.
+
+First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
+If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+```{r}
+  length_vec = c(25, 50, 100, 200, 400)
+  df_kruskal = data.frame(data = matrix(nrow = 0, ncol = 4))
+  colnames(df_kruskal) = c('genome_length', 'p_value', 'chi_squared', 'df')
+  for(genome_length in length_vec){
+    df_test = df2[df2$LENGTH == genome_length,]
+    res = kruskal.test(df_test$restraint_value ~ df_test$MCSIZE, df_test)
+    df_kruskal[nrow(df_kruskal) + 1,] = c(genome_length, res$p.value, as.numeric(res$statistic)[1], as.numeric(res$parameter)[1])
+  }
+  df_kruskal$less_0.01 = df_kruskal$p_value < 0.01
+  print(df_kruskal)
+```
+
+
+We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+
+```{r}
+size_vec = c(16, 32, 64, 128, 256, 512)
+length_vec = c(25, 50, 100, 200, 400)
+for(genome_length in length_vec){
+  df_test = df2[df2$LENGTH == genome_length,]
+  df_wilcox = data.frame(data = matrix(nrow = 0, ncol = 6))
+  colnames(df_wilcox) = c('genome_length', 'size_a', 'size_b', 'p_value_corrected', 'p_value_raw', 'W')
+  for(size_idx_a in 1:(length(size_vec) - 1)){
+    size_a = size_vec[size_idx_a]
+    for(size_idx_b in (size_idx_a + 1):length(size_vec)){
+      size_b = size_vec[size_idx_b]
+      res = wilcox.test(df_test[df_test$MCSIZE == size_a,]$restraint_value, df_test[df_test$MCSIZE == size_b,]$restraint_value, alternative = 'two.sided')
+      df_wilcox[nrow(df_wilcox) + 1,] = c(genome_length, size_a, size_b, 0, res$p.value, as.numeric(res$statistic)[1])
+    }
+  }
+  df_wilcox$p_value_corrected = p.adjust(df_wilcox$p_value_raw, method = 'holm')
+  df_wilcox$less_0.01 = df_wilcox$p_value_corrected < 0.01
+  print(paste0('Genome length: ', genome_length))
+  print(df_wilcox)
+}
+```

@@ -1,0 +1,12 @@
+[submodule "application/source/third_party/Empirical"]
+	path = application/source/third_party/Empirical
+	url = https://github.com/devosoft/Empirical.git
+[submodule "experiments/scripts/third_party/pyvarco"]
+	path = experiments/scripts/third_party/pyvarco
+	url = https://github.com/FergusonAJ/pyvarco.git
+[submodule "experiments/scripts/third_party/roll_q"]
+	path = experiments/scripts/third_party/roll_q
+	url = https://github.com/FergusonAJ/roll_q.git
+[submodule "application/source/third_party/gif-h"]
+	path = application/source/third_party/gif-h
+	url = git@github.com:charlietangora/gif-h.git
