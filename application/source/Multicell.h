@@ -15,6 +15,7 @@
 #include "emp/math/Random.hpp"
 #include "emp/math/stats.hpp"
 #include "emp/datastructs/TimeQueue.hpp"
+#include "./third_party/gif-h/gif.h"
 
 
 /// Information about a single cell.
@@ -347,11 +348,57 @@ struct Multicell {
       }
   }
 
+  void DrawFrame(GifWriter& gif_writer){
+    for(size_t y = 0; y < cells_side; ++y){
+        for(size_t x = 0; x < cells_side; ++x){
+            const Cell& cell_cur = cells[y * cells_side + x];
+            if(cell_cur.repro_time == 0){
+                buffer[y * cells_side * 4 + (x * 4) + 0] = 0;
+                buffer[y * cells_side * 4 + (x * 4) + 1] = 0;
+                buffer[y * cells_side * 4 + (x * 4) + 2] = 0;
+                buffer[y * cells_side * 4 + (x * 4) + 3] = 255;
+            }
+            else if(cell_cur.num_ones < restrain){
+                buffer[y * cells_side * 4 + (x * 4) + 0] = 255 - ((restrain - 1) - cell_cur.num_ones) * 5;
+                buffer[y * cells_side * 4 + (x * 4) + 1] = 0;
+                buffer[y * cells_side * 4 + (x * 4) + 2] = 0 + ((restrain - 1)- cell_cur.num_ones) * 2;
+                buffer[y * cells_side * 4 + (x * 4) + 3] = 255;
+            }
+            else{
+                buffer[y * cells_side * 4 + (x * 4) + 0] = 255 - (cell_cur.num_ones - restrain) * 5;
+                buffer[y * cells_side * 4 + (x * 4) + 1] = 255 - (cell_cur.num_ones - restrain) * 5;
+                buffer[y * cells_side * 4 + (x * 4) + 2] = 255 - (cell_cur.num_ones - restrain) * 5;
+                buffer[y * cells_side * 4 + (x * 4) + 3] = 255;
+            }
+        }
+    }
+    GifWriteFrame(&gif_writer, buffer.data(), cells_side, cells_side, delay);
+  }
+
+
   /// Run the multicell until it is full.
   RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
     last_count = 0;                   // Track cells from last time (for traces)
+    // Animation variables
+    std::stringstream string_stream;
+    buffer.resize(cells_side * cells_side * 4, 0);
+    GifWriter gif_writer;
+    string_stream << "./output.gif";
+    if(frames_per_anim != -1){
+      GifBegin(&gif_writer, string_stream.str().c_str(), cells_side, cells_side, delay);
+    }
+    size_t cur_step = 0;
     while (num_cells < cells.size()) {
       DoStep(print_trace, frames_per_anim, os);
+      if(frames_per_anim != -1){
+        if(cur_step % frames_per_anim == 0)
+          DrawFrame(gif_writer);
+        ++cur_step;
+      }
+    }
+    if(frames_per_anim != -1){
+      DrawFrame(gif_writer);
+      GifEnd(&gif_writer);
     }
 
     // Setup the results and return them.

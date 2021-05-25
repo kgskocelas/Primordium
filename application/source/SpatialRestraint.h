@@ -351,6 +351,7 @@
     bool reset_cache = false;         ///< Share the cache by default.
     bool verbose = false;             ///< Should we print extra information during the run?
     bool enforce_data_bounds = false; ///< If we are using pre-gen data and needed missing data, exit?
+    int updates_per_frame = -1;    ///< Num cell updates in each gif frame (-1 for no gif)
 
     emp::StreamManager stream_manager;  ///< Manage files
     std::string evolution_filename;     ///< Output filename for evolution summary data.
@@ -373,7 +374,7 @@
       // letters are used to control model parameters, while capital letters are used to control
       // output.  The one exception is -h for '--help' which is otherwise too standard.
       // The order below sets the order that combinations are tested in. 
-      // AVAILABLE OPTION FLAGS: fjlqx ADFGHJKNOQRSUVWXYZ
+      // AVAILABLE OPTION FLAGS: jlqx ADFGHJKNOQRSUVWXYZ
 
       config.AddComboSetting<size_t>("data_count", "Number of times to replicate each run", 'd') = { 100 };
       config.AddComboSetting("ancestor_1s", "How many 1s in starting cell?", 'a',
@@ -437,6 +438,8 @@
                        [this](){ verbose = true; } );
       config.AddAction("enforce", "Enforces population stays within bounds of data loaded with -L. Exits if bounds exceeded", 'e',
                        [this](){ enforce_data_bounds= true; } );
+      config.AddSetting("updates_per_frame", "Number of cells to update before we write another gif frame. -1 for no animation.", 'f',
+                        updates_per_frame, "Integer") = -1;
 
       // Process the command-line options
       config.ProcessOptions(args);
@@ -457,7 +460,7 @@
       multicell.InjectCell(start_pos);
 
       // Do the run!
-      return multicell.Run(print_trace);
+      return multicell.Run(print_trace, updates_per_frame);
     }
 
     TreatmentResults & RunTreatment(std::ostream & os=std::cout) {
