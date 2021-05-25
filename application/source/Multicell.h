@@ -349,6 +349,9 @@ struct Multicell {
   }
 
   void DrawFrame(GifWriter& gif_writer){
+    size_t r = 0;
+    size_t g = 0;
+    size_t b = 0;
     for(size_t y = 0; y < cells_side; ++y){
         for(size_t x = 0; x < cells_side; ++x){
             const Cell& cell_cur = cells[y * cells_side + x];
@@ -359,9 +362,9 @@ struct Multicell {
                 buffer[y * cells_side * 4 + (x * 4) + 3] = 255;
             }
             else if(cell_cur.num_ones < restrain){
-                buffer[y * cells_side * 4 + (x * 4) + 0] = 255 - ((restrain - 1) - cell_cur.num_ones) * 5;
+                buffer[y * cells_side * 4 + (x * 4) + 0] = 255 - ((restrain - 1) - cell_cur.num_ones) * 4;
                 buffer[y * cells_side * 4 + (x * 4) + 1] = 0;
-                buffer[y * cells_side * 4 + (x * 4) + 2] = 0 + ((restrain - 1)- cell_cur.num_ones) * 2;
+                buffer[y * cells_side * 4 + (x * 4) + 2] = 0 + ((restrain - 1) - cell_cur.num_ones) * 2;
                 buffer[y * cells_side * 4 + (x * 4) + 3] = 255;
             }
             else{
