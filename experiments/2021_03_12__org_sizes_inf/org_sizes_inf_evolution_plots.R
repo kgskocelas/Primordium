@@ -90,10 +90,10 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
-  theme(strip.background = element_rect(fill = '#dddddd')) +
-  #ggtitle('Finite Genome Avg Restraint by MC Size') +
-  ggsave('./evolution/plots/infinite_extended_size_boxplot.png', units = 'in', width = 6, height = 6) +
-  ggsave('./evolution/plots/infinite_extended_size_boxplot.pdf', units = 'in', width = 6, height = 6)
+  theme(strip.background = element_rect(fill = '#dddddd'))
+  #ggtitle('Finite Genome Avg Restraint by MC Size') 
+ggsave('./evolution/plots/infinite_extended_size_boxplot.png', units = 'in', width = 6, height = 6) 
+ggsave('./evolution/plots/infinite_extended_size_boxplot.pdf', units = 'in', width = 6, height = 6)
 
 # Plot same data as a raincloud plot
 ggplot(df2[df2$generation == 10000,], aes(x = restraint_value, y = size_factor_reversed)) +
@@ -114,6 +114,6 @@ ggplot(df2[df2$generation == 10000,], aes(x = restraint_value, y = size_factor_r
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
-  theme(strip.background = element_rect(fill = '#dddddd')) + 
-  ggsave('./evolution/plots/infinite_extended_size_raincloud.png', units = 'in', width = 6, height = 6) +
-  ggsave('./evolution/plots/infinite_extended_size_raincloud.pdf', units = 'in', width = 6, height = 6)
+  theme(strip.background = element_rect(fill = '#dddddd')) 
+ggsave('./evolution/plots/infinite_extended_size_raincloud.png', units = 'in', width = 6, height = 6) 
+ggsave('./evolution/plots/infinite_extended_size_raincloud.pdf', units = 'in', width = 6, height = 6)

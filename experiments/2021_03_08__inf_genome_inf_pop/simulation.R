@@ -103,8 +103,8 @@ for(size_idx in 1:length(size_vec)){
   ggplot(df_density[mask,], aes(x = num_ones, y = generation, fill = frac_of_pop)) + 
     geom_raster() + 
     scale_y_reverse(expand = c(0,0)) + 
-    scale_x_continuous(expand = c(0,0)) + 
-    ggsave(paste0('./simulation/plots/sim/density_over_time__size_', size, '.png'), units = 'in', width = 6, height = 6)
+    scale_x_continuous(expand = c(0,0)) 
+  ggsave(paste0('./simulation/plots/sim/density_over_time__size_', size, '.png'), units = 'in', width = 6, height = 6)
   
   # Save simulated data
   write.csv(df_density, paste0('simulation/data/size_', size, '.csv'))

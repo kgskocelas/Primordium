@@ -42,9 +42,9 @@ ggplot(df_summary, aes(x = ancestor_1s - 60, y = mean_rep_rate, color = as.facto
   theme(axis.text = element_text(size = text_minor_size)) +
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
-  theme(legend.position = 'bottom') +
-  ggsave('timing/plots/replication_rate.png', units = 'in', width = 6, height = 6) +
-  ggsave('timing/plots/replication_rate.pdf', units = 'in', width = 6, height = 6)
+  theme(legend.position = 'bottom') 
+ggsave('timing/plots/replication_rate.png', units = 'in', width = 6, height = 6) 
+ggsave('timing/plots/replication_rate.pdf', units = 'in', width = 6, height = 6)
 
 ggplot(df_summary, aes(x = ancestor_1s - 60, y = rep_rate_diff, color = as.factor(size_factor))) +
   geom_vline(aes(xintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -59,9 +59,9 @@ ggplot(df_summary, aes(x = ancestor_1s - 60, y = rep_rate_diff, color = as.facto
   theme(axis.text = element_text(size = text_minor_size)) +
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
-  theme(legend.position = 'bottom') +
-  ggsave('timing/plots/replication_rate_diff.png', units = 'in', width = 6, height = 6) +
-  ggsave('timing/plots/replication_rate_diff.pdf', units = 'in', width = 6, height = 6)
+  theme(legend.position = 'bottom') 
+ggsave('timing/plots/replication_rate_diff.png', units = 'in', width = 6, height = 6) 
+ggsave('timing/plots/replication_rate_diff.pdf', units = 'in', width = 6, height = 6)
 
 ggplot(df_summary[df_summary$ancestor_1s >= 40,], aes(x = ancestor_1s - 60, y = rep_rate_diff, color = as.factor(size_factor))) +
   geom_vline(aes(xintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -77,9 +77,9 @@ ggplot(df_summary[df_summary$ancestor_1s >= 40,], aes(x = ancestor_1s - 60, y = 
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(legend.position = 'bottom') +
-  guides(color = guide_legend(nrow = 3)) +
-  ggsave('timing/plots/replication_rate_diff_trimmed.png', units = 'in', width = 6, height = 6) +
-  ggsave('timing/plots/replication_rate_diff_trimmed.pdf', units = 'in', width = 6, height = 6)
+  guides(color = guide_legend(nrow = 3)) 
+ggsave('timing/plots/replication_rate_diff_trimmed.png', units = 'in', width = 6, height = 6) 
+ggsave('timing/plots/replication_rate_diff_trimmed.pdf', units = 'in', width = 6, height = 6)
 
 ggplot(df_summary[df_summary$ancestor_1s >= 40,], aes(x = ancestor_1s - 60, y = rep_rate_diff, color = as.factor(size_factor))) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -99,7 +99,7 @@ ggplot(df_summary[df_summary$ancestor_1s >= 40,], aes(x = ancestor_1s - 60, y = 
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
   #theme(legend.position = 'bottom') +
-  theme(legend.position = 'none') +
-  #guides(color = guide_legend(nrow = 3)) +
-  ggsave('timing/plots/replication_rate_diff_trimmed_two_col.png', units = 'in', width = 6, height = 6) +
-  ggsave('timing/plots/replication_rate_diff_trimmed_two_col.pdf', units = 'in', width = 6, height = 6)
+  theme(legend.position = 'none') 
+  #guides(color = guide_legend(nrow = 3)) 
+ggsave('timing/plots/replication_rate_diff_trimmed_two_col.png', units = 'in', width = 6, height = 6) 
+ggsave('timing/plots/replication_rate_diff_trimmed_two_col.pdf', units = 'in', width = 6, height = 6)
