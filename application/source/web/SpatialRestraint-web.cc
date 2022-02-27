@@ -18,10 +18,10 @@
 // Standard
 
 // Empirical
-#include "emp/web/web.hpp"
-#include "emp/web/Animate.hpp"
-#include "emp/web/color_map.hpp"
-#include "emp/web/Element.hpp"
+#include "web/web.h"
+#include "web/Animate.h"
+#include "web/color_map.h"
+#include "web/Element.h"
 
 // Local
 #include "../SpatialRestraint.h"
@@ -35,8 +35,9 @@ private:
   int tile_width = canvas_width / mc_size;  // Width of each cell in pixels
   int tile_height = canvas_height / mc_size;// Height of each cell in pixels
   int steps_per_draw = 1024;                // How many cell births per canvas update?
-  size_t starting_ones = 55;                // The number of ones in the starting cell's genome
-  double mut_prob = 0.2;                    // Per genome mutation rate (only ever one bit flip)
+  size_t starting_ones = 60;                // The number of ones in the starting cell's genome
+  double mut_prob = 0.5;                    // Per genome mutation rate (only ever one bit flip)
+  size_t threshold = 60;                    // Number of ones required for a cell to be restrained
   bool one_check = false;                   // If true, restrained cells only check one random 
                                             //    neighbor before losing their resources. If false, 
                                             //    restrained cells select randomly from empty 
@@ -53,17 +54,17 @@ protected:
     auto canvas = doc.Canvas("canvas");
     size_t num_ones = multicell.cells[cell_id].num_ones;
     std::string color_fill = "#ffffff";
-    if(num_ones < 50){ // Unrestrained
+    if(num_ones < threshold){ // Unrestrained
         color_fill = emp::ColorRGB(
-          255 - (49 - num_ones) * 5,
+          255 - (threshold - num_ones) * (255 / threshold),
           0,
-          0 + (49 - num_ones) * 2);
+          0 + (threshold - num_ones) *   (100 / threshold));
     }
     else{ // Restrained
         color_fill = emp::ColorRGB(
-          255 - (num_ones - 50) * 5,
-          255 - (num_ones - 50) * 5,
-          255 - (num_ones - 50) * 5);
+          255 - (num_ones - threshold) * (255 / (100 - threshold)),
+          255 - (num_ones - threshold) * (255 / (100 - threshold)),
+          255 - (num_ones - threshold) * (255 / (100 - threshold)));
     }
     canvas.Rect(
       (cell_id % mc_size) * tile_width, 
@@ -87,6 +88,7 @@ protected:
       Stop();
       doc.Button("anim_toggle_btn").SetLabel("Start");
       doc.Button("anim_toggle_btn").SetAttr("class", "btn btn-success");
+      doc.Text("update_counter").Clear() << "Finished in " << multicell.cell_queue.GetTime() << " updates.";
     }
     else{
       cells_to_draw_count = 0;
@@ -100,15 +102,26 @@ protected:
           if(multicell.cell_placed_last_step){
             cells_to_draw[cells_to_draw_count++] = multicell.last_placed_cell_id;
           }
+          if(multicell.num_cells >= multicell.cells.size())
+            break;
+          
         }
         for(size_t idx = 0; idx < cells_to_draw_count; ++idx){
           DrawCell(cells_to_draw[idx]);
+        }
+        // Did we finish?
+        if(multicell.num_cells >= multicell.cells.size()){
+          Stop();
+          doc.Button("anim_toggle_btn").SetLabel("Start");
+          doc.Button("anim_toggle_btn").SetAttr("class", "btn btn-success");
+          doc.Text("update_counter").Clear() << "Finished in " << multicell.cell_queue.GetTime() << " updates.";
         }
       }
       else{ // We've finished! Stop the animation and update the buttons
         Stop();
         doc.Button("anim_toggle_btn").SetLabel("Start");
         doc.Button("anim_toggle_btn").SetAttr("class", "btn btn-success");
+        doc.Text("update_counter").Clear() << "Finished in " << multicell.cell_queue.GetTime() << " updates.";
       }
     }
   }
@@ -117,6 +130,7 @@ protected:
     Stop();
     doc.Button("anim_toggle_btn").SetLabel("Start");
     doc.Button("anim_toggle_btn").SetAttr("class", "btn btn-success");
+    doc.Text("update_counter").Clear() << "Organism not finished!";
     multicell.SetupConfig();
     auto canvas = doc.Canvas("canvas");
     canvas.Clear("#000000");
@@ -131,12 +145,13 @@ protected:
     tile_height = canvas_height / mc_size;
     starting_ones = std::stoi(doc.Input("ones_input").GetCurrValue());
     mut_prob = std::stod(doc.Input("mut_prob_input").GetCurrValue());
+    threshold = std::stoi(doc.Input("threshold_input").GetCurrValue());
     std::string one_check_str = doc.Input("one_check_input").GetCurrValue();
     one_check = (one_check_str == "1" || one_check_str == "true");
-    multicell.mut_prob = mut_prob;
     multicell.cells_side = mc_size;
-    multicell.restrain = 50;
     multicell.genome_size = 100;
+    multicell.mut_prob = mut_prob;
+    multicell.restrain = threshold;
     multicell.one_check = one_check;
     multicell.SetupConfig();
   }
@@ -156,6 +171,24 @@ protected:
   // Add widgets to allow the user to change configuration options
   void AddConfigWidgets(){
     auto config_col = doc.Div("col_config"); 
+
+    auto guide_panel = emp::web::Div("guide_panel").SetAttr("class", "panel panel-default");
+    config_col << guide_panel;
+    auto guide_panel_header =emp::web::Div("guide_panel_header").SetAttr("class", "panel-heading");
+    guide_panel << guide_panel_header;
+    guide_panel_header << "<center><h3>Guide</h3></center>";
+    auto guide_panel_body = emp::web::Div("guide_panel_body").SetAttr("class", "panel-body");
+    guide_panel << guide_panel_body;
+    guide_panel_body << "Set the overall configuration options below and click";
+    guide_panel_body << " \"Restart &#38; Apply\". Then just press \"Start\" under the canvas on";
+    guide_panel_body << " the left to watch an organism fill!";
+    guide_panel_body << "<br/><br/>";
+    guide_panel_body << "Restrained cells just above the restraint threshold appear white, ";
+    guide_panel_body << " increasing restraint from there fades to black.";
+    guide_panel_body << "<br/><br/>";
+    guide_panel_body << "Unrestrained cells just below the restraint threshold appear red, ";
+    guide_panel_body << " decreasing restraint from there fades to blue.";
+
     auto config_panel = emp::web::Div("config_panel").SetAttr("class", "panel panel-default");
     config_col << config_panel;
     // Header text
@@ -178,10 +211,15 @@ protected:
     form << ones_input_group; 
     doc.Input("ones_input").Value(starting_ones);
     // Mutation rate
-    auto mut_prob_input_group = AddInputGroup("mut_prob", "Mutation probability", "number", 
+    auto mut_prob_input_group = AddInputGroup("mut_prob", "Somatic mutation probability", "number", 
       [](const std::string & s){;});
     form << mut_prob_input_group; 
     doc.Input("mut_prob_input").Value(mut_prob);
+    // Threshold
+    auto threshold_input_group = AddInputGroup("threshold", "Restraint threshold", "number", 
+      [](const std::string & s){;});
+    form << threshold_input_group; 
+    doc.Input("threshold_input").Value(threshold);
     // One check (i.e., do restrained cells only check on neighbor at random?)
     auto one_check_input_group = AddInputGroup("one_check",
         "Restrained cells check only a single neighbor?", "checkbox", [](const std::string & s){;});
@@ -230,10 +268,10 @@ protected:
     center << canvas_toggle_button;
     //center << GetToggleButton("anim_toggle_btn", "Start");
     center << "&nbsp";
-    center << GetStepButton("anim_step_btn", "Advance Step")
+    center << GetStepButton("anim_step_btn", "Advance One Step")
       .SetAttr("class", "btn btn-default");
     center << "&nbsp";
-    center << emp::web::Button([this](){ Reset(); }, "Reset Multicell", "anim_reset_btn")
+    center << emp::web::Button([this](){ Reset(); }, "Reset Organism", "anim_reset_btn")
       .SetAttr("class", "btn btn-warning");
     canvas_panel_body <<  "<br/>";
     // Allow user to change the number of attempted cell births per render update
@@ -252,6 +290,10 @@ protected:
       });
     form << run_to_end_input_group; 
     doc.Input("run_to_end_input").Value(run_to_end);
+    auto center2 = emp::web::Element("center", "");
+    canvas_panel_body << center2;
+    center2 << "</br>";
+    center2 << emp::web::Text("update_counter") << "Organism not finished!";
   }
 public:
   RogueCellAnimationController():
@@ -262,7 +304,7 @@ public:
     // Setup the basics of bootstrap (overall container, jumbotron, etc.)
     auto container_div = doc.AddDiv("container_main").SetAttr("class", "container");
     auto header = emp::web::Div("header").SetAttr("class", "jumbotron");
-    header << "<center><h1>Rogue Cell Multicell Visualization</h1></center>";
+    header << "<center><h1>Primordium Organism Visualization</h1></center>";
     container_div << header;
     auto bootstrap_row = emp::web::Div("row_main").SetAttr("class", "row");
     container_div << bootstrap_row;
