@@ -1,6 +1,6 @@
-# Primordium : The Evolution of Cellular Restraint in Multicellular Organisms
+# Primordium : The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms
 
-This repository holds the source code, configuration scripts, analsyses, and assembled supplemental material for the ALife 2021 conference submission The Evolution of Cellular Restraint in Multicellular Organisms.
+This repository holds the source code, configuration scripts, analsyses, and assembled supplemental material for the ALife 2022 conference submission The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms.
 
 Supplemental material is best viewed here: https://kgskocelas.github.io/Primordium/index.html
 
