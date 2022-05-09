@@ -1,17 +1,18 @@
 ---
-title: "Genome length sweep"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for the ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2022 conference submission"
 ---
 
 # Genome Length Sweep
 
 By default, all genomes are bitstrings with 100 bits. 
 Here, we look into the effects of varying this genome length using lengths of 25, 50, 100, 200, and 400 bits.
+Regardless of genome length, the restraint threshold was set at 60% of the genome being 1s and all organisms started at a restraint buffer of 0. 
 
 The configuration script and data for the experiment can be found under `2021_02_27__genome_length/` in the experiments directory of the git repository. 
 
@@ -34,7 +35,7 @@ df = rbind(df, read.csv('../experiments/2021_02_27__genome_length/evolution/data
 df = rbind(df, read.csv('../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_100.csv'))
 df = rbind(df, read.csv('../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_400.csv'))
 df = rbind(df, read.csv('../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_25.csv'))
-# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000
 df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 # Ignore data for size 8x8 and 1024x1024
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
@@ -168,7 +169,7 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
 
 ### Facet by organism size
 
-Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis. 
+Here we plot the same data again, only now each row shows an organism size while genome length varies on the x-axis. 
 
 ```{r echo = F, fig.width=6, fig.height=10}
 # Plot the evolved restraint buffer as boxplots
@@ -492,7 +493,7 @@ ggplot(df2[df2$generation == 10000 & df2$LENGTH == 400,], aes(x = size_factor, y
 Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate. 
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ. 
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ. 
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons. 
 
 ```{r}
@@ -509,7 +510,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ```
 
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
+We see that significant variation exists within each genome length, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)

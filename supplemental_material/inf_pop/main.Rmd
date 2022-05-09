@@ -1,20 +1,20 @@
 ---
-title: "Infinite population experiments"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for the ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2022 conference submission"
 ---
 
 # Infinite population experiments
 
 ## Finite genome experiment
 
-The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of higher restraint  buffers. 
+The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of larger restraint buffers. 
 However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint. 
-To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simuate an infinite population. 
+To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simulate an infinite population. 
 We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
 ![Formula]( ./inf_pop/formula.png "Formula")
 
@@ -37,6 +37,7 @@ Thus, even with an infinite population and the higher selective pressures that c
 
 Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome. 
 Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
+Additionally, the probability that a mutation reduces restraint is locked at 60% (_i.e._, b(n) = 0.6). 
 The simulation script, plotting script, and timing data for this experiment can be found under `2021_03_08__inf_genome_inf_pop/` in the experiments directory of the git repository.
 
 ### Plots 
@@ -48,4 +49,4 @@ Here we show the evolved restraint buffer values at the end of 10,000 generation
 Again, we use bar plots because the simulation is deterministic.
 ![Finite final bars plot]( ./inf_pop/inf_evolved_bars.png "Finite final bars plot")
 
-Thus, we see that using *both* an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evovled restraint buffers monotonically increase with organism size. 
+Thus, we see that using *both* an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evolved restraint buffers continuously increase with organism size. 

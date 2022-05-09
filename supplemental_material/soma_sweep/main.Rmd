@@ -1,17 +1,22 @@
 ---
-title: "Somatic Mutation Rate Sweep"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for the ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2022 conference submission"
 ---
 
 # Somatic Mutation Rate Sweep
 
-This was one of the prelimary experiments we conducted to find the default parameters for Primordium. 
-Here, we vary the somatic mutation rate, which is the probability that a cell replication will result in a mutation to the offspring's genome.
+This was one of the preliminary experiments we conducted to find the default parameters for Primordium.
+However, the data shown here were ran after the system was finalized (with new random number seeds). 
+There were no qualitative differences from prior results. 
+
+Here, we vary the _somatic_ mutation rate, which is the probability that cell replication will result in a mutation to the offspring's genome.
+The probability of a mutation is per-genome, not per-bit. 
+When a somatic mutation occurs, only a change of +/-1 is possible in the restraint value. 
 We settled on a somatic mutation rate of 0.5 (_i.e._, each cell replication has a 50% chance of mutation).
 
 The configuration script and data for the experiment can be found under `2021_02_27__soma_mut_fin/` in the experiments directory of the git repository. 
@@ -30,7 +35,7 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 ```{r, echo = T}
 # Load the data
 df = read.csv('../experiments/2021_02_27__soma_mut_fin/evolution/data/scraped_evolution_data.csv')
-# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000
 df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 # Ignore data for size 8x8 and 1024x1024
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]
@@ -514,7 +519,7 @@ Here we plot each somatic mutation rate independently, with organism size varyin
 Since organism size is our main point of comparison, we calculate statistics for each somatic mutation rate. 
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate. 
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ. 
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ. 
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons. 
 
 ```{r}
@@ -530,7 +535,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
   print(df_kruskal)
 ```
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
+We see that significant variation exists within each mutation rate, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)
