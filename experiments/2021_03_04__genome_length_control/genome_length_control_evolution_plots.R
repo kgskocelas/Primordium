@@ -176,6 +176,28 @@ ggplot(df2[df2$generation == 10000,], aes(x = length_factor, y = restraint_value
   facet_grid(vars(size_factor), scales = 'free_y') 
 ggsave('./evolution/plots/genome_length_control_boxplot_facet_size_free_y.png', units = 'in', width = 6, height = 10) 
 ggsave('./evolution/plots/genome_length_control_boxplot_facet_size_free_y.pdf', units = 'in', width = 6, height = 10)
+# Same plot but y-axes are locked again, and this time we do a facet_wrap
+ggplot(df2[df2$generation == 10000,], aes(x = length_factor, y = restraint_value)) +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
+  geom_boxplot(aes(fill = size_factor)) +
+  xlab('Genome length') +
+  ylab('Evolved restraint buffer') +
+  scale_fill_manual(values = color_map) +
+  labs(fill = 'Organism size') +
+  theme_light() +
+  theme(legend.position = 'none') +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(axis.title = element_text(size = text_major_size)) +
+  theme(axis.text = element_text(size = text_minor_size)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.8, hjust = 0.8)) +
+  theme(legend.title = element_text(size = text_major_size)) +
+  theme(legend.text = element_text(size = text_minor_size)) +
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  facet_wrap(vars(size_factor), nrow = 3, ncol = 2) 
+ggsave('./evolution/plots/genome_length_control_boxplot_facet_wrap.png', units = 'in', width = 6, height = 7)
+ggsave('./evolution/plots/genome_length_control_boxplot_facet_wrap.pdf', units = 'in', width = 6, height = 7)
 
 # Plot the evolved restraint buffer as boxplots, one file per genome length
   # x-axis = organism size
