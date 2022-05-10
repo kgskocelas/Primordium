@@ -1,39 +1,46 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 %
-\documentclass[]{book}
+\documentclass[
+]{book}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
-\else % if luatex or xelatex
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
   \usepackage{unicode-math}
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-\usepackage{hyperref}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-            pdftitle={The Evolution of Cellular Restraint in Multicellular Organisms},
-            pdfauthor={Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
+  pdftitle={The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms},
+  pdfauthor={Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -75,9 +82,15 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
-% Fix footnotes in tables (requires footnote package)
-\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
-\usepackage{graphicx,grffile}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -86,31 +99,20 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-% set default figure placement to htbp
+% Set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
-
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
 \usepackage[]{natbib}
 \bibliographystyle{plainnat}
 
-\title{The Evolution of Cellular Restraint in Multicellular Organisms}
+\title{The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms}
 \author{Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria}
-\date{2021-03-20}
+\date{2022-05-08}
 
 \begin{document}
 \maketitle
@@ -122,13 +124,13 @@
 \hypertarget{introduction}{%
 \chapter{Introduction}\label{introduction}}
 
-This document serves as the supplemental material for the ALife 2021 conference submission ``The Evolution of Cellular Restraint in Multicellular Organisms''.
+This document serves as the supplemental material for the ALife 2022 conference submission ``The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms''.
 
 \hypertarget{overview}{%
 \section{Overview}\label{overview}}
 
-The document is split into sections that are assessable via the navigation bar on the left side of the screen.
-Each section corresponds to an experiment (some that were discussed at length in the paper, others that were not included).
+The document is split into sections that are accessible via the navigation bar on the left side of the screen.
+Each section corresponds to an experiment (some that were discussed at length in the paper, others that were briefly mentioned).
 As such, each section follows the same formula: setup, plots, and statistics.
 
 \hypertarget{interactive-web-app}{%
@@ -141,7 +143,7 @@ To build intuition on how organisms fill, we created an interactive web app, ava
 
 Here we show all of the data for the baseline experiment in which we vary organism size while all other parameters are set to their default values.
 
-For this experiment, we also tested size 8x8 and 1024x1024 organisms.
+For this original experiment, we also tested size 8x8 and 1024x1024 organisms.
 In the paper, however, we only included sizes 16x16 to 512x512.
 Size 8x8 organisms are quick to run, but these smaller organisms see the most noise in the fitness data.
 Conversely, size 1024x1024 organisms take so long to run that it was not computationally feasible to run them for each experiment.
@@ -168,10 +170,10 @@ Load the data and trim to only include the final generation
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_26__org_sizes/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_26\_\_org\_sizes/evolution/data/scraped\_evolution\_data.csv\textquotesingle{}}\NormalTok{)}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -179,9 +181,9 @@ Group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
 
@@ -189,29 +191,29 @@ Clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'8x8'}\NormalTok{ =}\StringTok{       '#333333'}\NormalTok{,}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\DecValTok{60}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{ =}\StringTok{       \textquotesingle{}\#333333\textquotesingle{}}\NormalTok{,}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -252,12 +254,12 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df2}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE, df2)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-\NormalTok{  df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df2}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE, df2)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -266,25 +268,25 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 1 1.506351e-127    610.2553  7      TRUE
 \end{verbatim}
 
-We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{df_test =}\StringTok{ }\NormalTok{df2}
-\NormalTok{df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
-\KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{  size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-  \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{    size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
-\NormalTok{    df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{df\_test =}\StringTok{ }\NormalTok{df2}
+\NormalTok{df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
+\KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{  size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{    size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{    df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
 \NormalTok{\}}
-\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-\KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+\KeywordTok{print}\NormalTok{(df\_wilcox)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -310,8 +312,13 @@ We see that significant variation exists, so we perform pariwise Wilcoxon tests 
 \hypertarget{somatic-mutation-rate-sweep}{%
 \chapter{Somatic Mutation Rate Sweep}\label{somatic-mutation-rate-sweep}}
 
-This was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-Here, we vary the somatic mutation rate, which is the probability that a cell replication will result in a mutation to the offspring's genome.
+This was one of the preliminary experiments we conducted to find the default parameters for Primordium.
+However, the data shown here were ran after the system was finalized (with new random number seeds).
+There were no qualitative differences from prior results.
+
+Here, we vary the \emph{somatic} mutation rate, which is the probability that cell replication will result in a mutation to the offspring's genome.
+The probability of a mutation is per-genome, not per-bit.
+When a somatic mutation occurs, only a change of +/-1 is possible in the restraint value.
 We settled on a somatic mutation rate of 0.5 (\emph{i.e.}, each cell replication has a 50\% chance of mutation).
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_soma\_mut\_fin/} in the experiments directory of the git repository.
@@ -335,12 +342,12 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__soma_mut_fin/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_soma\_mut\_fin/evolution/data/scraped\_evolution\_data.csv\textquotesingle{}}\NormalTok{)}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -348,42 +355,46 @@ We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, CELLMUT)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, CELLMUT)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'MCSIZE'. You can override using the `.groups` argument.
+\end{verbatim}
 
 We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{soma_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'soma CELLMUT'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{CELLMUT)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{CELLMUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{soma_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'soma CELLMUT'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{CELLMUT)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{CELLMUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\DecValTok{60}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{soma\_mut\_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}soma CELLMUT\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{CELLMUT)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{mut\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{CELLMUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{soma\_mut\_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}soma CELLMUT\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{CELLMUT)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{mut\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{CELLMUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -498,21 +509,21 @@ Here we plot each somatic mutation rate independently, with organism size varyin
 Since organism size is our main point of comparison, we calculate statistics for each somatic mutation rate.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'soma_mut_rate'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
-\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{CELLMUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
-\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  mut\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}soma\_mut\_rate\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(mut\_rate }\ControlFlowTok{in}\NormalTok{ mut\_vec)\{}
+\NormalTok{    df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{CELLMUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut\_rate,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_test}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_test}\OperatorTok{$}\NormalTok{MCSIZE, df\_test)}
+\NormalTok{    df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut\_rate, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -527,28 +538,28 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 7          1.00 5.474947e-99    468.3229  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists within each mutation rate, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
-\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{CELLMUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
-\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'mut_rate'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
-\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{mut\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(mut\_rate }\ControlFlowTok{in}\NormalTok{ mut\_vec)\{}
+\NormalTok{  df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{CELLMUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut\_rate,]}
+\NormalTok{  df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}mut\_rate\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+    \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{      size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{      df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut\_rate, size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{    \}}
 \NormalTok{  \}}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Somatic mutation rate: '}\NormalTok{, mut_rate))}
-  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}Somatic mutation rate: \textquotesingle{}}\NormalTok{, mut\_rate))}
+  \KeywordTok{print}\NormalTok{(df\_wilcox)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -678,11 +689,19 @@ We see that significant variation exists within each mutation rate, so we perfor
 \hypertarget{germ-mutation-rate-sweep}{%
 \chapter{Germ Mutation Rate Sweep}\label{germ-mutation-rate-sweep}}
 
-This experiment was one of the prelimary experiments we conducted to find the default parameters for Primordium.
-We varied the mutation rate, which is the probability that an offspring experineces a mutation to its restraint buffer during organism reproduction.
+This was one of the preliminary experiments we conducted to find the default parameters for Primordium.
+However, the data shown here were ran after the system was finalized (with new random number seeds).
+There were no qualitative differences from prior results.
+
+We vary the \emph{germ} mutation rate, which is the probability that an offspring experiences a mutation to its restraint buffer during organism reproduction.
+The probability of a mutation is per-genome, not per-bit.
+When a germ mutation occurs, only a change of +/-1 is possible in the restraint buffer.
 The final default germ mutation rate was 0.02 (\emph{i.e.}, each organism reproduction has a 2\% chance of mutation).
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_16\_\_germ\_mut\_fin/} in the experiments directory of the git repository.
+
+\hypertarget{data-cleaning-2}{%
+\section{Data cleaning}\label{data-cleaning-2}}
 
 Load necessary R libraries
 
@@ -700,11 +719,11 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
-\CommentTok{#df = read.csv('/research/rogue_cell/Primordium/experiments/2021_02_16__germ_mut_fin/evolution/data/scraped_evolution_data.csv')}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\KeywordTok{cat}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(df), }\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{)}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_16\_\_germ\_mut\_fin/evolution/data/scraped\_evolution\_data.csv\textquotesingle{}}\NormalTok{)}
+\CommentTok{\#df = read.csv(\textquotesingle{}/research/rogue\_cell/Primordium/experiments/2021\_02\_16\_\_germ\_mut\_fin/evolution/data/scraped\_evolution\_data.csv\textquotesingle{})}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\KeywordTok{cat}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(df), }\StringTok{\textquotesingle{}}\CharTok{\textbackslash{}n}\StringTok{\textquotesingle{}}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -714,9 +733,9 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -724,9 +743,9 @@ We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, MUT)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, MUT)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
 
@@ -734,33 +753,33 @@ Further cleaning of the data plus adding some variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{germ_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'GERM MUT'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MUT)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{germ_mut_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{'GERM MUT'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MUT)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{mut_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\DecValTok{60}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{germ\_mut\_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}GERM MUT\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MUT)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{mut\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{germ\_mut\_str =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}GERM MUT\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MUT)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{mut\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MUT, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.10}\NormalTok{, }\FloatTok{0.20}\NormalTok{, }\FloatTok{0.50}\NormalTok{, }\FloatTok{1.00}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
-\NormalTok{boxplot_color =}\StringTok{ '#9ecae1'}
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
+\NormalTok{boxplot\_color =}\StringTok{ \textquotesingle{}\#9ecae1\textquotesingle{}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -879,21 +898,21 @@ Similarly, here we plot each germ mutation rate independently, with the organism
 Since organism size is our main point of comparison, we calculate stats for each germ mutation rate.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'germ_mut_rate'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
-\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
-\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  mut\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}germ\_mut\_rate\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(mut\_rate }\ControlFlowTok{in}\NormalTok{ mut\_vec)\{}
+\NormalTok{    df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut\_rate,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_test}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_test}\OperatorTok{$}\NormalTok{MCSIZE, df\_test)}
+\NormalTok{    df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut\_rate, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -908,28 +927,28 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 7          1.00 2.144229e-92    437.7600  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each mutation rate, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists within each mutation rate, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{mut_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(mut_rate }\ControlFlowTok{in}\NormalTok{ mut_vec)\{}
-\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut_rate,]}
-\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'germ_mut_rate'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
-\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut_rate, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{mut\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.02}\NormalTok{, }\FloatTok{0.05}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(mut\_rate }\ControlFlowTok{in}\NormalTok{ mut\_vec)\{}
+\NormalTok{  df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MUT }\OperatorTok{==}\StringTok{ }\NormalTok{mut\_rate,]}
+\NormalTok{  df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}germ\_mut\_rate\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+    \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{      size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{      df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(mut\_rate, size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{    \}}
 \NormalTok{  \}}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Germ mutation rate: '}\NormalTok{, mut_rate))}
-  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}Germ mutation rate: \textquotesingle{}}\NormalTok{, mut\_rate))}
+  \KeywordTok{print}\NormalTok{(df\_wilcox)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1063,8 +1082,10 @@ By default, we calculated 100 timing samples for each combination of organism si
 This experiment showed that increasing from 100 samples to 10,000 samples has no qualitative difference on results.
 This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples.
 
-\hypertarget{data-cleaning-2}{%
-\section{Data cleaning}\label{data-cleaning-2}}
+The configuration script and data for the experiment can be found under \texttt{2021\_02\_24\_\_finite\_10k\_samples/} in the experiments directory of the git repository.
+
+\hypertarget{data-cleaning-3}{%
+\section{Data cleaning}\label{data-cleaning-3}}
 
 Load necessary R libraries
 
@@ -1082,17 +1103,17 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k.csv'}\NormalTok{)}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_128.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_256.csv'}\NormalTok{))}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_24\_\_finite\_10k\_samples/evolution/data/scraped\_evolution\_data\_10k.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_24\_\_finite\_10k\_samples/evolution/data/scraped\_evolution\_data\_10k\_128.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_24\_\_finite\_10k\_samples/evolution/data/scraped\_evolution\_data\_10k\_256.csv\textquotesingle{}}\NormalTok{))}
 \NormalTok{df}\OperatorTok{$}\NormalTok{LENGTH =}\StringTok{ }\DecValTok{100}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'}\NormalTok{))}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_24\_\_finite\_10k\_samples/evolution/data/scraped\_evolution\_data\_10k\_512.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_24\_\_finite\_10k\_samples/evolution/data/scraped\_evolution\_data\_benchmark.csv\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1100,38 +1121,42 @@ We group and summarize the data to make to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, SAMPLES)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, SAMPLES)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'MCSIZE'. You can override using the `.groups` argument.
+\end{verbatim}
 
 We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\DecValTok{60}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -1176,8 +1201,13 @@ Since we treat each organism size as a group, we simply conduct a Wilcoxon Rank-
 By default, all populations contain 200 organisms.
 This experiment tested if increasing the population size to 2,000 organisms has any substantial effect on evolved restraint.
 
-\hypertarget{data-cleaning-3}{%
-\section{Data cleaning}\label{data-cleaning-3}}
+This experiment was initially conducted to find our default parameters.
+However, the data shown here were reran (with new random number seeds) when we decided to investigate population size in the paper.
+
+The configuration script and data for the experiment can be found under \texttt{2021\_03\_06\_\_pop\_size/} in the experiments directory of the git repository.
+
+\hypertarget{data-cleaning-4}{%
+\section{Data cleaning}\label{data-cleaning-4}}
 
 Load necessary libraries
 
@@ -1195,13 +1225,13 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_200.csv'}\NormalTok{)}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_06__pop_size/evolution/data/scraped_evolution_data_2k.csv'}\NormalTok{))}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_06\_\_pop\_size/evolution/data/scraped\_evolution\_data\_200.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_06\_\_pop\_size/evolution/data/scraped\_evolution\_data\_2k.csv\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1209,38 +1239,42 @@ We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, POP)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, POP)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'MCSIZE'. You can override using the `.groups` argument.
+\end{verbatim}
 
 We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60 because genome length is 100 here)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\DecValTok{60}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60 because genome length is 100 here)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\DecValTok{60}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -1264,7 +1298,7 @@ Inside each subplot, population size is shown on the x-axis.
 \section{Statistics}\label{statistics-4}}
 
 The plot shows that increasing population size increases the evolved restraint buffer at organism sizes.
-Further, we see that the same general trend holds at both population sizes, that evolved restriant peaks at size 128x128.
+Further, we see that the same general trend holds at both population sizes, that evolved restraint peaks at size 128x128.
 
 Finally, we treat each organism size as a group and conduct a Wilcoxon Rank-Sum test between the population sizes.
 
@@ -1283,11 +1317,12 @@ Finally, we treat each organism size as a group and conduct a Wilcoxon Rank-Sum 
 
 By default, all genomes are bitstrings with 100 bits.
 Here, we look into the effects of varying this genome length using lengths of 25, 50, 100, 200, and 400 bits.
+Regardless of genome length, the restraint threshold was set at 60\% of the genome being 1s and all organisms started at a restraint buffer of 0.
 
 The configuration script and data for the experiment can be found under \texttt{2021\_02\_27\_\_genome\_length/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-4}{%
-\section{Data cleaning}\label{data-cleaning-4}}
+\hypertarget{data-cleaning-5}{%
+\section{Data cleaning}\label{data-cleaning-5}}
 
 Load necessary libraries
 
@@ -1305,16 +1340,16 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_50.csv'}\NormalTok{)}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_200.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_100.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_400.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_02_27__genome_length/evolution/data/scraped_evolution_data_length_25.csv'}\NormalTok{))}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_genome\_length/evolution/data/scraped\_evolution\_data\_length\_50.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_genome\_length/evolution/data/scraped\_evolution\_data\_length\_200.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_genome\_length/evolution/data/scraped\_evolution\_data\_length\_100.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_genome\_length/evolution/data/scraped\_evolution\_data\_length\_400.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_02\_27\_\_genome\_length/evolution/data/scraped\_evolution\_data\_length\_25.csv\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1322,43 +1357,47 @@ We group and summarize the data to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, LENGTH)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, LENGTH)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'MCSIZE'. You can override using the `.groups` argument.
+\end{verbatim}
 
 We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{## Set variables to make plotting easier}
-\CommentTok{# Calculate restraint value (x - 60% of the genome length)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{*}\StringTok{ }\FloatTok{0.6}\NormalTok{)}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\#\# Set variables to make plotting easier}
+\CommentTok{\# Calculate restraint value (x {-} 60\% of the genome length)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{*}\StringTok{ }\FloatTok{0.6}\NormalTok{)}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{\textquotesingle{}{-}bit\textquotesingle{}}\NormalTok{)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{length\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}25{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}50{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}100{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}200{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}400{-}bit\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{length\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{\textquotesingle{}{-}bit\textquotesingle{}}\NormalTok{)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{length\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{length\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}25{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}50{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}100{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}200{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}400{-}bit\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -1387,7 +1426,7 @@ Here we plot the same data, only we allow the y-axis to vary between rows.
 \hypertarget{facet-by-organism-size-2}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size-2}}
 
-Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
+Here we plot the same data again, only now each row shows an organism size while genome length varies on the x-axis.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-79-1.pdf}
 
@@ -1466,21 +1505,21 @@ Here we plot each genome length independently, with the organism size on the x-a
 Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
-\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
-\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  length\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}genome\_length\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(genome\_length }\ControlFlowTok{in}\NormalTok{ length\_vec)\{}
+\NormalTok{    df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome\_length,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_test}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_test}\OperatorTok{$}\NormalTok{MCSIZE, df\_test)}
+\NormalTok{    df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome\_length, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1493,28 +1532,28 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 5           400 2.857912e-49    237.3380  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists within each genome length, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
-\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
-\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
-\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{length\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(genome\_length }\ControlFlowTok{in}\NormalTok{ length\_vec)\{}
+\NormalTok{  df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome\_length,]}
+\NormalTok{  df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}genome\_length\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+    \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{      size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{      df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome\_length, size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{    \}}
 \NormalTok{  \}}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Genome length: '}\NormalTok{, genome_length))}
-  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}Genome length: \textquotesingle{}}\NormalTok{, genome\_length))}
+  \KeywordTok{print}\NormalTok{(df\_wilcox)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1628,8 +1667,8 @@ The fitness data for 64x64 organisms is shown below, showing the range of each g
 
 The configuration script and data for the experiment can be found under \texttt{2021\_03\_04\_\_genome\_length\_control/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-5}{%
-\section{Data cleaning}\label{data-cleaning-5}}
+\hypertarget{data-cleaning-6}{%
+\section{Data cleaning}\label{data-cleaning-6}}
 
 Load necessary R libraries
 
@@ -1647,16 +1686,16 @@ Load the data and trim include only the final generation data for sizes 16x16 to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(          }\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_50.csv'}\NormalTok{)}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_200.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_100.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_400.csv'}\NormalTok{))}
-\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_04__genome_length_control/evolution/data/scraped_evolution_data_length_25.csv'}\NormalTok{))}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
-\CommentTok{# Ignore data for size 8x8 and 1024x1024}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(          }\StringTok{\textquotesingle{}../experiments/2021\_03\_04\_\_genome\_length\_control/evolution/data/scraped\_evolution\_data\_length\_50.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_04\_\_genome\_length\_control/evolution/data/scraped\_evolution\_data\_length\_200.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_04\_\_genome\_length\_control/evolution/data/scraped\_evolution\_data\_length\_100.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_04\_\_genome\_length\_control/evolution/data/scraped\_evolution\_data\_length\_400.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{df =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df, }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_04\_\_genome\_length\_control/evolution/data/scraped\_evolution\_data\_length\_25.csv\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Ignore data for size 8x8 and 1024x1024}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{8} \OperatorTok{\&}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{!=}\StringTok{ }\DecValTok{1024}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1664,42 +1703,46 @@ We group and summarize the data to make to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE, LENGTH)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE, LENGTH)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'MCSIZE'. You can override using the `.groups` argument.
+\end{verbatim}
 
 We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (x - 60% of the genome length)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones }\OperatorTok{-}\StringTok{ }\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{*}\StringTok{ }\FloatTok{0.6}\NormalTok{)}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{'-bit'}\NormalTok{)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{length_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{length_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'25-bit'}\NormalTok{, }\StringTok{'50-bit'}\NormalTok{, }\StringTok{'100-bit'}\NormalTok{, }\StringTok{'200-bit'}\NormalTok{, }\StringTok{'400-bit'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (x {-} 60\% of the genome length)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones }\OperatorTok{{-}}\StringTok{ }\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{*}\StringTok{ }\FloatTok{0.6}\NormalTok{)}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{\textquotesingle{}{-}bit\textquotesingle{}}\NormalTok{)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{length\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{length\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}25{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}50{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}100{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}200{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}400{-}bit\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{length\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{LENGTH, }\StringTok{\textquotesingle{}{-}bit\textquotesingle{}}\NormalTok{)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{length\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{length\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}25{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}50{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}100{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}200{-}bit\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}400{-}bit\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -1728,7 +1771,7 @@ Here we plot the same data, only we allow the y-axis to vary between rows.
 \hypertarget{facet-by-organism-size-3}{%
 \subsection{Facet by organism size}\label{facet-by-organism-size-3}}
 
-Here we plot the same data again, only now each row shows an organims size while genome length varies on the x-axis.
+Here we plot the same data again, only now each row shows an organism size while genome length varies on the x-axis.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-101-1.pdf}
 
@@ -1801,27 +1844,30 @@ Here we plot each genome length independently, with the organism size on the x-a
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-113-1.pdf}
 
+These plots show no qualitative difference with the genome length experiment.
+Increasing organism size correlates with evolved restraint buffers until a point, and then larger organisms evolve less restraint than their smaller counterparts.
+
 \hypertarget{statistics-6}{%
 \section{Statistics}\label{statistics-6}}
 
 Since organism size is our main point of comparison, we calculate statistics for each genome length.
 
 First, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists at that mutation rate.
-If variance exists, we then perfrm a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
 Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
-\NormalTok{    df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df_test}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df_test}\OperatorTok{$}\NormalTok{MCSIZE, df_test)}
-\NormalTok{    df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  length\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}genome\_length\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(genome\_length }\ControlFlowTok{in}\NormalTok{ length\_vec)\{}
+\NormalTok{    df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome\_length,]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_test}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_test}\OperatorTok{$}\NormalTok{MCSIZE, df\_test)}
+\NormalTok{    df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome\_length, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1834,28 +1880,28 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 5           400 3.667815e-58    278.7645  5      TRUE
 \end{verbatim}
 
-We see that significant variation exists within each genome length, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists within each genome length, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{length_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(genome_length }\ControlFlowTok{in}\NormalTok{ length_vec)\{}
-\NormalTok{  df_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome_length,]}
-\NormalTok{  df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'genome_length'}\NormalTok{, }\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-  \ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{    size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-    \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{      size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{)}
-\NormalTok{      df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome_length, size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{length\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(genome\_length }\ControlFlowTok{in}\NormalTok{ length\_vec)\{}
+\NormalTok{  df\_test =}\StringTok{ }\NormalTok{df2[df2}\OperatorTok{$}\NormalTok{LENGTH }\OperatorTok{==}\StringTok{ }\NormalTok{genome\_length,]}
+\NormalTok{  df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{6}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}genome\_length\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{    size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+    \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{      size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{      res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{)}
+\NormalTok{      df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(genome\_length, size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{    \}}
 \NormalTok{  \}}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{  df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{'Genome length: '}\NormalTok{, genome_length))}
-  \KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}Genome length: \textquotesingle{}}\NormalTok{, genome\_length))}
+  \KeywordTok{print}\NormalTok{(df\_wilcox)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1954,6 +2000,7 @@ We see that significant variation exists within each genome length, so we perfor
 Building off the genome length experiment, we wanted to ensure our results were not an artifact of limited genome size.
 Genomes in biological organisms can be extremely large compared to our 400-bit genomes.
 Therefore, we extended the model to support infinite genomes.
+
 Organisms with infinite genomes have no limit on the restraint buffer values they can evolve.
 In an infinite genome, restraint threshold is set at zero, and thus all non-negative restraint values are restrained.
 Organisms begin with a restraint buffer of zero.
@@ -1961,12 +2008,12 @@ Each mutation (both somatic and germ) \emph{always} has a 60\% probability of lo
 In this way, the infinite genome has the same probability of a restraint-reducing mutation as finite genomes have at their restraint threshold.
 Furthermore, mutational pressure does not increase with the restraint buffer as it does in finite genomes.
 
-Here, we show the results of re-running the baseline experiment using an infnite genome.
+Here, we show the results of re-running the baseline experiment using an infinite genome.
 Since we are replicating the baseline experiment, we also include the 8x8 and 1024x1024 organism sizes.
 The configuration script and data for the experiment can be found under \texttt{2021\_03\_12\_\_org\_sizes\_inf/} in the experiments directory of the git repository.
 
-\hypertarget{data-cleaning-6}{%
-\section{Data cleaning}\label{data-cleaning-6}}
+\hypertarget{data-cleaning-7}{%
+\section{Data cleaning}\label{data-cleaning-7}}
 
 Load necessary R libraries
 
@@ -1984,10 +2031,10 @@ Load the data and trim to only include the final generation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Load the data}
-\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'../experiments/2021_03_12__org_sizes_inf/evolution/data/scraped_evolution_data.csv'}\NormalTok{)}
-\CommentTok{# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000}
-\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
+\CommentTok{\# Load the data}
+\NormalTok{df =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_12\_\_org\_sizes\_inf/evolution/data/scraped\_evolution\_data.csv\textquotesingle{}}\NormalTok{)}
+\CommentTok{\# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000}
+\NormalTok{df2 =}\StringTok{ }\NormalTok{df[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(df}\OperatorTok{$}\NormalTok{MCSIZE) }\OperatorTok{\&}\StringTok{ }\NormalTok{df}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\DecValTok{10000}\NormalTok{,]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1995,9 +2042,9 @@ We group and summarize the data to make to ensure all replicates are present.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Group the data by size and summarize}
-\NormalTok{data_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group_by}\NormalTok{(df2, MCSIZE)}
-\NormalTok{data_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data_grouped, }\DataTypeTok{mean_ones =} \KeywordTok{mean}\NormalTok{(ave_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
+\CommentTok{\# Group the data by size and summarize}
+\NormalTok{data\_grouped =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{group\_by}\NormalTok{(df2, MCSIZE)}
+\NormalTok{data\_summary =}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarize}\NormalTok{(data\_grouped, }\DataTypeTok{mean\_ones =} \KeywordTok{mean}\NormalTok{(ave\_ones), }\DataTypeTok{n =}\NormalTok{ dplyr}\OperatorTok{::}\KeywordTok{n}\NormalTok{())}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2005,29 +2052,29 @@ We clean the data and create a few helper variables to make plotting easier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Calculate restraint value (infinite genome there is no difference)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave_ones}
-\CommentTok{# Make a nice, clean factor for size}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\NormalTok{df2}\OperatorTok{$}\NormalTok{size_factor_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{)))}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{'x'}\NormalTok{, data_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
-\NormalTok{data_summary}\OperatorTok{$}\NormalTok{size_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data_summary}\OperatorTok{$}\NormalTok{size_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'8x8'}\NormalTok{, }\StringTok{'16x16'}\NormalTok{, }\StringTok{'32x32'}\NormalTok{, }\StringTok{'64x64'}\NormalTok{, }\StringTok{'128x128'}\NormalTok{, }\StringTok{'256x256'}\NormalTok{, }\StringTok{'512x512'}\NormalTok{, }\StringTok{'1024x1024'}\NormalTok{))}
-\CommentTok{# Create a map of colors we'll use to plot the different organism sizes}
-\NormalTok{color_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{'bright'}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
-\NormalTok{color_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
-  \StringTok{'8x8'}\NormalTok{ =}\StringTok{       '#333333'}\NormalTok{,}
-  \StringTok{'16x16'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{1}\NormalTok{],}
-  \StringTok{'32x32'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{2}\NormalTok{],}
-  \StringTok{'64x64'}\NormalTok{ =}\StringTok{     }\NormalTok{color_vec[}\DecValTok{3}\NormalTok{],}
-  \StringTok{'128x128'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{4}\NormalTok{],}
-  \StringTok{'256x256'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{5}\NormalTok{],}
-  \StringTok{'512x512'}\NormalTok{ =}\StringTok{   }\NormalTok{color_vec[}\DecValTok{6}\NormalTok{],}
-  \StringTok{'1024x1024'}\NormalTok{ =}\StringTok{ }\NormalTok{color_vec[}\DecValTok{7}\NormalTok{]}
+\CommentTok{\# Calculate restraint value (infinite genome there is no difference)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{ave\_ones}
+\CommentTok{\# Make a nice, clean factor for size}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(df2}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, df2}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\NormalTok{df2}\OperatorTok{$}\NormalTok{size\_factor\_reversed =}\StringTok{ }\KeywordTok{factor}\NormalTok{(df2}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{)))}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{MCSIZE, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, data\_summary}\OperatorTok{$}\NormalTok{MCSIZE)}
+\NormalTok{data\_summary}\OperatorTok{$}\NormalTok{size\_factor =}\StringTok{ }\KeywordTok{factor}\NormalTok{(data\_summary}\OperatorTok{$}\NormalTok{size\_str, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{))}
+\CommentTok{\# Create a map of colors we\textquotesingle{}ll use to plot the different organism sizes}
+\NormalTok{color\_vec =}\StringTok{ }\KeywordTok{as.character}\NormalTok{(khroma}\OperatorTok{::}\KeywordTok{color}\NormalTok{(}\StringTok{\textquotesingle{}bright\textquotesingle{}}\NormalTok{)(}\DecValTok{7}\NormalTok{))}
+\NormalTok{color\_map =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \StringTok{\textquotesingle{}8x8\textquotesingle{}}\NormalTok{ =}\StringTok{       \textquotesingle{}\#333333\textquotesingle{}}\NormalTok{,}
+  \StringTok{\textquotesingle{}16x16\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{1}\NormalTok{],}
+  \StringTok{\textquotesingle{}32x32\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{2}\NormalTok{],}
+  \StringTok{\textquotesingle{}64x64\textquotesingle{}}\NormalTok{ =}\StringTok{     }\NormalTok{color\_vec[}\DecValTok{3}\NormalTok{],}
+  \StringTok{\textquotesingle{}128x128\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{4}\NormalTok{],}
+  \StringTok{\textquotesingle{}256x256\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{5}\NormalTok{],}
+  \StringTok{\textquotesingle{}512x512\textquotesingle{}}\NormalTok{ =}\StringTok{   }\NormalTok{color\_vec[}\DecValTok{6}\NormalTok{],}
+  \StringTok{\textquotesingle{}1024x1024\textquotesingle{}}\NormalTok{ =}\StringTok{ }\NormalTok{color\_vec[}\DecValTok{7}\NormalTok{]}
 \NormalTok{)}
-\CommentTok{# Set the sizes for text in plots}
-\NormalTok{text_major_size =}\StringTok{ }\DecValTok{18}
-\NormalTok{text_minor_size =}\StringTok{ }\DecValTok{16} 
+\CommentTok{\# Set the sizes for text in plots}
+\NormalTok{text\_major\_size =}\StringTok{ }\DecValTok{18}
+\NormalTok{text\_minor\_size =}\StringTok{ }\DecValTok{16} 
 \end{Highlighting}
 \end{Shaded}
 
@@ -2060,7 +2107,7 @@ We can plot the same data via raincloud plots.
 
 \includegraphics{primordium_supplemental_material_files/figure-latex/unnamed-chunk-122-1.pdf}
 
-These plots show that the same trend observed in the baseline experiment (that evolved restraint buffers initially increase and then decrease with increasing organims size) still appears when organism genomes are not limited in length.
+These plots show that the same trend observed in the baseline experiment (that evolved restraint buffers initially increase and then decrease with increasing organism size) still appears when organism genomes are not limited in length.
 
 \hypertarget{statistics-7}{%
 \section{Statistics}\label{statistics-7}}
@@ -2071,12 +2118,12 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df2}\OperatorTok{$}\NormalTok{restraint_value }\OperatorTok{~}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE, df2)}
-\NormalTok{  df_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
-  \KeywordTok{colnames}\NormalTok{(df_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'p_value'}\NormalTok{, }\StringTok{'chi_squared'}\NormalTok{, }\StringTok{'df'}\NormalTok{)}
-\NormalTok{  df_kruskal[}\KeywordTok{nrow}\NormalTok{(df_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
-\NormalTok{  df_kruskal}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_kruskal}\OperatorTok{$}\NormalTok{p_value }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-  \KeywordTok{print}\NormalTok{(df_kruskal)}
+\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df2}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df2}\OperatorTok{$}\NormalTok{MCSIZE, df2)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2085,25 +2132,25 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ## 1 6.606587e-79    383.9432  7      TRUE
 \end{verbatim}
 
-We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+We see that significant variation exists, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{size_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
-\NormalTok{df_test =}\StringTok{ }\NormalTok{df2}
-\NormalTok{df_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
-\KeywordTok{colnames}\NormalTok{(df_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'size_a'}\NormalTok{, }\StringTok{'size_b'}\NormalTok{, }\StringTok{'p_value_corrected'}\NormalTok{, }\StringTok{'p_value_raw'}\NormalTok{, }\StringTok{'W'}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{(size_idx_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size_vec) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
-\NormalTok{  size_a =}\StringTok{ }\NormalTok{size_vec[size_idx_a]}
-  \ControlFlowTok{for}\NormalTok{(size_idx_b }\ControlFlowTok{in}\NormalTok{ (size_idx_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size_vec))\{}
-\NormalTok{    size_b =}\StringTok{ }\NormalTok{size_vec[size_idx_b]}
-\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_a,]}\OperatorTok{$}\NormalTok{restraint_value, df_test[df_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size_b,]}\OperatorTok{$}\NormalTok{restraint_value, }\DataTypeTok{alternative =} \StringTok{'two.sided'}\NormalTok{) }
-\NormalTok{    df_wilcox[}\KeywordTok{nrow}\NormalTok{(df_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size_a, size_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{df\_test =}\StringTok{ }\NormalTok{df2}
+\NormalTok{df\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
+\KeywordTok{colnames}\NormalTok{(df\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{  size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{    size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, df\_test[df\_test}\OperatorTok{$}\NormalTok{MCSIZE }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }\DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{    df\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size\_a, size\_b, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
 \NormalTok{  \}}
 \NormalTok{\}}
-\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df_wilcox}\OperatorTok{$}\NormalTok{p_value_raw, }\DataTypeTok{method =} \StringTok{'holm'}\NormalTok{)}
-\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{less_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df_wilcox}\OperatorTok{$}\NormalTok{p_value_corrected }\OperatorTok{<}\StringTok{ }\FloatTok{0.01}
-\KeywordTok{print}\NormalTok{(df_wilcox)}
+\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+\KeywordTok{print}\NormalTok{(df\_wilcox)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2132,9 +2179,9 @@ We see that significant variation exists, so we perform pariwise Wilcoxon tests 
 \hypertarget{finite-genome-experiment}{%
 \section{Finite genome experiment}\label{finite-genome-experiment}}
 
-The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of higher restraint buffers.
+The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of larger restraint buffers.
 However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint.
-To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simuate an infinite population.
+To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simulate an infinite population.
 We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
 \includegraphics{./inf_pop/formula.png}
 
@@ -2157,6 +2204,7 @@ Thus, even with an infinite population and the higher selective pressures that c
 
 Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome.
 Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
+Additionally, the probability that a mutation reduces restraint is locked at 60\% (\emph{i.e.}, b(n) = 0.6).
 The simulation script, plotting script, and timing data for this experiment can be found under \texttt{2021\_03\_08\_\_inf\_genome\_inf\_pop/} in the experiments directory of the git repository.
 
 \hypertarget{plots-1}{%
@@ -2169,6 +2217,6 @@ Here we show the evolved restraint buffer values at the end of 10,000 generation
 Again, we use bar plots because the simulation is deterministic.
 \includegraphics{./inf_pop/inf_evolved_bars.png}
 
-Thus, we see that using \emph{both} an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evovled restraint buffers monotonically increase with organism size.
+Thus, we see that using \emph{both} an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evolved restraint buffers continuously increase with organism size.
 
 \end{document}

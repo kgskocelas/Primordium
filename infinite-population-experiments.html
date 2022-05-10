@@ -4,27 +4,27 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms</title>
-  <meta name="description" content="Supplemental material for the ALife 2021 conference submission" />
-  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+  <title>Section 10 Infinite population experiments | The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms</title>
+  <meta name="description" content="Supplemental material for the ALife 2022 conference submission" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta property="og:title" content="Section 10 Infinite population experiments | The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Supplemental material for the ALife 2021 conference submission" />
+  <meta property="og:description" content="Supplemental material for the ALife 2022 conference submission" />
   <meta name="github-repo" content="kgskocelas/Primordium" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Section 10 Infinite population experiments | The Evolution of Cellular Restraint in Multicellular Organisms" />
+  <meta name="twitter:title" content="Section 10 Infinite population experiments | The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms" />
   
-  <meta name="twitter:description" content="Supplemental material for the ALife 2021 conference submission" />
+  <meta name="twitter:description" content="Supplemental material for the ALife 2022 conference submission" />
   
 
 <meta name="author" content="Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria" />
 
 
-<meta name="date" content="2021-03-20" />
+<meta name="date" content="2022-05-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +33,9 @@
   
 <link rel="prev" href="infinite-genome-experiment.html"/>
 
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -49,29 +51,32 @@
 
 
 
-
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -80,9 +85,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -115,6 +120,7 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
@@ -131,27 +137,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Supplemental Material</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#overview"><i class="fa fa-check"></i><b>1.1</b> Overview</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#interactive-web-app"><i class="fa fa-check"></i><b>1.2</b> Interactive web app</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html"><i class="fa fa-check"></i><b>2</b> Baseline: Varying organism size</a><ul>
+<li class="chapter" data-level="2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html"><i class="fa fa-check"></i><b>2</b> Baseline: Varying organism size</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-cleaning"><i class="fa fa-check"></i><b>2.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="2.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#data-integrity-check"><i class="fa fa-check"></i><b>2.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="2.3" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#aggregate-plots"><i class="fa fa-check"></i><b>2.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="2.3" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#aggregate-plots"><i class="fa fa-check"></i><b>2.3</b> Aggregate plots</a>
+<ul>
 <li class="chapter" data-level="2.3.1" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#boxplots"><i class="fa fa-check"></i><b>2.3.1</b> Boxplots</a></li>
 <li class="chapter" data-level="2.3.2" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#raincloud-plots"><i class="fa fa-check"></i><b>2.3.2</b> Raincloud plots</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="baseline-varying-organism-size.html"><a href="baseline-varying-organism-size.html#statistics"><i class="fa fa-check"></i><b>2.4</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>3</b> Somatic Mutation Rate Sweep</a><ul>
+<li class="chapter" data-level="3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>3</b> Somatic Mutation Rate Sweep</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-cleaning-1"><i class="fa fa-check"></i><b>3.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#data-integrity-check-1"><i class="fa fa-check"></i><b>3.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="3.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#aggregate-plots-1"><i class="fa fa-check"></i><b>3.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="3.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#aggregate-plots-1"><i class="fa fa-check"></i><b>3.3</b> Aggregate plots</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-somatic-mutation-rate"><i class="fa fa-check"></i><b>3.3.1</b> Facet by somatic mutation rate</a></li>
 <li class="chapter" data-level="3.3.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#facet-by-organism-size"><i class="fa fa-check"></i><b>3.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-organism-size-plots"><i class="fa fa-check"></i><b>3.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="3.4" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-organism-size-plots"><i class="fa fa-check"></i><b>3.4</b> Single organism size plots</a>
+<ul>
 <li class="chapter" data-level="3.4.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-16x16"><i class="fa fa-check"></i><b>3.4.1</b> Organism size 16x16</a></li>
 <li class="chapter" data-level="3.4.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-32x32"><i class="fa fa-check"></i><b>3.4.2</b> Organism size 32x32</a></li>
 <li class="chapter" data-level="3.4.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-64x64"><i class="fa fa-check"></i><b>3.4.3</b> Organism size 64x64</a></li>
@@ -159,7 +171,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.4.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-256x256"><i class="fa fa-check"></i><b>3.4.5</b> Organism size 256x256</a></li>
 <li class="chapter" data-level="3.4.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#organism-size-512x512"><i class="fa fa-check"></i><b>3.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-somatic-mutation-rate-plots"><i class="fa fa-check"></i><b>3.5</b> Single somatic mutation rate plots</a><ul>
+<li class="chapter" data-level="3.5" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#single-somatic-mutation-rate-plots"><i class="fa fa-check"></i><b>3.5</b> Single somatic mutation rate plots</a>
+<ul>
 <li class="chapter" data-level="3.5.1" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.01"><i class="fa fa-check"></i><b>3.5.1</b> Somatic mut. rate 0.01</a></li>
 <li class="chapter" data-level="3.5.2" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.02"><i class="fa fa-check"></i><b>3.5.2</b> Somatic mut. rate 0.02</a></li>
 <li class="chapter" data-level="3.5.3" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#somatic-mut.-rate-0.05"><i class="fa fa-check"></i><b>3.5.3</b> Somatic mut. rate 0.05</a></li>
@@ -170,51 +183,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="somatic-mutation-rate-sweep.html"><a href="somatic-mutation-rate-sweep.html#statistics-1"><i class="fa fa-check"></i><b>3.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>4</b> Germ Mutation Rate Sweep</a><ul>
-<li class="chapter" data-level="4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-integrity-check-2"><i class="fa fa-check"></i><b>4.1</b> Data integrity check</a></li>
-<li class="chapter" data-level="4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#aggregate-plots-2"><i class="fa fa-check"></i><b>4.2</b> Aggregate plots</a><ul>
-<li class="chapter" data-level="4.2.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-germ-mutation-rate"><i class="fa fa-check"></i><b>4.2.1</b> Facet by germ mutation rate</a></li>
-<li class="chapter" data-level="4.2.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-organism-size-1"><i class="fa fa-check"></i><b>4.2.2</b> Facet by organism size</a></li>
+<li class="chapter" data-level="4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html"><i class="fa fa-check"></i><b>4</b> Germ Mutation Rate Sweep</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-cleaning-2"><i class="fa fa-check"></i><b>4.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#data-integrity-check-2"><i class="fa fa-check"></i><b>4.2</b> Data integrity check</a></li>
+<li class="chapter" data-level="4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#aggregate-plots-2"><i class="fa fa-check"></i><b>4.3</b> Aggregate plots</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-germ-mutation-rate"><i class="fa fa-check"></i><b>4.3.1</b> Facet by germ mutation rate</a></li>
+<li class="chapter" data-level="4.3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#facet-by-organism-size-1"><i class="fa fa-check"></i><b>4.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-1"><i class="fa fa-check"></i><b>4.3</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="4.3.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-16x16-1"><i class="fa fa-check"></i><b>4.3.1</b> Organism size 16x16</a></li>
-<li class="chapter" data-level="4.3.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-32x32-1"><i class="fa fa-check"></i><b>4.3.2</b> Organism size 32x32</a></li>
-<li class="chapter" data-level="4.3.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-64x64-1"><i class="fa fa-check"></i><b>4.3.3</b> Organism size 64x64</a></li>
-<li class="chapter" data-level="4.3.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-128x128-1"><i class="fa fa-check"></i><b>4.3.4</b> Organism size 128x128</a></li>
-<li class="chapter" data-level="4.3.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-256x256-1"><i class="fa fa-check"></i><b>4.3.5</b> Organism size 256x256</a></li>
-<li class="chapter" data-level="4.3.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-512x512-1"><i class="fa fa-check"></i><b>4.3.6</b> Organism size 512x512</a></li>
+<li class="chapter" data-level="4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-1"><i class="fa fa-check"></i><b>4.4</b> Single organism size plots</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-16x16-1"><i class="fa fa-check"></i><b>4.4.1</b> Organism size 16x16</a></li>
+<li class="chapter" data-level="4.4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-32x32-1"><i class="fa fa-check"></i><b>4.4.2</b> Organism size 32x32</a></li>
+<li class="chapter" data-level="4.4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-64x64-1"><i class="fa fa-check"></i><b>4.4.3</b> Organism size 64x64</a></li>
+<li class="chapter" data-level="4.4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-128x128-1"><i class="fa fa-check"></i><b>4.4.4</b> Organism size 128x128</a></li>
+<li class="chapter" data-level="4.4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-256x256-1"><i class="fa fa-check"></i><b>4.4.5</b> Organism size 256x256</a></li>
+<li class="chapter" data-level="4.4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#organism-size-512x512-1"><i class="fa fa-check"></i><b>4.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-2"><i class="fa fa-check"></i><b>4.4</b> Single organism size plots</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.01"><i class="fa fa-check"></i><b>4.4.1</b> Germ mut. rate 0.01</a></li>
-<li class="chapter" data-level="4.4.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.02"><i class="fa fa-check"></i><b>4.4.2</b> Germ mut. rate 0.02</a></li>
-<li class="chapter" data-level="4.4.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.05"><i class="fa fa-check"></i><b>4.4.3</b> Germ mut. rate 0.05</a></li>
-<li class="chapter" data-level="4.4.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.1"><i class="fa fa-check"></i><b>4.4.4</b> Germ mut. rate 0.1</a></li>
-<li class="chapter" data-level="4.4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.2"><i class="fa fa-check"></i><b>4.4.5</b> Germ mut. rate 0.2</a></li>
-<li class="chapter" data-level="4.4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.5"><i class="fa fa-check"></i><b>4.4.6</b> Germ mut. rate 0.5</a></li>
-<li class="chapter" data-level="4.4.7" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-1.0"><i class="fa fa-check"></i><b>4.4.7</b> Germ mut. rate 1.0</a></li>
+<li class="chapter" data-level="4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#single-organism-size-plots-2"><i class="fa fa-check"></i><b>4.5</b> Single organism size plots</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.01"><i class="fa fa-check"></i><b>4.5.1</b> Germ mut. rate 0.01</a></li>
+<li class="chapter" data-level="4.5.2" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.02"><i class="fa fa-check"></i><b>4.5.2</b> Germ mut. rate 0.02</a></li>
+<li class="chapter" data-level="4.5.3" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.05"><i class="fa fa-check"></i><b>4.5.3</b> Germ mut. rate 0.05</a></li>
+<li class="chapter" data-level="4.5.4" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.1"><i class="fa fa-check"></i><b>4.5.4</b> Germ mut. rate 0.1</a></li>
+<li class="chapter" data-level="4.5.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.2"><i class="fa fa-check"></i><b>4.5.5</b> Germ mut. rate 0.2</a></li>
+<li class="chapter" data-level="4.5.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-0.5"><i class="fa fa-check"></i><b>4.5.6</b> Germ mut. rate 0.5</a></li>
+<li class="chapter" data-level="4.5.7" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#germ-mut.-rate-1.0"><i class="fa fa-check"></i><b>4.5.7</b> Germ mut. rate 1.0</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#statistics-2"><i class="fa fa-check"></i><b>4.5</b> Statistics</a></li>
+<li class="chapter" data-level="4.6" data-path="germ-mutation-rate-sweep.html"><a href="germ-mutation-rate-sweep.html#statistics-2"><i class="fa fa-check"></i><b>4.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html"><i class="fa fa-check"></i><b>5</b> Timing sample count experiment</a><ul>
-<li class="chapter" data-level="5.1" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-cleaning-2"><i class="fa fa-check"></i><b>5.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="5" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html"><i class="fa fa-check"></i><b>5</b> Timing sample count experiment</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-cleaning-3"><i class="fa fa-check"></i><b>5.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="5.2" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#data-integrity-check-3"><i class="fa fa-check"></i><b>5.2</b> Data integrity check</a></li>
 <li class="chapter" data-level="5.3" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#plot"><i class="fa fa-check"></i><b>5.3</b> Plot</a></li>
 <li class="chapter" data-level="5.4" data-path="timing-sample-count-experiment.html"><a href="timing-sample-count-experiment.html#statistics-3"><i class="fa fa-check"></i><b>5.4</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="population-size-experiment.html"><a href="population-size-experiment.html"><i class="fa fa-check"></i><b>6</b> Population size experiment</a><ul>
-<li class="chapter" data-level="6.1" data-path="population-size-experiment.html"><a href="population-size-experiment.html#data-cleaning-3"><i class="fa fa-check"></i><b>6.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="6" data-path="population-size-experiment.html"><a href="population-size-experiment.html"><i class="fa fa-check"></i><b>6</b> Population size experiment</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="population-size-experiment.html"><a href="population-size-experiment.html#data-cleaning-4"><i class="fa fa-check"></i><b>6.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="6.2" data-path="population-size-experiment.html"><a href="population-size-experiment.html#data-integrity-check-4"><i class="fa fa-check"></i><b>6.2</b> Data integrity check</a></li>
 <li class="chapter" data-level="6.3" data-path="population-size-experiment.html"><a href="population-size-experiment.html#plot-1"><i class="fa fa-check"></i><b>6.3</b> Plot</a></li>
 <li class="chapter" data-level="6.4" data-path="population-size-experiment.html"><a href="population-size-experiment.html#statistics-4"><i class="fa fa-check"></i><b>6.4</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html"><i class="fa fa-check"></i><b>7</b> Genome Length Sweep</a><ul>
-<li class="chapter" data-level="7.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-cleaning-4"><i class="fa fa-check"></i><b>7.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="7" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html"><i class="fa fa-check"></i><b>7</b> Genome Length Sweep</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-cleaning-5"><i class="fa fa-check"></i><b>7.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="7.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#data-integrity-check-5"><i class="fa fa-check"></i><b>7.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="7.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#aggregate-plots-3"><i class="fa fa-check"></i><b>7.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="7.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#aggregate-plots-3"><i class="fa fa-check"></i><b>7.3</b> Aggregate plots</a>
+<ul>
 <li class="chapter" data-level="7.3.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-genome-length"><i class="fa fa-check"></i><b>7.3.1</b> Facet by genome length</a></li>
 <li class="chapter" data-level="7.3.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#facet-by-organism-size-2"><i class="fa fa-check"></i><b>7.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="7.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-organism-size-plots-3"><i class="fa fa-check"></i><b>7.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="7.4" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-organism-size-plots-3"><i class="fa fa-check"></i><b>7.4</b> Single organism size plots</a>
+<ul>
 <li class="chapter" data-level="7.4.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-16x16-2"><i class="fa fa-check"></i><b>7.4.1</b> Organism size 16x16</a></li>
 <li class="chapter" data-level="7.4.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-32x32-2"><i class="fa fa-check"></i><b>7.4.2</b> Organism size 32x32</a></li>
 <li class="chapter" data-level="7.4.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-64x64-2"><i class="fa fa-check"></i><b>7.4.3</b> Organism size 64x64</a></li>
@@ -222,7 +245,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.4.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-256x256-2"><i class="fa fa-check"></i><b>7.4.5</b> Organism size 256x256</a></li>
 <li class="chapter" data-level="7.4.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#organism-size-512x512-2"><i class="fa fa-check"></i><b>7.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="7.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-genome-length-plots"><i class="fa fa-check"></i><b>7.5</b> Single genome length plots</a><ul>
+<li class="chapter" data-level="7.5" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#single-genome-length-plots"><i class="fa fa-check"></i><b>7.5</b> Single genome length plots</a>
+<ul>
 <li class="chapter" data-level="7.5.1" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes"><i class="fa fa-check"></i><b>7.5.1</b> 25-bit genomes</a></li>
 <li class="chapter" data-level="7.5.2" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-1"><i class="fa fa-check"></i><b>7.5.2</b> 50-bit genomes</a></li>
 <li class="chapter" data-level="7.5.3" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#bit-genomes-2"><i class="fa fa-check"></i><b>7.5.3</b> 100-bit genomes</a></li>
@@ -231,14 +255,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="7.6" data-path="genome-length-sweep.html"><a href="genome-length-sweep.html#statistics-5"><i class="fa fa-check"></i><b>7.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html"><i class="fa fa-check"></i><b>8</b> Genome Length Control Experiment</a><ul>
-<li class="chapter" data-level="8.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#data-cleaning-5"><i class="fa fa-check"></i><b>8.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="8" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html"><i class="fa fa-check"></i><b>8</b> Genome Length Control Experiment</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>8.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="8.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#data-integrity-check-6"><i class="fa fa-check"></i><b>8.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="8.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#aggregate-plots-4"><i class="fa fa-check"></i><b>8.3</b> Aggregate plots</a><ul>
+<li class="chapter" data-level="8.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#aggregate-plots-4"><i class="fa fa-check"></i><b>8.3</b> Aggregate plots</a>
+<ul>
 <li class="chapter" data-level="8.3.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#facet-by-genome-length-1"><i class="fa fa-check"></i><b>8.3.1</b> Facet by genome length</a></li>
 <li class="chapter" data-level="8.3.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#facet-by-organism-size-3"><i class="fa fa-check"></i><b>8.3.2</b> Facet by organism size</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-organism-size-plots-4"><i class="fa fa-check"></i><b>8.4</b> Single organism size plots</a><ul>
+<li class="chapter" data-level="8.4" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-organism-size-plots-4"><i class="fa fa-check"></i><b>8.4</b> Single organism size plots</a>
+<ul>
 <li class="chapter" data-level="8.4.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-16x16-3"><i class="fa fa-check"></i><b>8.4.1</b> Organism size 16x16</a></li>
 <li class="chapter" data-level="8.4.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-32x32-3"><i class="fa fa-check"></i><b>8.4.2</b> Organism size 32x32</a></li>
 <li class="chapter" data-level="8.4.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-64x64-3"><i class="fa fa-check"></i><b>8.4.3</b> Organism size 64x64</a></li>
@@ -246,7 +273,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.4.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-256x256-3"><i class="fa fa-check"></i><b>8.4.5</b> Organism size 256x256</a></li>
 <li class="chapter" data-level="8.4.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#organism-size-512x512-3"><i class="fa fa-check"></i><b>8.4.6</b> Organism size 512x512</a></li>
 </ul></li>
-<li class="chapter" data-level="8.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-genome-length-plots-1"><i class="fa fa-check"></i><b>8.5</b> Single genome length plots</a><ul>
+<li class="chapter" data-level="8.5" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#single-genome-length-plots-1"><i class="fa fa-check"></i><b>8.5</b> Single genome length plots</a>
+<ul>
 <li class="chapter" data-level="8.5.1" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-5"><i class="fa fa-check"></i><b>8.5.1</b> 25-bit genomes</a></li>
 <li class="chapter" data-level="8.5.2" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-6"><i class="fa fa-check"></i><b>8.5.2</b> 50-bit genomes</a></li>
 <li class="chapter" data-level="8.5.3" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#bit-genomes-7"><i class="fa fa-check"></i><b>8.5.3</b> 100-bit genomes</a></li>
@@ -255,20 +283,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.6" data-path="genome-length-control-experiment.html"><a href="genome-length-control-experiment.html#statistics-6"><i class="fa fa-check"></i><b>8.6</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a><ul>
-<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-6"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
+<li class="chapter" data-level="9" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html"><i class="fa fa-check"></i><b>9</b> Infinite genome experiment</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-cleaning-7"><i class="fa fa-check"></i><b>9.1</b> Data cleaning</a></li>
 <li class="chapter" data-level="9.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#data-integrity-check-7"><i class="fa fa-check"></i><b>9.2</b> Data integrity check</a></li>
-<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a><ul>
+<li class="chapter" data-level="9.3" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#plot-2"><i class="fa fa-check"></i><b>9.3</b> Plot</a>
+<ul>
 <li class="chapter" data-level="9.3.1" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#boxplots-1"><i class="fa fa-check"></i><b>9.3.1</b> Boxplots</a></li>
 <li class="chapter" data-level="9.3.2" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#raincloud-plots-1"><i class="fa fa-check"></i><b>9.3.2</b> Raincloud plots</a></li>
 </ul></li>
 <li class="chapter" data-level="9.4" data-path="infinite-genome-experiment.html"><a href="infinite-genome-experiment.html#statistics-7"><i class="fa fa-check"></i><b>9.4</b> Statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html"><i class="fa fa-check"></i><b>10</b> Infinite population experiments</a><ul>
-<li class="chapter" data-level="10.1" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#finite-genome-experiment"><i class="fa fa-check"></i><b>10.1</b> Finite genome experiment</a><ul>
+<li class="chapter" data-level="10" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html"><i class="fa fa-check"></i><b>10</b> Infinite population experiments</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#finite-genome-experiment"><i class="fa fa-check"></i><b>10.1</b> Finite genome experiment</a>
+<ul>
 <li class="chapter" data-level="10.1.1" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#plots"><i class="fa fa-check"></i><b>10.1.1</b> Plots</a></li>
 </ul></li>
-<li class="chapter" data-level="10.2" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#infinite-genome-experiment-1"><i class="fa fa-check"></i><b>10.2</b> Infinite genome experiment</a><ul>
+<li class="chapter" data-level="10.2" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#infinite-genome-experiment-1"><i class="fa fa-check"></i><b>10.2</b> Infinite genome experiment</a>
+<ul>
 <li class="chapter" data-level="10.2.1" data-path="infinite-population-experiments.html"><a href="infinite-population-experiments.html#plots-1"><i class="fa fa-check"></i><b>10.2.1</b> Plots</a></li>
 </ul></li>
 </ul></li>
@@ -284,7 +317,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The Evolution of Cellular Restraint in Multicellular Organisms</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms</a>
           </h1>
         </div>
 
@@ -292,17 +325,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="infinite-population-experiments" class="section level1">
+<div id="infinite-population-experiments" class="section level1" number="10">
 <h1><span class="header-section-number">Section 10</span> Infinite population experiments</h1>
-<div id="finite-genome-experiment" class="section level2">
+<div id="finite-genome-experiment" class="section level2" number="10.1">
 <h2><span class="header-section-number">10.1</span> Finite genome experiment</h2>
-<p>The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of higher restraint buffers.
+<p>The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of larger restraint buffers.
 However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint.
-To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simuate an infinite population.
+To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simulate an infinite population.
 We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
 <img src="inf_pop/formula.png" title="Formula" alt="Formula" /></p>
 <p>The simulation script, plotting script, and timing data for this experiment can be found under <code>2021_03_07__inf_population/</code> in the experiments directory of the git repository.</p>
-<div id="plots" class="section level3">
+<div id="plots" class="section level3" number="10.1.1">
 <h3><span class="header-section-number">10.1.1</span> Plots</h3>
 <p>Here we show how the evolved restraint buffer values change through the course of evolution.
 <img src="inf_pop/over_time.png" title="Finite over time plot" alt="Finite over time plot" /></p>
@@ -312,19 +345,20 @@ Bar plots are used because the simulation is deterministic; there is only one sa
 <p>Thus, even with an infinite population and the higher selective pressures that come with it, we still see the turning point trend in the evolved restraint buffer values.</p>
 </div>
 </div>
-<div id="infinite-genome-experiment-1" class="section level2">
+<div id="infinite-genome-experiment-1" class="section level2" number="10.2">
 <h2><span class="header-section-number">10.2</span> Infinite genome experiment</h2>
 <p>Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome.
 Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
+Additionally, the probability that a mutation reduces restraint is locked at 60% (<em>i.e.</em>, b(n) = 0.6).
 The simulation script, plotting script, and timing data for this experiment can be found under <code>2021_03_08__inf_genome_inf_pop/</code> in the experiments directory of the git repository.</p>
-<div id="plots-1" class="section level3">
+<div id="plots-1" class="section level3" number="10.2.1">
 <h3><span class="header-section-number">10.2.1</span> Plots</h3>
 <p>Here we show how the evolved restraint buffer values change through the course of evolution.
 <img src="inf_pop/inf_over_time.png" title="Infinite over time plot" alt="Infinite over time plot" /></p>
 <p>Here we show the evolved restraint buffer values at the end of 10,000 generations.
 Again, we use bar plots because the simulation is deterministic.
 <img src="inf_pop/inf_evolved_bars.png" title="Finite final bars plot" alt="Finite final bars plot" /></p>
-<p>Thus, we see that using <em>both</em> an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evovled restraint buffers monotonically increase with organism size.</p>
+<p>Thus, we see that using <em>both</em> an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evolved restraint buffers continuously increase with organism size.</p>
 
 </div>
 </div>
@@ -339,7 +373,6 @@ Again, we use bar plots because the simulation is deterministic.
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -358,6 +391,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -378,6 +412,10 @@ gitbook.start({
 "text": null
 },
 "download": ["primordium_supplemental_material.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
