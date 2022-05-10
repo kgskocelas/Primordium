@@ -97,10 +97,10 @@ ggplot(df2[df2$generation == 10000,], aes(x = as.factor(SAMPLES), y = restraint_
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size - 2, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  facet_grid(cols = vars(size_factor)) +
-  #ggtitle('Finite Genome Avg Restraint by MC Size') +
-  ggsave('./evolution/plots/num_samples_boxplot.png', units = 'in', width = 6, height = 6) +
-  ggsave('./evolution/plots/num_samples_boxplot.pdf', units = 'in', width = 6, height = 6)
+  facet_grid(cols = vars(size_factor)) 
+  #ggtitle('Finite Genome Avg Restraint by MC Size') 
+ggsave('./evolution/plots/num_samples_boxplot.png', units = 'in', width = 6, height = 6) 
+ggsave('./evolution/plots/num_samples_boxplot.pdf', units = 'in', width = 6, height = 6)
 
 # Plot the evolved restraint buffer for all reps of each org size as boxplots
 ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
@@ -119,7 +119,7 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(legend.title = element_text(size = text_major_size)) +
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size - 2, color = '#000000')) +
-  theme(strip.background = element_rect(fill = '#dddddd')) +
-  #ggtitle('Finite Genome Avg Restraint by MC Size') +
-  ggsave('./evolution/plots/num_samples_boxplot_basic.png', units = 'in', width = 6, height = 6) +
-  ggsave('./evolution/plots/num_samples_boxplot_basic.pdf', units = 'in', width = 6, height = 6)
+  theme(strip.background = element_rect(fill = '#dddddd')) 
+  #ggtitle('Finite Genome Avg Restraint by MC Size') 
+ggsave('./evolution/plots/num_samples_boxplot_basic.png', units = 'in', width = 6, height = 6) 
+ggsave('./evolution/plots/num_samples_boxplot_basic.pdf', units = 'in', width = 6, height = 6)

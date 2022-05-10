@@ -71,9 +71,9 @@ ggplot(df_summary[df_summary$generation <= 10000,], aes(x = generation, y = rest
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  theme(legend.position = 'bottom') +
-  ggsave('./simulation/plots/final/simulated_density_over_time_trimmed.png', units = 'in', width = 6, height = 6) +
-  ggsave('./simulation/plots/final/simulated_density_over_time_trimmed.pdf', units = 'in', width = 6, height = 6)
+  theme(legend.position = 'bottom') 
+ggsave('./simulation/plots/final/simulated_density_over_time_trimmed.png', units = 'in', width = 6, height = 6) 
+ggsave('./simulation/plots/final/simulated_density_over_time_trimmed.pdf', units = 'in', width = 6, height = 6)
 
 ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = restraint_value ))  +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') + 
@@ -94,9 +94,9 @@ ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = res
   theme(panel.grid.minor.x = element_blank()) + 
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) + 
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  theme(legend.position = 'none')  +
-  ggsave('./simulation/plots/final/evolved_bars.png', units = 'in', width = 6, height = 6) +
-  ggsave('./simulation/plots/final/evolved_bars.pdf', units = 'in', width = 6, height = 6)
+  theme(legend.position = 'none')  
+ggsave('./simulation/plots/final/evolved_bars.png', units = 'in', width = 6, height = 6) 
+ggsave('./simulation/plots/final/evolved_bars.pdf', units = 'in', width = 6, height = 6)
 
 
 #df_inf_summary = read.csv('../infinite/60_40/simulation/density/combined_simulation_summary_data.csv')

@@ -1,21 +1,21 @@
 ---
-title: "The Evolution of Cellular Restraint in Multicellular Organisms"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for the ALife 2021 conference submission"
+description: "Supplemental material for the ALife 2022 conference submission"
 ---
 
 # Introduction
 
-This document serves as the supplemental material for the ALife 2021 conference submission "The Evolution of Cellular Restraint in Multicellular Organisms".
+This document serves as the supplemental material for the ALife 2022 conference submission "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms".
 
 ## Overview
 
-The document is split into sections that are assessable via the navigation bar on the left side of the screen. 
-Each section corresponds to an experiment (some that were discussed at length in the paper, others that were not included).
+The document is split into sections that are accessible via the navigation bar on the left side of the screen. 
+Each section corresponds to an experiment (some that were discussed at length in the paper, others that were briefly mentioned).
 As such, each section follows the same formula: setup, plots, and statistics. 
 
 ## Interactive web app 

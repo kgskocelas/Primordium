@@ -1,11 +1,11 @@
 ---
-title: "Number of timing samples test"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for our ALife 2022 conference submission"
 ---
 
 # Timing sample count experiment
@@ -14,6 +14,7 @@ By default, we calculated 100 timing samples for each combination of organism si
 This experiment showed that increasing from 100 samples to 10,000 samples has no qualitative difference on results. 
 This was done by replicating the baseline experiment using 10,000 samples and comparing the results to a fresh run with 100 samples. 
 
+The configuration script and data for the experiment can be found under `2021_02_24__finite_10k_samples/` in the experiments directory of the git repository. 
 
 ## Data cleaning
 
@@ -36,7 +37,7 @@ df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution
 df$LENGTH = 100
 df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_10k_512.csv'))
 df = rbind(df, read.csv('../experiments/2021_02_24__finite_10k_samples/evolution/data/scraped_evolution_data_benchmark.csv'))
-# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000
 df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 # Ignore data for size 8x8 and 1024x1024
 df2 = df2[df2$MCSIZE != 8 & df2$MCSIZE != 1024,]

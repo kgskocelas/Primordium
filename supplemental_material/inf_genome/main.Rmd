@@ -1,11 +1,11 @@
 ---
-title: "Infinite genome experiment"
+title: "The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms"
 author: "Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria"
 date: "`r Sys.Date()`"
 output: bookdown::gitbook
 documentclass: book
 github-repo: kgskocelas/Primordium
-description: "Supplemental material for our ALife 2021 conference submission"
+description: "Supplemental material for our ALife 2022 conference submission"
 ---
 
 # Infinite genome experiment
@@ -13,6 +13,7 @@ description: "Supplemental material for our ALife 2021 conference submission"
 Building off the genome length experiment, we wanted to ensure our results were not an artifact of limited genome size. 
 Genomes in biological organisms can be extremely large compared to our 400-bit genomes. 
 Therefore, we extended the model to support infinite genomes. 
+
 Organisms with infinite genomes have no limit on the restraint buffer values they can evolve. 
 In an infinite genome, restraint threshold is set at zero, and thus all non-negative restraint values are restrained. 
 Organisms begin with a restraint buffer of zero. 
@@ -20,7 +21,7 @@ Each mutation (both somatic and germ) *always* has a 60% probability of lowering
 In this way, the infinite genome has the same probability of a restraint-reducing mutation as finite genomes have at their restraint threshold.
 Furthermore, mutational pressure does not increase with the restraint buffer as it does in finite genomes.
 
-Here, we show the results of re-running the baseline experiment using an infnite genome. 
+Here, we show the results of re-running the baseline experiment using an infinite genome. 
 Since we are replicating the baseline experiment, we also include the 8x8 and 1024x1024 organism sizes. 
 The configuration script and data for the experiment can be found under `2021_03_12__org_sizes_inf/` in the experiments directory of the git repository. 
 
@@ -38,7 +39,7 @@ Load the data and trim to only include the final generation.
 ```{r, echo = T}
 # Load the data
 df = read.csv('../experiments/2021_03_12__org_sizes_inf/evolution/data/scraped_evolution_data.csv')
-# Trim off NAs (artifiacts of how we scraped the data) and trim to only have gen 10,000
+# Trim off NAs (artifacts of how we scraped the data) and trim to only have gen 10,000
 df2 = df[!is.na(df$MCSIZE) & df$generation == 10000,]
 ```
 
@@ -158,7 +159,7 @@ ggplot(df2[df2$generation == 10000,], aes(x = restraint_value, y = size_factor_r
   theme(strip.background = element_rect(fill = '#dddddd'))  
 ```
 
-These plots show that the same trend observed in the baseline experiment (that evolved restraint buffers initially increase and then decrease with increasing organims size) still appears when organism genomes are not limited in length. 
+These plots show that the same trend observed in the baseline experiment (that evolved restraint buffers initially increase and then decrease with increasing organism size) still appears when organism genomes are not limited in length. 
 
 
 ## Statistics
@@ -177,7 +178,7 @@ Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
 ```
 
 
-We see that significant variation exists, so we perform pariwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
+We see that significant variation exists, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different. 
 
 ```{r}
 size_vec = c(16, 32, 64, 128, 256, 512)

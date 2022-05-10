@@ -15,6 +15,7 @@
 #include "emp/math/Random.hpp"
 #include "emp/math/stats.hpp"
 #include "emp/datastructs/TimeQueue.hpp"
+#include "./third_party/gif-h/gif.h"
 
 
 /// Information about a single cell.
@@ -347,11 +348,79 @@ struct Multicell {
       }
   }
 
+  void DrawFrame(GifWriter& gif_writer, size_t pixels_per_cell=1){
+    size_t r = 0;
+    size_t g = 0;
+    size_t b = 0;
+    size_t a = 0;
+    size_t width_pixels = cells_side * pixels_per_cell;
+    size_t y_off = 0;
+    size_t x_off = 0;
+    size_t width_vals = width_pixels * 4;
+    for(size_t y = 0; y < cells_side; ++y){
+        for(size_t x = 0; x < cells_side; ++x){
+            const Cell& cell_cur = cells[y * cells_side + x];
+            if(cell_cur.repro_time == 0){
+                r = 0;
+                g = 0;
+                b = 0;
+                a = 255;
+            }
+            else if(cell_cur.num_ones < restrain){
+                r = 255 - ((restrain - 1) - cell_cur.num_ones) * 4;
+                g = 0;
+                b = 0 + ((restrain - 1) - cell_cur.num_ones) * 2;
+                a = 255;
+            }
+            else{
+                r = 255 - (cell_cur.num_ones - restrain) * 5;
+                g = 255 - (cell_cur.num_ones - restrain) * 5;
+                b = 255 - (cell_cur.num_ones - restrain) * 5;
+                a = 255;
+            }
+            for(y_off = 0; y_off < pixels_per_cell; ++y_off){
+              for(x_off = 0; x_off < pixels_per_cell; ++x_off){
+                buffer[y * width_vals * pixels_per_cell + y_off * width_vals +
+                  (x * 4 * pixels_per_cell + x_off * 4)]     = r;
+                buffer[y * width_vals * pixels_per_cell + y_off * width_vals +
+                  (x * 4 * pixels_per_cell + x_off * 4) + 1] = g;
+                buffer[y * width_vals * pixels_per_cell + y_off * width_vals +
+                  (x * 4 * pixels_per_cell + x_off * 4) + 2] = b;
+                buffer[y * width_vals * pixels_per_cell + y_off * width_vals +
+                  (x * 4 * pixels_per_cell + x_off * 4) + 3] = a;
+              }
+            }
+        }
+    }
+    GifWriteFrame(&gif_writer, buffer.data(), cells_side * pixels_per_cell, 
+        cells_side * pixels_per_cell, delay);
+  }
+
+
   /// Run the multicell until it is full.
-  RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout) {
+  RunResults Run(bool print_trace=false, int frames_per_anim = -1, std::ostream & os=std::cout, size_t pixels_per_cell=1) {
     last_count = 0;                   // Track cells from last time (for traces)
+    // Animation variables
+    std::stringstream string_stream;
+    buffer.resize(cells_side * cells_side * 4 * pixels_per_cell * pixels_per_cell, 0);
+    GifWriter gif_writer;
+    string_stream << "./output.gif";
+    if(frames_per_anim != -1){
+      GifBegin(&gif_writer, string_stream.str().c_str(), cells_side * pixels_per_cell, 
+          cells_side * pixels_per_cell, delay);
+    }
+    size_t cur_step = 0;
     while (num_cells < cells.size()) {
       DoStep(print_trace, frames_per_anim, os);
+      if(frames_per_anim != -1){
+        if(cur_step % frames_per_anim == 0)
+          DrawFrame(gif_writer, pixels_per_cell);
+        ++cur_step;
+      }
+    }
+    if(frames_per_anim != -1){
+      DrawFrame(gif_writer);
+      GifEnd(&gif_writer);
     }
 
     // Setup the results and return them.

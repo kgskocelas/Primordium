@@ -102,9 +102,9 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  facet_grid(rows = vars(mut_factor)) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.pdf', units = 'in', width = 6, height = 10)
+  facet_grid(rows = vars(mut_factor)) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.png', units = 'in', width = 6, height = 10) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_size.pdf', units = 'in', width = 6, height = 10)
 # Same plot, but with free y-axes between plots
 ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -124,9 +124,9 @@ ggplot(df2[df2$generation == 10000,], aes(x = size_factor, y = restraint_value))
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  facet_grid(rows = vars(mut_factor), scales = 'free_y') +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.pdf', units = 'in', width = 6, height = 10)
+  facet_grid(rows = vars(mut_factor), scales = 'free_y') 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.png', units = 'in', width = 6, height = 10) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_size_free_y.pdf', units = 'in', width = 6, height = 10)
 
 # Plot the evolved restraint buffer as boxplots
   # x-axis = germ mutation rate
@@ -149,9 +149,9 @@ ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) 
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  facet_grid(rows = vars(size_factor)) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.pdf', units = 'in', width = 6, height = 10)
+  facet_grid(rows = vars(size_factor)) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.png', units = 'in', width = 6, height = 10) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut.pdf', units = 'in', width = 6, height = 10)
 # Same plot, but with a free y-axis for each row
 ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) +
   geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') +
@@ -170,9 +170,9 @@ ggplot(df2[df2$generation == 10000,], aes(x = mut_factor, y = restraint_value)) 
   theme(legend.text = element_text(size = text_minor_size)) +
   theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
   theme(strip.background = element_rect(fill = '#dddddd')) +
-  facet_grid(rows = vars(size_factor), scales = 'free_y') +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.png', units = 'in', width = 6, height = 10) +
-  ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.pdf', units = 'in', width = 6, height = 10)
+  facet_grid(rows = vars(size_factor), scales = 'free_y') 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.png', units = 'in', width = 6, height = 10) 
+ggsave('./evolution/plots/germ_sweep_boxplot_facet_mut_free_y.pdf', units = 'in', width = 6, height = 10)
 
 
 
@@ -197,9 +197,9 @@ for(org_size in unique(df2$MCSIZE)){
     theme(legend.text = element_text(size = text_minor_size)) +
     theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
     theme(strip.background = element_rect(fill = '#dddddd')) +
-    facet_grid(rows = vars(size_factor)) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.png'), units = 'in', width = 6, height = 6) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.pdf'), units = 'in', width = 6, height = 6)
+    facet_grid(rows = vars(size_factor)) 
+  ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.png'), units = 'in', width = 6, height = 6) 
+  ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_size_', org_size, '.pdf'), units = 'in', width = 6, height = 6)
 }
 
 # Plot the evolved restraint buffer as boxplots once for EACH organism size
@@ -224,7 +224,7 @@ for(mut_rate in unique(df2$MUT)){
     theme(legend.text = element_text(size = text_minor_size)) +
     theme(strip.text = element_text(size = text_minor_size, color = '#000000')) +
     theme(strip.background = element_rect(fill = '#dddddd')) +
-    facet_grid(rows = vars(mut_factor)) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.png'), units = 'in', width = 6, height = 6) +
-    ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.pdf'), units = 'in', width = 6, height = 6)
+    facet_grid(rows = vars(mut_factor)) 
+  ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.png'), units = 'in', width = 6, height = 6) 
+  ggsave(paste0('./evolution/plots/germ_sweep_boxplot_single_rate_', mut_rate, '.pdf'), units = 'in', width = 6, height = 6)
 }
