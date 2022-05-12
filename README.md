@@ -12,4 +12,4 @@ Supplemental material is best viewed here: https://kgskocelas.github.io/Primordi
 - `./web` is a placeholder directory to hold the compiled web app. The web app can be viewed online here: http://fergusonaj.com/webapps/primordium/
 
 ## DOI 
-References to the supplemental material should be pointed to our DOI on Zenodo:  10.5281/zenodo.6539528 
+References to the supplemental material should be pointed to our DOI on Zenodo: [10.5281/zenodo.6539528 ](https://zenodo.org/record/6539528)
