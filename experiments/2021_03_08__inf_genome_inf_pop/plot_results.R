@@ -5,26 +5,37 @@ library(ggplot2)
 library(cowplot)
 library(khroma)
 
+size_vec = c(16, 32, 64, 128, 256, 512)
+num_batches = 30
+
 # Load data
-df = read.csv('./simulation/data/size_16.csv')
-df = rbind(df, read.csv('./simulation/data/size_32.csv'))
-df = rbind(df, read.csv('./simulation/data/size_64.csv'))
-df = rbind(df, read.csv('./simulation/data/size_128.csv'))
-df = rbind(df, read.csv('./simulation/data/size_256.csv'))
-df = rbind(df, read.csv('./simulation/data/size_512.csv'))
+df = NA
+for(size in size_vec){
+  for(batch_id in 1:num_batches){
+    if(!is.data.frame(df)){
+      df = read.csv(paste0('./simulation/data/size_', size, '__batch_', batch_id, '.csv'))
+      df$batch_id = batch_id
+    } else{
+      df_tmp = read.csv(paste0('./simulation/data/size_', size, '__batch_', batch_id, '.csv'))
+      df_tmp$batch_id = batch_id
+      df = rbind(df, df_tmp)
+    }
+  }
+}
 
 # Summarize data, grabbing the mean from the simulation
-size_vec = c(16, 32, 64, 128, 256, 512)
-df_summary = data.frame(data = matrix(nrow = 0, ncol = 3))
-colnames(df_summary) = c('mc_size', 'generation', 'mean_ones')
+df_summary = data.frame(data = matrix(nrow = 0, ncol = 4))
+colnames(df_summary) = c('mc_size', 'generation', 'mean_ones', 'batch_id')
 for(size in size_vec){
-  mask = df$mc_size == size
-  cat('Size: ', size, '\n\t')
-  for(gen in unique(df$generation)){
-    df_summary[nrow(df_summary) + 1,] = c(size, gen, weighted.mean(-100:550, df[mask & df$generation == gen,]$frac_of_pop))
-    cat(gen, ' ')
+  for(batch_id in 1:num_batches){
+    mask = df$mc_size == size
+    cat(paste0('(', batch_id, ') Size: ', size, '\n\t'))
+    for(gen in unique(df$generation)){
+      df_summary[nrow(df_summary) + 1,] = c(size, gen, weighted.mean(-100:550, df[mask & df$generation == gen & df$batch_id == batch_id,]$frac_of_pop), batch_id)
+      cat(gen, ' ')
+    }
+    cat('\n')
   }
-  cat('\n')
 }
 
 # Create variables to make plotting easier
@@ -97,6 +108,29 @@ ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = res
   theme(legend.position = 'none')  
 ggsave('./simulation/plots/final/evolved_bars.png', units = 'in', width = 6, height = 6) 
 ggsave('./simulation/plots/final/evolved_bars.pdf', units = 'in', width = 6, height = 6)
+
+ggplot(df_summary[df_summary$generation == 10000,], aes(x = size_factor, y = restraint_value ))  +
+  geom_hline(aes(yintercept = 0), alpha = 0.5, linetype = 'dashed') + 
+  geom_boxplot(aes(fill = size_factor)) + 
+  #geom_text(aes(x = size_factor, y = restraint_value + 2, label = round(restraint_value, 1))) + 
+  xlab('Organism size') + 
+  ylab('Average restraint buffer') + 
+  labs(color = 'Organism size') + 
+  scale_fill_manual(values = color_map) + 
+  scale_y_continuous(limits = c(0, 70)) +
+  theme_light() + 
+  theme(axis.title = element_text(size = text_major_size)) + 
+  theme(axis.text = element_text(size = text_minor_size)) + 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.95, hjust = 0.9)) +
+  theme(legend.title = element_text(size = text_major_size)) + 
+  theme(legend.text = element_text(size = text_minor_size)) + 
+  theme(panel.grid.major.x = element_blank()) + 
+  theme(panel.grid.minor.x = element_blank()) + 
+  theme(strip.text = element_text(size = text_minor_size, color = '#000000')) + 
+  theme(strip.background = element_rect(fill = '#dddddd')) +
+  theme(legend.position = 'none')  
+ggsave('./simulation/plots/final/evolved_boxplots.png', units = 'in', width = 6, height = 6) 
+ggsave('./simulation/plots/final/evolved_boxplots.pdf', units = 'in', width = 6, height = 6)
 
 
 #df_inf_summary = read.csv('../infinite/60_40/simulation/density/combined_simulation_summary_data.csv')
