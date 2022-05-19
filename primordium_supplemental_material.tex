@@ -112,7 +112,7 @@
 
 \title{The Evolution of Genetic Robustness for Cellular Cooperation in Early Multicellular Organisms}
 \author{Katherine G. Skocelas, Austin J. Ferguson, Clifford Bohm, Katherine Perry, Rosemary Adaji, Charles Ofria}
-\date{2022-05-08}
+\date{2022-05-19}
 
 \begin{document}
 \maketitle
@@ -2182,7 +2182,8 @@ We see that significant variation exists, so we perform pairwise Wilcoxon tests 
 The population size experiment showed that increasing population size also increases selection pressure and leads to the evolution of larger restraint buffers.
 However, even at a population size of 2,000 individuals, we still see the turning point in evolved restraint.
 To determine if an even higher population size would prevent the turning point trend, we created a population genetics model to simulate an infinite population.
-We plugged the average of 100 fitness samples at each restraint buffer into the following formula:
+For each replicate, we ran an independent set of 100 fitness samples at each restraint buffer.
+These samples were then plugged into the following formula:
 \includegraphics{./inf_pop/formula.png}
 
 The simulation script, plotting script, and timing data for this experiment can be found under \texttt{2021\_03\_07\_\_inf\_population/} in the experiments directory of the git repository.
@@ -2190,33 +2191,263 @@ The simulation script, plotting script, and timing data for this experiment can 
 \hypertarget{plots}{%
 \subsection{Plots}\label{plots}}
 
-Here we show how the evolved restraint buffer values change through the course of evolution.
-\includegraphics{./inf_pop/over_time.png}
-
 Here we show the evolved restraint buffer values at the end of 10,000 generations.
-Bar plots are used because the simulation is deterministic; there is only one sample needed for each organism size.
-\includegraphics{./inf_pop/evolved_bars.png}
+\includegraphics{./inf_pop/evolved_boxplots.png}
 
 Thus, even with an infinite population and the higher selective pressures that come with it, we still see the turning point trend in the evolved restraint buffer values.
+
+We hypothesize that the surprisingly high restraint buffers seen in the 16x16 treatment are an artifact of the greater variation in fitness samples for the smallest organisms (see Figure 5 in the paper).
+
+\hypertarget{statistics-8}{%
+\subsection{Statistics}\label{statistics-8}}
+
+First, we load and prep the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{num\_samples =}\StringTok{ }\DecValTok{3000}
+\NormalTok{num\_batches =}\StringTok{ }\DecValTok{30} 
+\NormalTok{batch\_size =}\StringTok{ }\NormalTok{num\_samples }\OperatorTok{/}\StringTok{ }\NormalTok{num\_batches}
+\NormalTok{max\_gen =}\StringTok{ }\DecValTok{10000}
+
+\CommentTok{\# Load data}
+\NormalTok{df\_finite =}\StringTok{ }\OtherTok{NA}
+\ControlFlowTok{for}\NormalTok{(size }\ControlFlowTok{in}\NormalTok{ size\_vec)\{}
+  \ControlFlowTok{for}\NormalTok{(batch\_id }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{num\_batches)\{}
+    \ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.data.frame}\NormalTok{(df\_finite))\{}
+\NormalTok{      df\_finite =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_07\_\_inf\_population/simulation/data/size\_\textquotesingle{}}\NormalTok{, size, }\StringTok{\textquotesingle{}\_\_batch\_\textquotesingle{}}\NormalTok{, batch\_id, }\StringTok{\textquotesingle{}.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{      df\_finite}\OperatorTok{$}\NormalTok{batch\_id =}\StringTok{ }\NormalTok{batch\_id}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      df\_finite\_tmp =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_07\_\_inf\_population/simulation/data/size\_\textquotesingle{}}\NormalTok{, size, }\StringTok{\textquotesingle{}\_\_batch\_\textquotesingle{}}\NormalTok{, batch\_id, }\StringTok{\textquotesingle{}.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{      df\_finite\_tmp}\OperatorTok{$}\NormalTok{batch\_id =}\StringTok{ }\NormalTok{batch\_id}
+\NormalTok{      df\_finite =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df\_finite, df\_finite\_tmp)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# Summarize data, grabbing the mean from the simulation}
+\NormalTok{df\_finite\_summary =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+\KeywordTok{colnames}\NormalTok{(df\_finite\_summary) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}mc\_size\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}generation\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}mean\_ones\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}batch\_id\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size }\ControlFlowTok{in}\NormalTok{ size\_vec)\{}
+\NormalTok{  size\_mask =}\StringTok{ }\NormalTok{df\_finite}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size}
+  \ControlFlowTok{for}\NormalTok{(batch\_id }\ControlFlowTok{in} \KeywordTok{unique}\NormalTok{(df\_finite}\OperatorTok{$}\NormalTok{batch\_id))\{}
+\NormalTok{    mask =}\StringTok{ }\NormalTok{size\_mask }\OperatorTok{\&}\StringTok{ }\NormalTok{df\_finite}\OperatorTok{$}\NormalTok{batch\_id }\OperatorTok{==}\StringTok{ }\NormalTok{batch\_id}
+    \ControlFlowTok{for}\NormalTok{(gen }\ControlFlowTok{in} \KeywordTok{unique}\NormalTok{(df\_finite}\OperatorTok{$}\NormalTok{generation))\{}
+\NormalTok{      df\_finite\_summary[}\KeywordTok{nrow}\NormalTok{(df\_finite\_summary) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size, gen, }\KeywordTok{weighted.mean}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{, df\_finite[mask }\OperatorTok{\&}\StringTok{ }\NormalTok{df\_finite}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\NormalTok{gen,]}\OperatorTok{$}\NormalTok{frac\_of\_pop), batch\_id)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# Trim to final generation}
+\NormalTok{df\_finite\_summary =}\StringTok{ }\NormalTok{df\_finite\_summary[df\_finite\_summary}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\NormalTok{max\_gen,]}
+\CommentTok{\# Rename column}
+\NormalTok{df\_finite\_summary}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df\_finite\_summary}\OperatorTok{$}\NormalTok{mean\_ones }
+\end{Highlighting}
+\end{Shaded}
+
+Next, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_finite\_summary}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_finite\_summary}\OperatorTok{$}\NormalTok{mc\_size, df\_finite\_summary)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        p_value chi_squared df less_0.01
+## 1 6.864684e-27    132.5438  5      TRUE
+\end{verbatim}
+
+We see that significant variation exists, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate stats}
+\NormalTok{df\_finite\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
+\NormalTok{adjacent\_counter =}\StringTok{ }\DecValTok{0}
+\KeywordTok{colnames}\NormalTok{(df\_finite\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{  size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+\NormalTok{  size\_a\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(size\_a, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, size\_a)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{    size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{    size\_b\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(size\_b, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, size\_b)}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(}
+\NormalTok{      df\_finite\_summary[df\_finite\_summary}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, }
+\NormalTok{      df\_finite\_summary[df\_finite\_summary}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }
+      \DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{    df\_finite\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_finite\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size\_a\_str, size\_b\_str, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{df\_finite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_finite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{df\_finite\_wilcox}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}ns\textquotesingle{}}
+\NormalTok{df\_finite\_wilcox[df\_finite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.05}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}*\textquotesingle{}}
+\NormalTok{df\_finite\_wilcox[df\_finite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.01}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}**\textquotesingle{}}
+\NormalTok{df\_finite\_wilcox[df\_finite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.001}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}***\textquotesingle{}}
+\KeywordTok{print}\NormalTok{(df\_finite\_wilcox)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     size_a  size_b p_value_corrected          p_value_raw   W label
+## 1    16x16   32x32      9.060257e-02   0.0906025723531084 335    ns
+## 2    16x16   64x64      2.321832e-04 7.73943915506614e-05 191   ***
+## 3    16x16 128x128      3.698987e-07 7.39797408170052e-08 111   ***
+## 4    16x16 256x256      2.057755e-07 3.42959129633882e-08 104   ***
+## 5    16x16 512x512      1.039919e-04 2.59979796766096e-05 176   ***
+## 6    32x32   64x64      2.542063e-11 3.63151836599917e-12  40   ***
+## 7    32x32 128x128      2.536685e-16 1.69112338921448e-17   0   ***
+## 8    32x32 256x256      2.536685e-16 1.69112338921448e-17   0   ***
+## 9    32x32 512x512      2.536685e-16 1.69112338921448e-17   0   ***
+## 10   64x64 128x128      2.536685e-16 1.69112338921448e-17   0   ***
+## 11   64x64 256x256      2.536685e-16 1.69112338921448e-17   0   ***
+## 12   64x64 512x512      2.823500e-13 3.52937451329061e-14  19   ***
+## 13 128x128 256x256      6.387082e-03  0.00319354081859395 253    **
+## 14 128x128 512x512      2.536685e-16 1.69112338921448e-17 900   ***
+## 15 256x256 512x512      2.536685e-16 1.69112338921448e-17 900   ***
+\end{verbatim}
 
 \hypertarget{infinite-genome-experiment-1}{%
 \section{Infinite genome experiment}\label{infinite-genome-experiment-1}}
 
 Knowing that an infinite population alone is not enough to negate the turning point trend, we then reran the infinite population model with an infinite genome.
-Functionally this experiment is identical to the one above, the only difference is that we now feed in fitness data from the infinite genome experiment (fitness data was calculated from restraint buffer values of -100 to 450, which preliminary experiments showed was sufficient).
-Additionally, the probability that a mutation reduces restraint is locked at 60\% (\emph{i.e.}, b(n) = 0.6).
+Functionally this experiment is identical to the one above, the only difference is that we now feed in new fitness data calculated using the infinite genome model (fitness data was calculated from restraint buffer values of -100 to 550, which preliminary experiments showed was sufficient).
+Additionally, the probability that a mutation reduces restraint is locked at 60\% (\emph{i.e.}, b(n) = 0.4).
 The simulation script, plotting script, and timing data for this experiment can be found under \texttt{2021\_03\_08\_\_inf\_genome\_inf\_pop/} in the experiments directory of the git repository.
 
 \hypertarget{plots-1}{%
 \subsection{Plots}\label{plots-1}}
 
-Here we show how the evolved restraint buffer values change through the course of evolution.
-\includegraphics{./inf_pop/inf_over_time.png}
-
 Here we show the evolved restraint buffer values at the end of 10,000 generations.
-Again, we use bar plots because the simulation is deterministic.
-\includegraphics{./inf_pop/inf_evolved_bars.png}
+\includegraphics{./inf_pop/inf_evolved_boxplots.png}
 
 Thus, we see that using \emph{both} an infinite genome and an infinite population (and thus increasing selective pressure while decreasing mutational pressure) is enough to see evolved restraint buffers continuously increase with organism size.
+
+Similar to the finite population treatment above, we hypothesize that the increased variance in the 16x16 and 32x32 treatments is an artifact of the greater variation in fitness samples for the smallest organisms (see Figure 5 in the paper).
+
+\hypertarget{statistics-9}{%
+\subsection{Statistics}\label{statistics-9}}
+
+First, we load and prep the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{size\_vec =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{, }\DecValTok{512}\NormalTok{)}
+\NormalTok{num\_samples =}\StringTok{ }\DecValTok{3000}
+\NormalTok{num\_batches =}\StringTok{ }\DecValTok{30} 
+\NormalTok{batch\_size =}\StringTok{ }\NormalTok{num\_samples }\OperatorTok{/}\StringTok{ }\NormalTok{num\_batches}
+\NormalTok{max\_gen =}\StringTok{ }\DecValTok{10000}
+
+\CommentTok{\# Load data}
+\NormalTok{df\_infinite =}\StringTok{ }\OtherTok{NA}
+\ControlFlowTok{for}\NormalTok{(size }\ControlFlowTok{in}\NormalTok{ size\_vec)\{}
+  \ControlFlowTok{for}\NormalTok{(batch\_id }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{num\_batches)\{}
+    \ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.data.frame}\NormalTok{(df\_infinite))\{}
+\NormalTok{      df\_infinite =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_08\_\_inf\_genome\_inf\_pop/simulation/data/size\_\textquotesingle{}}\NormalTok{, size, }\StringTok{\textquotesingle{}\_\_batch\_\textquotesingle{}}\NormalTok{, batch\_id, }\StringTok{\textquotesingle{}.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{      df\_infinite}\OperatorTok{$}\NormalTok{batch\_id =}\StringTok{ }\NormalTok{batch\_id}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      df\_infinite\_tmp =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}../experiments/2021\_03\_08\_\_inf\_genome\_inf\_pop/simulation/data/size\_\textquotesingle{}}\NormalTok{, size, }\StringTok{\textquotesingle{}\_\_batch\_\textquotesingle{}}\NormalTok{, batch\_id, }\StringTok{\textquotesingle{}.csv\textquotesingle{}}\NormalTok{))}
+\NormalTok{      df\_infinite\_tmp}\OperatorTok{$}\NormalTok{batch\_id =}\StringTok{ }\NormalTok{batch\_id}
+\NormalTok{      df\_infinite =}\StringTok{ }\KeywordTok{rbind}\NormalTok{(df\_infinite, df\_infinite\_tmp)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# Summarize data, grabbing the mean from the simulation}
+\NormalTok{df\_infinite\_summary =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{))}
+\KeywordTok{colnames}\NormalTok{(df\_infinite\_summary) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}mc\_size\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}generation\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}mean\_ones\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}batch\_id\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size }\ControlFlowTok{in}\NormalTok{ size\_vec)\{}
+\NormalTok{  size\_mask =}\StringTok{ }\NormalTok{df\_infinite}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size}
+  \ControlFlowTok{for}\NormalTok{(batch\_id }\ControlFlowTok{in} \KeywordTok{unique}\NormalTok{(df\_infinite}\OperatorTok{$}\NormalTok{batch\_id))\{}
+\NormalTok{    mask =}\StringTok{ }\NormalTok{size\_mask }\OperatorTok{\&}\StringTok{ }\NormalTok{df\_infinite}\OperatorTok{$}\NormalTok{batch\_id }\OperatorTok{==}\StringTok{ }\NormalTok{batch\_id}
+    \ControlFlowTok{for}\NormalTok{(gen }\ControlFlowTok{in} \KeywordTok{unique}\NormalTok{(df\_infinite}\OperatorTok{$}\NormalTok{generation))\{}
+\NormalTok{      df\_infinite\_summary[}\KeywordTok{nrow}\NormalTok{(df\_infinite\_summary) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size, gen, }\KeywordTok{weighted.mean}\NormalTok{(}\OperatorTok{{-}}\DecValTok{100}\OperatorTok{:}\DecValTok{550}\NormalTok{, df\_infinite[mask }\OperatorTok{\&}\StringTok{ }\NormalTok{df\_infinite}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\NormalTok{gen,]}\OperatorTok{$}\NormalTok{frac\_of\_pop), batch\_id)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# Trim to final generation}
+\NormalTok{df\_infinite\_summary =}\StringTok{ }\NormalTok{df\_infinite\_summary[df\_infinite\_summary}\OperatorTok{$}\NormalTok{generation }\OperatorTok{==}\StringTok{ }\NormalTok{max\_gen,]}
+\CommentTok{\# Rename column}
+\NormalTok{df\_infinite\_summary}\OperatorTok{$}\NormalTok{restraint\_value =}\StringTok{ }\NormalTok{df\_infinite\_summary}\OperatorTok{$}\NormalTok{mean\_ones }
+\end{Highlighting}
+\end{Shaded}
+
+Next, we perform a Kruskal-Wallis test across all organism sizes to indicate if variance exists.
+If variance exists, we then perform a pairwise Wilcoxon Rank-Sum test to show which pairs of organism sizes significantly differ.
+Finally, we perform Bonferroni-Holm corrections for multiple comparisons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  res =}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(df\_infinite\_summary}\OperatorTok{$}\NormalTok{restraint\_value }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{df\_infinite\_summary}\OperatorTok{$}\NormalTok{mc\_size, df\_infinite\_summary)}
+\NormalTok{  df\_kruskal =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{))}
+  \KeywordTok{colnames}\NormalTok{(df\_kruskal) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}p\_value\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}chi\_squared\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}df\textquotesingle{}}\NormalTok{)}
+\NormalTok{  df\_kruskal[}\KeywordTok{nrow}\NormalTok{(df\_kruskal) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{], }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{parameter)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  df\_kruskal}\OperatorTok{$}\NormalTok{less\_}\FloatTok{0.01}\NormalTok{ =}\StringTok{ }\NormalTok{df\_kruskal}\OperatorTok{$}\NormalTok{p\_value }\OperatorTok{\textless{}}\StringTok{ }\FloatTok{0.01}
+  \KeywordTok{print}\NormalTok{(df\_kruskal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        p_value chi_squared df less_0.01
+## 1 9.275788e-25    122.4987  5      TRUE
+\end{verbatim}
+
+We see that significant variation exists, so we perform pairwise Wilcoxon tests on each to see which pairs of sizes are significantly different.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate stats}
+\NormalTok{df\_infinite\_wilcox =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \DecValTok{0}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{))}
+\NormalTok{adjacent\_counter =}\StringTok{ }\DecValTok{0}
+\KeywordTok{colnames}\NormalTok{(df\_infinite\_wilcox) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{\textquotesingle{}size\_a\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}size\_b\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_corrected\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}p\_value\_raw\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}W\textquotesingle{}}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(size\_idx\_a }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{(}\KeywordTok{length}\NormalTok{(size\_vec) }\OperatorTok{{-}}\StringTok{ }\DecValTok{1}\NormalTok{))\{}
+\NormalTok{  size\_a =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_a]}
+\NormalTok{  size\_a\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(size\_a, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, size\_a)}
+  \ControlFlowTok{for}\NormalTok{(size\_idx\_b }\ControlFlowTok{in}\NormalTok{ (size\_idx\_a }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(size\_vec))\{}
+\NormalTok{    size\_b =}\StringTok{ }\NormalTok{size\_vec[size\_idx\_b]}
+\NormalTok{    size\_b\_str =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(size\_b, }\StringTok{\textquotesingle{}x\textquotesingle{}}\NormalTok{, size\_b)}
+\NormalTok{    res =}\StringTok{ }\KeywordTok{wilcox.test}\NormalTok{(}
+\NormalTok{      df\_infinite\_summary[df\_infinite\_summary}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size\_a,]}\OperatorTok{$}\NormalTok{restraint\_value, }
+\NormalTok{      df\_infinite\_summary[df\_infinite\_summary}\OperatorTok{$}\NormalTok{mc\_size }\OperatorTok{==}\StringTok{ }\NormalTok{size\_b,]}\OperatorTok{$}\NormalTok{restraint\_value, }
+      \DataTypeTok{alternative =} \StringTok{\textquotesingle{}two.sided\textquotesingle{}}\NormalTok{) }
+\NormalTok{    df\_infinite\_wilcox[}\KeywordTok{nrow}\NormalTok{(df\_infinite\_wilcox) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{,] =}\StringTok{ }\KeywordTok{c}\NormalTok{(size\_a\_str, size\_b\_str, }\DecValTok{0}\NormalTok{, res}\OperatorTok{$}\NormalTok{p.value, }\KeywordTok{as.numeric}\NormalTok{(res}\OperatorTok{$}\NormalTok{statistic)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected =}\StringTok{ }\KeywordTok{p.adjust}\NormalTok{(df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_raw, }\DataTypeTok{method =} \StringTok{\textquotesingle{}holm\textquotesingle{}}\NormalTok{)}
+\NormalTok{df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}ns\textquotesingle{}}
+\NormalTok{df\_infinite\_wilcox[df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.05}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}*\textquotesingle{}}
+\NormalTok{df\_infinite\_wilcox[df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.01}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}**\textquotesingle{}}
+\NormalTok{df\_infinite\_wilcox[df\_infinite\_wilcox}\OperatorTok{$}\NormalTok{p\_value\_corrected }\OperatorTok{\textless{}=}\StringTok{ }\FloatTok{0.001}\NormalTok{,]}\OperatorTok{$}\NormalTok{label =}\StringTok{ \textquotesingle{}***\textquotesingle{}}
+\KeywordTok{print}\NormalTok{(df\_infinite\_wilcox)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     size_a  size_b p_value_corrected          p_value_raw   W label
+## 1    16x16   32x32      1.903319e-02  0.00800779223573467 272     *
+## 2    16x16   64x64      1.134432e-03  0.00022688642966782 207    **
+## 3    16x16 128x128      3.985008e-07 6.64168028505824e-08 110   ***
+## 4    16x16 256x256      9.772299e-10 1.08581096978365e-10  60   ***
+## 5    16x16 512x512      2.536685e-16 1.69112338921448e-17   0   ***
+## 6    32x32   64x64      4.492125e-01    0.449212452880926 398    ns
+## 7    32x32 128x128      1.903319e-02  0.00634439571905353 267     *
+## 8    32x32 256x256      3.000458e-07 4.28636796657485e-08 106   ***
+## 9    32x32 512x512      1.072054e-12 9.74594409204303e-14  23   ***
+## 10   64x64 128x128      1.039894e-02  0.00259973476772674 249     *
+## 11   64x64 256x256      7.409488e-12 7.40948801750431e-13  32   ***
+## 12   64x64 512x512      2.536685e-16 1.69112338921448e-17   0   ***
+## 13 128x128 256x256      7.628660e-09 9.53582505495524e-10  75   ***
+## 14 128x128 512x512      2.536685e-16 1.69112338921448e-17   0   ***
+## 15 256x256 512x512      2.536685e-16 1.69112338921448e-17   0   ***
+\end{verbatim}
 
 \end{document}
