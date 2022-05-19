@@ -5,15 +5,23 @@ library(ggplot2)
 library(ggridges)
 library(dplyr)
 
+num_samples = 3000
+num_batches = 30 
+batch_size = num_samples / num_batches
+
 # Load in data, if recalc_summary is false we just load the summary data from file
 recalc_summary = T
 if(recalc_summary){
-  df = read.csv('./timing/data/scraped_timing_data.csv')
+  df = read.csv('./timing/data/scraped_timing_data_16_256.csv')
+  df = rbind(df, read.csv('./timing/data/scraped_timing_data_512.csv'))
   df = df[df$cells_side != 8 & df$cells_side != 1024,]
   # Group and summarize the data, we mostly just use the mean times  
   df_grouped = dplyr::group_by(df, cells_side, ancestor_1s)
-  df_summary = dplyr::summarize(df_grouped, mean_time = mean(rep_time), n = n(), sd_time = sd(rep_time))
-  df_summary[df_summary$n != 10000,]
+  df_grouped = group_modify(df_grouped, ~ mutate(.x, id = 1:num_samples))
+  df_grouped$batch_id = ceiling(df_grouped$id / batch_size)
+  df_grouped_2 = group_by(df_grouped, cells_side, ancestor_1s, batch_id)
+  df_summary = dplyr::summarize(df_grouped_2, mean_time = mean(rep_time), n = n(), sd_time = sd(rep_time))
+  df_summary[df_summary$n != 100,]
 }else{
   df_summary = read.csv('timing/data/timing_data_summary.csv')
 }
